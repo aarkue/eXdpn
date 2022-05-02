@@ -1,3 +1,5 @@
+import pm4py
+from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.algo.discovery.inductive import factory as inductive_miner
 
 # data type for log? dataframe or event log event? 
