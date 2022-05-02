@@ -12,6 +12,7 @@ def mining (log) -> PetriNet:
     Returns: 
         PetriNet: Petri Net based on input data, later used to find decision find decision points 
     """
+    
 
     # mine petri net
     net, initial_marking, final_marking = inductive_miner.apply(log)
