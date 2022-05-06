@@ -1,4 +1,4 @@
-from exdpn.decisionpoints.find import find_decision_points
+from exdpn.decisionpoints import find_decision_points
 
 from pandas import DataFrame
 from typing import Dict
