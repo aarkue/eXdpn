@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<log xes.version="1849-2016" xes.features="nested-attributes" xmlns="http://www.xes-standard.org/">
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext" />
+	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.xesext" />
+	<string key="origin" value="csv" />
+	<trace>
+		<string key="concept:name" value="1" />
+		<event>
+			<int key="case_id" value="1" />
+			<string key="activity" value="A" />
+			<date key="timestamp" value="2010-12-30T10:02:00+00:00" />
+			<int key="costs" value="500" />
+			<string key="resource" value="Pete" />
+			<string key="concept:name" value="A" />
+			<date key="time:timestamp" value="2010-12-30T10:02:00+00:00" />
+			<int key="@@index" value="6" />
+		</event>
+		<event>
+			<int key="case_id" value="1" />
+			<string key="activity" value="D" />
+			<date key="timestamp" value="2010-12-31T09:06:00+00:00" />
+			<int key="costs" value="400" />
+			<string key="resource" value="Sue" />
+			<string key="concept:name" value="D" />
+			<date key="time:timestamp" value="2010-12-31T09:06:00+00:00" />
+			<int key="@@index" value="7" />
+		</event>
+		<event>
+			<int key="case_id" value="1" />
+			<string key="activity" value="D" />
+			<date key="timestamp" value="2011-01-05T14:12:00+00:00" />
+			<int key="costs" value="100" />
+			<string key="resource" value="Mike" />
+			<string key="concept:name" value="D" />
+			<date key="time:timestamp" value="2011-01-05T14:12:00+00:00" />
+			<int key="@@index" value="8" />
+		</event>
+		<event>
+			<int key="case_id" value="1" />
+			<string key="activity" value="C" />
+			<date key="timestamp" value="2011-01-07T13:24:00+00:00" />
+			<int key="costs" value="200" />
+			<string key="resource" value="Pete" />
+			<string key="concept:name" value="C" />
+			<date key="time:timestamp" value="2011-01-07T13:24:00+00:00" />
+			<int key="@@index" value="9" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="2" />
+		<event>
+			<int key="case_id" value="2" />
+			<string key="activity" value="X" />
+			<date key="timestamp" value="2010-12-30T10:32:00+00:00" />
+			<int key="costs" value="100" />
+			<string key="resource" value="Mike" />
+			<string key="concept:name" value="X" />
+			<date key="time:timestamp" value="2010-12-30T10:32:00+00:00" />
+			<int key="@@index" value="3" />
+		</event>
+		<event>
+			<int key="case_id" value="2" />
+			<string key="activity" value="B" />
+			<date key="timestamp" value="2010-12-30T11:12:00+00:00" />
+			<int key="costs" value="100" />
+			<string key="resource" value="Mike" />
+			<string key="concept:name" value="B" />
+			<date key="time:timestamp" value="2010-12-30T11:12:00+00:00" />
+			<int key="@@index" value="4" />
+		</event>
+		<event>
+			<int key="case_id" value="2" />
+			<string key="activity" value="C" />
+			<date key="timestamp" value="2010-12-30T13:16:00+00:00" />
+			<int key="costs" value="400" />
+			<string key="resource" value="Sean" />
+			<string key="concept:name" value="C" />
+			<date key="time:timestamp" value="2010-12-30T13:16:00+00:00" />
+			<int key="@@index" value="5" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="3" />
+		<event>
+			<int key="case_id" value="3" />
+			<string key="activity" value="A" />
+			<date key="timestamp" value="2010-12-30T13:32:00+00:00" />
+			<int key="costs" value="100" />
+			<string key="resource" value="Pete" />
+			<string key="concept:name" value="A" />
+			<date key="time:timestamp" value="2010-12-30T13:32:00+00:00" />
+			<int key="@@index" value="0" />
+		</event>
+		<event>
+			<int key="case_id" value="3" />
+			<string key="activity" value="B" />
+			<date key="timestamp" value="2010-12-30T14:06:00+00:00" />
+			<int key="costs" value="10" />
+			<string key="resource" value="Mike" />
+			<string key="concept:name" value="B" />
+			<date key="time:timestamp" value="2010-12-30T14:06:00+00:00" />
+			<int key="@@index" value="1" />
+		</event>
+		<event>
+			<int key="case_id" value="3" />
+			<string key="activity" value="C" />
+			<date key="timestamp" value="2010-12-30T15:34:00+00:00" />
+			<int key="costs" value="100" />
+			<string key="resource" value="Ellen" />
+			<string key="concept:name" value="C" />
+			<date key="time:timestamp" value="2010-12-30T15:34:00+00:00" />
+			<int key="@@index" value="2" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="4" />
+		<event>
+			<int key="case_id" value="4" />
+			<string key="activity" value="A" />
+			<date key="timestamp" value="2011-01-06T14:02:00+00:00" />
+			<int key="costs" value="0" />
+			<string key="resource" value="Pete" />
+			<string key="concept:name" value="A" />
+			<date key="time:timestamp" value="2011-01-06T14:02:00+00:00" />
+			<int key="@@index" value="13" />
+		</event>
+		<event>
+			<int key="case_id" value="4" />
+			<string key="activity" value="C" />
+			<date key="timestamp" value="2011-01-07T11:06:00+00:00" />
+			<int key="costs" value="100" />
+			<string key="resource" value="Mike" />
+			<string key="concept:name" value="C" />
+			<date key="time:timestamp" value="2011-01-07T11:06:00+00:00" />
+			<int key="@@index" value="14" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="6" />
+		<event>
+			<int key="case_id" value="6" />
+			<string key="activity" value="X" />
+			<date key="timestamp" value="2011-01-06T14:02:00+00:00" />
+			<int key="costs" value="550" />
+			<string key="resource" value="Mike" />
+			<string key="concept:name" value="X" />
+			<date key="time:timestamp" value="2011-01-06T14:02:00+00:00" />
+			<int key="@@index" value="10" />
+		</event>
+		<event>
+			<int key="case_id" value="6" />
+			<string key="activity" value="D" />
+			<date key="timestamp" value="2011-01-06T15:06:00+00:00" />
+			<int key="costs" value="400" />
+			<string key="resource" value="Ellen" />
+			<string key="concept:name" value="D" />
+			<date key="time:timestamp" value="2011-01-06T15:06:00+00:00" />
+			<int key="@@index" value="11" />
+		</event>
+		<event>
+			<int key="case_id" value="6" />
+			<string key="activity" value="C" />
+			<date key="timestamp" value="2011-01-07T15:22:00+00:00" />
+			<int key="costs" value="100" />
+			<string key="resource" value="Mike" />
+			<string key="concept:name" value="C" />
+			<date key="time:timestamp" value="2011-01-07T15:22:00+00:00" />
+			<int key="@@index" value="12" />
+		</event>
+	</trace>
+</log>
