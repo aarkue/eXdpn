@@ -7,10 +7,12 @@ def get_petri_net (log: EventLog) -> tuple[PetriNet, PetriNet.Place, PetriNet.Pl
     """ Mines Petri Net based on given event log and returns found Petri Net.
 
     Args: 
-        log: Given event log, as # insert data type
+        log: Given event log, as EventLog
     
     Returns: 
         PetriNet: Petri Net based on input data, later used to find decision find decision points 
+        PetriNet.Place: Initial Marking
+        PetriNet.Place: Final Marking 
     """
     
     # mine petri net using inductive miner to fit all traces
