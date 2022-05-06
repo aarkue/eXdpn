@@ -13,7 +13,7 @@ def get_petri_net (log: EventLog) -> tuple[PetriNet, PetriNet.Place, PetriNet.Pl
         PetriNet: Petri Net based on input data, later used to find decision find decision points 
     """
     
-    # mine petri net using inductive miner to *insert benefits of inductive miner*
+    # mine petri net using inductive miner to fit all traces
     net, initial_marking, final_marking = inductive_miner.apply(log)
     
     return net, initial_marking, final_marking
