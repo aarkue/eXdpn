@@ -17,44 +17,62 @@ def get_instances_per_transition(log: EventLog, net: PetriNet, im: PetriNet.Plac
                                  event_attributes: list[str],
                                  sliding_window_size: int,
                                  act_name_attr: str) -> Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]]:
+    """ Returns a dictionary of transitions (activities) mapped to the attribute lists of all instances that passed that activity.
+    Args:
+        log (EventLog): The pm4py event log to use for dataset generation
+        net (PetriNet): The pm4py Petri net in which to generate the datasets
+        im (PetriNet.Place): The initial marking of net
+        fm (PetriNet.Place): The final marking of net
+        case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+        event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
+        sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
+        act_name_attr (str): Event level attribute name corresponding to the name of an event
+    Returns:
+        transition_instance_map (Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]]): Mapping of transitions (t) to instance lists \
+            corresponding to trace attributes which passed transition t. List of event attributes has to be list[any] since one \
+            can not assume the type of attributes in an event log
 
-    # has to be list[any] since one can not assume the type of attributes in an event log
-
-    transition_ins_map = dict()
+    """
+    transition_instance_map = dict()
     replay = token_replay.apply(log, net, im, fm)
-    # Token based replay is enough. All traces will be fitting,
-    # since we replay on the same log used for mining (ind. miner)
+    # Token based replay is enough. All traces will be fitting, since we replay on the same log used for mining the petri net 
+    # (mining is based on inductive miner, see get_petri_net function)
 
     # instance scheme:
     # [case_level_attr_1, .., case_level_attr_i, event_attr_1, .., event_attr_j, window_last_1, .., window_last_(sliding_window_size)]
     for index_trace, trace_replay in enumerate(replay):
+        # initialize count for passed activities
         index_activity = 0
-        window = [np.nan for _ in range(sliding_window_size)]
+        window = [np.nan for _ in range(sliding_window_size)] 
 
         for transition in trace_replay["activated_transitions"]:
-            if not transition in transition_ins_map:
-                transition_ins_map[transition] = []
+            # add transitions to dict if they are not already in it
+            if not transition in transition_instance_map:
+                transition_instance_map[transition] = []
 
-            instance = [log[index_trace].attributes[attr]
-                        for attr in case_level_attributes]
+            # get all case level attributes of the current instance
+            instance = [log[index_trace].attributes[attr] for attr in case_level_attributes]
+            # create trace of all case level attributes, event attributes, and the last events per instance
             if index_activity > 0:
-                transition_ins_map[transition].append(instance
+                transition_instance_map[transition].append(instance
                                                       + [log[index_trace][index_activity-1][attr]
                                                          if attr in log[index_trace][index_activity-1] else np.nan
                                                          for attr in event_attributes]
                                                       + [window[-(i+1)] for i in range(sliding_window_size)])
             else:
-                # current place is source. I.e. no previous events were recorded
-                transition_ins_map[transition].append(instance
+                # special case: current place is source, i.e., no previous events were recorded. in this case no event attributes can be added
+                transition_instance_map[transition].append(instance
                                                       + [np.nan for _ in event_attributes]
                                                       + [window[-(i+1)] for i in range(sliding_window_size)])
 
+            # update count for passed activities and add activity to sliding window
             if transition.label != None:
                 index_activity += 1
                 window.append(log[index_trace]
                               [index_activity-1][act_name_attr])
-
-    return transition_ins_map
+    
+    # output: transition -> [instance]
+    return transition_instance_map
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
@@ -64,16 +82,31 @@ def get_instances_per_place_per_transition(log: EventLog, net: PetriNet, im: Pet
                                            event_attributes: list[str],
                                            sliding_window_size: int,
                                            act_name_attr: str) -> tuple[Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]], list[str]]:
-
+    """ Returns a dictionary with all places, that are decision points, as keys and as values all transitions that follow these places corresponding transitions. \
+        The transitions are mapped on the particular attribute lists of all instances that passed that activity.
+    Args:
+        log (EventLog): The pm4py event log to use for dataset generation
+        net (PetriNet): The pm4py Petri net in which to generate the datasets
+        im (PetriNet.Place): The initial marking of net
+        fm (PetriNet.Place): The final marking of net
+        case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+        event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
+        sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
+        act_name_attr (str): Event level attribute name corresponding to the name of an event
+    Returns:
+        place_transition_instance_map (Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]]): The mapping of places (p) to mappings of transitions (t) to instance lists \
+            corresponding to trace attributes which visited p during replay and proceeded by taking transition t
+        attribute_list (list[str]): The attribute names corresponding to the tuple entries of the instances
+    """
     decision_points = find_decision_points(net)
 
     # this is the core data consisting of instance tuples (created using token based replay) per transition in the Petri net
-    transition_ins_map = get_instances_per_transition(
+    transition_instance_map = get_instances_per_transition(
         log, net, im, fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr)
 
-    # TODO: explaing "wrapper" functionallity or use
-    # place -> trans -> [instance]
-    place_transition_ins_map = {decision_point: {transition: transition_ins_map[transition] if transition in transition_ins_map else set()
+    # output: place -> transition -> [instance]
+    # use decision points as keys and map the corresponding transitions and their instance tuples 
+    place_transition_instance_map = {decision_point: {transition: transition_instance_map[transition] if transition in transition_instance_map else set()
                                                  for transition in transitions}
                                 for decision_point, transitions in decision_points.items()}
 
@@ -82,27 +115,33 @@ def get_instances_per_place_per_transition(log: EventLog, net: PetriNet, im: Pet
     attribute_list = case_level_attributes + event_attributes + \
         [f"prev-{i+1}" for i in range(sliding_window_size)]
 
-    return place_transition_ins_map, attribute_list
+    return place_transition_instance_map, attribute_list
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
 
-def get_guard_dataset(place: PetriNet.Place, place_trans_ins_map: Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]], attribute_list: list[str]) -> DataFrame:
-    """ Returns a guard dataset for a specific place 
+def get_guard_dataset(place: PetriNet.Place, 
+                      place_transition_instance_map: Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]], 
+                      attribute_list: list[str]) -> DataFrame:
+    """ Returns a guard dataset for a specific place. This contains all contain all combinations of trace attributes and outgoing transition seen in the data for the given guard.
     Args:
         place (PetriNet.Place): The pm4py Petri net place to use for dataset generation
-        place_trans_ins_map (Dict[PetriNet.Place,Dict[PetriNet.Transition, list[any]]]): The mapping of places (p) to mappings of transitions (t) to instance lists \
+        place_transition_instance_map (Dict[PetriNet.Place,Dict[PetriNet.Transition, list[any]]]): The mapping of places (p) to mappings of transitions (t) to instance lists \
             corresponding to trace attributes which visited p during replay and proceeded by taking transition t 
         attribute_list (list[str]): The attribute names corresponding to the instance tuple entries
     Returns:
         pd.DataFrame: A dataset corresponding to trace attributes with their outgoing transition (for traces which visited place during replay)
     """
-    trans_ins = place_trans_ins_map[place]
-    transitions_taken = list(trans_ins.keys())
+    # get mapping of place to transitions and the names of the occuring transitions
+    transition_instance = place_transition_instance_map[place]
+    transitions_taken = list(transition_instance.keys())
+    
+    # set up data frame with attribute names as columns and a target column describing the transition
     df = DataFrame(columns=attribute_list + ["target"])
 
+    # add trace attributes and outgoing transition to data frame
     for transition in transitions_taken:
-        for instance in trans_ins[transition]:
+        for instance in transition_instance[transition]:
             df.loc[len(df.index)] = instance + [transition]
 
     return df
@@ -115,7 +154,8 @@ def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm:
                            event_attributes: list[str] = [],
                            sliding_window_size: int = 3,
                            act_name_attr: str = "concept:name") -> Dict[PetriNet.Place, DataFrame]:
-    """ Returns a mapping of guards to their corresponding guard dataset 
+    """ Returns a mapping of all guards (desicion points) to their corresponding guard dataset. Thes guard dataset contains all combinations of trace attributes and outgoing \
+        transition seen in the data for the particular guard, i.e., the attribute values of all instances that passed the corresponding decision point as well as the outgoing transition.
     Args:
         log (EventLog): The pm4py event log to use for dataset generation
         net (PetriNet): The pm4py Petri net in which to generate the datasets
@@ -130,9 +170,13 @@ def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm:
             corresponding to trace attributes with their outgoing transition (for traces which visited this place during replay)
     """
     # TODO Allow for specifying different attributes per place
-    place_trans_ins_map, attribute_list = get_instances_per_place_per_transition(
+    
+    # get mapping of all places to their transitions and the corresponding attribute names
+    place_transition_instance_map, attribute_list = get_instances_per_place_per_transition(
         log, net, im, fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr)
 
-    place_df_map = {place: get_guard_dataset(place, place_trans_ins_map, attribute_list)
-                    for place in place_trans_ins_map.keys()}
+    # get trace attributes for all places 
+    place_df_map = {place: get_guard_dataset(place, place_transition_instance_map, attribute_list)
+                    for place in place_transition_instance_map.keys()}
+    
     return place_df_map
