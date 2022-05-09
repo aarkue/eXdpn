@@ -16,7 +16,7 @@ def get_instances_per_transition(log: EventLog, net: PetriNet, im: PetriNet.Plac
                                  case_level_attributes: list[str],
                                  event_attributes: list[str],
                                  sliding_window_size: int,
-                                 act_name_attr: str) -> Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]]:
+                                 act_name_attr: str) -> Dict[PetriNet.Transition, list[any]]:
     """ Returns a dictionary of transitions (activities) mapped to the attribute lists of all instances that passed that activity.
     Args:
         log (EventLog): The pm4py event log to use for dataset generation
@@ -28,7 +28,7 @@ def get_instances_per_transition(log: EventLog, net: PetriNet, im: PetriNet.Plac
         sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
         act_name_attr (str): Event level attribute name corresponding to the name of an event
     Returns:
-        transition_instance_map (Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]]): Mapping of transitions (t) to instance lists \
+        transition_instance_map (Dict[PetriNet.Transition, list[any]]): Mapping of transitions (t) to instance lists \
             corresponding to trace attributes which passed transition t. List of event attributes has to be list[any] since one \
             can not assume the type of attributes in an event log
 
@@ -169,7 +169,6 @@ def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm:
         Dict[PetriNet.Place, pd.DataFrame]: A dictionary mapping places where decisions are made to the dataset \
             corresponding to trace attributes with their outgoing transition (for traces which visited this place during replay)
     """
-    # TODO Allow for specifying different attributes per place
     
     # get mapping of all places to their transitions and the corresponding attribute names
     place_transition_instance_map, attribute_list = get_instances_per_place_per_transition(
