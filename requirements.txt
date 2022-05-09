@@ -2,3 +2,4 @@ pm4py==2.2.20.1
 wheel==0.37.1
 setuptools==47.1.0
 twine==4.0.0
+pandas==1.4.2
