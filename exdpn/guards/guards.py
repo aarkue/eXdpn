@@ -1,0 +1,2 @@
+class Guards():
+    pass
