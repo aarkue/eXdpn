@@ -2,15 +2,19 @@ from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
 
+from ml_technique import ML_Technique
+from guards import Guard
+# TODO: import all concrete Guard implementations
+
 
 # idea: call Guard_Manager for each decision point to get the best possible guard model for either the default\
 # machine learning techniques (all implemented) or the selected machine learning techniques
 
 class Guard_Manager():
-    def __init__(self, dataframe: DataFrame, ml_list: list[str] = [ML_Technique.NN.name, 
-                                                                   ML_Technique.DT.name, 
-                                                                   ML_Technique.LG.name, 
-                                                                   ML_Technique.SVM.name]) -> Dict[str, Guard]:
+    def __init__(self, dataframe: DataFrame, ml_list: list[str] = [ML_Technique.NN, 
+                                                                   ML_Technique.DT, 
+                                                                   ML_Technique.LG, 
+                                                                   ML_Technique.SVM]) -> Dict[str, Guard]:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique
         Args: 
@@ -24,7 +28,7 @@ class Guard_Manager():
         self.dataframe = dataframe
         self.ml_list = ml_list 
         # create list of all needed machine learning techniques to evaluate the guards
-        self.guards_list = {key: eval(key+"_Guard")() for key in self.ml_list}
+        self.guards_list = {technique: eval(technique.name + "_Guard")() for technique in self.ml_list}
 
 
     def evaluate_guards(self) -> Dict[str, any]:
@@ -32,12 +36,19 @@ class Guard_Manager():
         using the specified machine learning techniques
         Returns:
             guards_results (Dict[str, any]): Returns a mapping of all selected machine learning techniques \
-                to the achieved precision and the trained model
+                to the achieved F1-score and the trained model
             """
         self.guards_results = {} 
         # evaluate all selected ml techniques for all guards of the given decision point
         for guard_name in self.guards_list:
-            self.guards_results[guard_name] = self.guards_list[guard_name].evaluate(self.dataframe)
+            # currently proposed pipeline:
+            # 1) guards_list[guard_name].train( train portion of data )
+            # 2) guards_list[guard_name].predict( test portion of data )
+            # 3) calculate F1 score using desired and predicted transitions
+
+            # decide on keeping model trained w/ train portion of data
+            # or "retraining" the model w/ all data available
+            pass
         return self.guards_results 
 
 
