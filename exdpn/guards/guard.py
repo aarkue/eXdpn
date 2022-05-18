@@ -10,18 +10,18 @@ class Guard(metaclass=abc.ABCMeta):
         """Nothing to do just yet."""
         pass
 
-    @abc.abstractmethod
-    def evaluate(self, dataframe: DataFrame) -> tuple[float, Dict[str, any]]:
-        """Shall evaluate a concrete guard and return it's score and optimal hyperparameters.
-        Args:
-            dataframe (DataFrame): Dataset used to evaluate the guard
-        Returns:
-            score (float): Evaluation result
-            hyperparameters (Dict[str, any]): Parameter names mapped to their values"""
-        pass
+    #@abc.abstractmethod
+    #def evaluate(self, dataframe: DataFrame) -> tuple[float, Dict[str, any]]:
+    #    """Shall evaluate a concrete guard and return it's score and optimal hyperparameters.
+    #    Args:
+    #        dataframe (DataFrame): Dataset used to evaluate the guard
+    #    Returns:
+    #        score (float): Evaluation result
+    #        hyperparameters (Dict[str, any]): Parameter names mapped to their values"""
+    #    pass
 
     @abc.abstractmethod
-    def train(self, dataframe: DataFrame, hyperparameters: Dict[str, any]) -> None:
+    def train(self, dataframe: DataFrame, hyperparameters: Dict[str, any] = None) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             dataframe (DataFrame): Dataset used to train the classifier behind the guard
