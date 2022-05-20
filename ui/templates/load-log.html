@@ -7,7 +7,11 @@
     <title>eXdpn</title>
 </head>
 <body>
-    <h1>Welcome to eXdpn</h1>
-    <h2>You can start by <a href="/load-log">selecting an event log</a></h2>
+    <h1>Select an event log</h1>
+    <form method="post" action="/load-log"  enctype="multipart/form-data">
+
+    <input type="file" name="log" accept=".xes" id="log">
+    <button>Submit</button>
+</form>
 </body>
 </html>
