@@ -9,5 +9,16 @@
 <body>
     <h1>Welcome to eXdpn</h1>
     <h2>You can start by <a href="/load-log">selecting an event log</a></h2>
+
+    <ul class="log-list">
+        {% for log_id in uploaded_logs %}
+        <li>
+            <div>
+                <a href="/log/{{ log_id }}">{{ uploaded_logs[log_id]['name'] }} ({{uploaded_logs[log_id]['size']/1000}} KB)</a>
+                <span>{{uploaded_logs[log_id]['uploaded_at']}}</span>        
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
