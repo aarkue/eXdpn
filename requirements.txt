@@ -3,3 +3,4 @@ wheel==0.37.1
 setuptools==47.1.0
 twine==4.0.0
 pandas==1.4.2
+Flask==2.1.2
