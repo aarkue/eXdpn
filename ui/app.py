@@ -34,7 +34,7 @@ def index():
 
 
 # Form for uploading an event log
-@app.route("/load-log", methods=["GET","POST"])
+@app.route("/load-log", methods=["POST"])
 def load_log():
     if request.method == "POST":
         # Get the form input from request
@@ -46,8 +46,6 @@ def load_log():
         log.save(save_path)
         uploaded_logs[safe_name] = get_file_info(safe_name)
         return redirect('/')
-    else:
-        return render_template("load-log.html")
 
 # Details page for a single log
 @app.route("/log/<logid>", methods=["GET","DELETE"])

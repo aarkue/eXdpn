@@ -56,7 +56,7 @@
         <div class="list-group">
             {% for log_id in uploaded_logs %}
             <a class="list-group-item list-group-item-action" data-bs-toggle="modal"
-                data-bs-target="#logInfoModal{{log_id | replace(" @","_") | replace('.','_')}}">
+                data-bs-target="#logInfoModal{{log_id | replace("@","_") | replace('.','_')}}">
                 <div>
                     <span class="fw-bold fs-5">{{uploaded_logs[log_id]['name']}}</span>
 
@@ -66,12 +66,12 @@
                     <span class="text-muted float-end">{{uploaded_logs[log_id]['size']/1000}} KB</span>
                 </div>
             </a>
-            <div class="modal fade" id="logInfoModal{{log_id | replace(" @","_") | replace('.','_')}}" tabindex="-1"
-                aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="logInfoModal{{log_id | replace("@","_") | replace('.','_')}}" tabindex="-1"
+                aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">{{uploaded_logs[log_id]['name']}}</h5>
+                            <h5 class="modal-title">Log Info</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -87,28 +87,32 @@
                         <div class="modal-footer d-flex justify-content-between">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <div>
-                                <a class="btn btn-primary" href="/log/{{log_id}}">Go!</a>
+                                <a class="btn btn-primary" href="/log/{{log_id}}">Use this event log</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
-            <a href="/load-log"
-                class="list-group-item list-group-item-action fw-bold fs-5 list-group-item-success text-center">Add a
-                new event log</a>
+            <button
+                class="list-group-item list-group-item-action fw-bold fs-5 list-group-item-success text-center" data-bs-toggle="modal"
+                data-bs-target="#uploadLogModal">Add a
+                new event log</button>
         </div>
         {% else %}
-        <div class="alert alert-primary" role="alert">
-            Please <a href="/load-log">import an event log</a> to get started!
+        <div class="alert alert-primary d-flex justify-content-between align-items-center" role="alert">
+            <span class="fs-5">Please import an event log to get started!</span>
+            <br />
+            <button class="btn btn-lg btn-primary mt-2" data-bs-toggle="modal"
+            data-bs-target="#uploadLogModal">Import event log</button>
         </div>
         {% endif %}
     </div>
-    <div class="modal fade" id="deleteLogModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteLogModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteLogModal"> Confirm Deletion </h5>
+                    <h5 class="modal-title">Confirm Deletion</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body fs-5">
@@ -121,6 +125,26 @@
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
                         onclick="confirmedDeleteLog()">Delete</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="uploadLogModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="/load-log"  enctype="multipart/form-data">
+                    <div class="modal-body fs-5">
+                        <label for="log" class="form-label">Select an event log (.xes)</label>
+                        <input class="form-control form-control-lg" id="log" type="file" name="log" accept=".xes" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success" type="submit">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
