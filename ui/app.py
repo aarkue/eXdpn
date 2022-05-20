@@ -3,11 +3,13 @@ import os
 from datetime import datetime as dt
 app = Flask('eXdpn')
 from werkzeug.utils import secure_filename
+from werkzeug.security import safe_join
 import uuid
 
 
+
 def get_upload_path(name):
-    return os.path.join('./uploads/', name)
+    return safe_join('./uploads/', name)
 
 
 def get_file_info(name):
@@ -48,7 +50,19 @@ def load_log():
         return render_template("load-log.html")
 
 # Details page for a single log
-@app.route("/log/<logid>")
+@app.route("/log/<logid>", methods=["GET","DELETE"])
 def log_page(logid: str):
-    log = uploaded_logs[logid]
-    return render_template("log.html",log=log)
+    if request.method == "DELETE":
+        if logid in uploaded_logs:
+            uploaded_logs.pop(logid)
+            safe_path = get_upload_path(logid)
+            if safe_path is not None:
+                os.remove(safe_path)
+            else:
+                return "Invalid log name provided.", 403
+            return "", 200
+        else:
+            return "Could not find log.", 404
+    else:
+        log = uploaded_logs[logid]
+        return render_template("log.html",log=log)
