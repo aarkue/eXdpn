@@ -26,7 +26,5 @@ def data_preprocessing(dataframe: DataFrame, ml: str):
 
 
     # one hot encoding for svm and nn
-    # todo
 
     # split data
-    # todo
