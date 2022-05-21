@@ -4,6 +4,9 @@ from typing import Dict
 
 from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
+from exdpn.data_preprocessing import data_preprocessing
+
+from sklearn.metrics import f1_score
 
 
 # idea: call Guard_Manager for each decision point to get the best possible guard model for either the default\
@@ -25,8 +28,15 @@ class Guard_Manager():
                 mapped to the guards for the selected machine learning techniques       
         """
         self.dataframe = dataframe
-        self.ml_list = ml_list
+
+        X_train, X_test, y_train, y_test = data_preprocessing(dataframe)
+        self.X_train = X_train
+        self.X_test  = X_test
+        self.y_train = y_train
+        self.y_test  = y_test
+
         # create list of all needed machine learning techniques to evaluate the guards
+        self.ml_list = ml_list
         self.guards_list = {technique: technique.value() for technique in self.ml_list}
 
     def evaluate_guards(self) -> Dict[str, any]:
@@ -38,26 +48,24 @@ class Guard_Manager():
             """
         self.guards_results = {}
         # evaluate all selected ml techniques for all guards of the given decision point
-        for guard_name in self.guards_list:
+        for guard_name, guard in self.guards_list.items():
             # currently proposed pipeline:
             # 1) guards_list[guard_name].train( train portion of data )
+            guard.train(self.X_train, self.y_train)
             # 2) guards_list[guard_name].predict( test portion of data )
+            print(type(self.X_test),type(self.y_test))
+            y_prediction = guard.predict(self.X_test)
             # 3) calculate F1 score using desired and predicted transitions
-
+            self.guards_results[guard_name] = f1_score(self.y_test, y_prediction)
             # decide on keeping model trained w/ train portion of data
             # or "retraining" the model w/ all data available
-            pass
         return self.guards_results
 
-    def get_best(self) -> tuple[str, any]:
+    def get_best(self) -> tuple[ML_Technique, Guard]:
         """ Returns "best" guard for a decision point
         Returns: 
-            best_guard (Dict[list[any], float]): Returns "best" guard for a decision point with respect to the \
-                chosen precision metric, return contains name of machine learning technique and corresponding guard model
+            best_guard (tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
+                chosen metric (F1 score), the returned tuple contains the machine learning technique and corresponding guard
             """
-        # TODO decide what precision metric should be used
-        #best_guard = [min(guards_results[place]) for place in guards_results.keys()]
-        #best_guard = [max(guards_results[place]) for place in guards_results.keys()]
-
-        # return best_guard
-        pass
+        best_guard_name = max(self.guards_results, key=self.guards_results.get)
+        return best_guard_name, self.guards_list[best_guard_name]
