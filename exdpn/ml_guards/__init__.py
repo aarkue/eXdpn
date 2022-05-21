@@ -1,1 +1,1 @@
-from exdpn.ml_guards import decision_tree_guard
+from exdpn.ml_guards.decision_tree_guard import Decision_Tree_Guard
