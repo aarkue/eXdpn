@@ -1,12 +1,11 @@
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import get_all_guard_datasets
 from exdpn.load_event_log import import_xes
-from exdpn.petrinet import get_petri_net
+from exdpn.petri_net import get_petri_net
 
 import unittest
 import os
 
-from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.log.obj import EventLog
 
