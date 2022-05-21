@@ -3,6 +3,7 @@ import abc  # use abstract base classes to define interfaces
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
+import numpy as np
 
 
 class Guard(metaclass=abc.ABCMeta):
@@ -21,10 +22,11 @@ class Guard(metaclass=abc.ABCMeta):
     #    pass
 
     @abc.abstractmethod
-    def train(self, dataframe: DataFrame, hyperparameters: Dict[str, any] = None) -> None:
+    def train(self, X: np.ndarray, y: np.ndarray, hyperparameters: Dict[str, any]) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
-            dataframe (DataFrame): Dataset used to train the classifier behind the guard
+            X (np.ndarray): Dataset used to train the classifier behind the guard (w/o the target label)
+            y (np.ndarray): Target label for each instance in the X dataset used to train the model
             hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
         pass
 
