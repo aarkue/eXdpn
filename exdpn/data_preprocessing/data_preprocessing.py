@@ -16,7 +16,8 @@ def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     """
 
     # TODO define correct data types
-
+    # timestamp 
+    
     # get target and feature names
     target_var = "target"
     df_X = dataframe.copy()
