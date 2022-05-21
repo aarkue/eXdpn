@@ -3,6 +3,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import pandas
 from sklearn.preprocessing import OneHotEncoder
+import sys
 
 def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     """ Basic preprocessing before data frames are used for machine learning modeling. Drops all columns \
@@ -86,18 +87,22 @@ def fit_apply_ohe(X: DataFrame) -> DataFrame:
     Returns: 
         X_encoded (DataFrame): Encoded data
     """
-    # split data into categorical and non-categorical features
-    X_encoded = X.copy()
-    X_encoded = X_encoded.select_dtypes(exclude = [object])
-    X_encoded_temp = X.copy()
-    X_encoded_temp = X_encoded_temp.select_dtypes(include = [object])
+    # check if data set contains categorical data, if yes: perform one hot encoding, no: skip
+    if len(X.select_dtypes(exclude = [object]).columns) == 0:
+        sys.exit("Data does not contain categorical data, no One Hot Encoding is necessary")
+    else: 
+        # split data into categorical and non-categorical features
+        X_encoded = X.copy()
+        X_encoded = X_encoded.select_dtypes(exclude = [object])
+        X_encoded_temp = X.copy()
+        X_encoded_temp = X_encoded_temp.select_dtypes(include = [object])
 
-    # define OneHotEncoder
-    enc = OneHotEncoder()
-    X_encoded_temp_enc = enc.fit_transform(X_encoded_temp) 
-    encoded_columns = enc.get_feature_names_out(X_encoded_temp.columns)
+        # define OneHotEncoder
+        enc = OneHotEncoder()
+        X_encoded_temp_enc = enc.fit_transform(X_encoded_temp) 
+        encoded_columns = enc.get_feature_names_out(X_encoded_temp.columns)
 
-    # join encoded features, column names are of type "feature_category"
-    X_encoded = X_encoded.join(DataFrame(X_encoded_temp_enc.toarray(), columns = encoded_columns))
+        # join encoded features, column names are of type "feature_category"
+        X_encoded = X_encoded.join(DataFrame(X_encoded_temp_enc.toarray(), columns = encoded_columns))
 
-    return X_encoded
+        return X_encoded
