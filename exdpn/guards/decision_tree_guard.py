@@ -35,13 +35,15 @@ class Decision_Tree_Guard(Guard):
 
         self.model = model.fit(X, y_transformed)
 
-    def predict(self, input_instance: list[any]) -> PetriNet.Transition:
+    def predict(self, input_instance: list[any]) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
-            input_instance (list[any]): Input instance used to predict the next transition"""
+            input_instance (list[any]): Input instances used to predict the next transition
+        Returns:
+            predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
         predicted_transition_ids = self.model.predict([input_instance])
         # ty stackoverflow
-        return next(transition for transition, transition_id in self.transition_int_map.items() if transition_id == predicted_transition_ids[0])
+        return [next(trans for trans, trans_id in self.transition_int_map.items() if trans_id == pred_id) for pred_id in predicted_transition_ids]
 
     def is_explainable(self) -> bool:
         """Shall return wheter or not the internal classifier is explainable.
