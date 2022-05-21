@@ -1,4 +1,4 @@
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, export_text
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
@@ -28,7 +28,7 @@ class Decision_Tree_Guard(Guard):
 
         # make transition to integer (i.e. ID) map
         self.transition_int_map = {
-            transition: index for index, transition in enumerate(y)}
+            transition: index for index, transition in enumerate(list(set(y)))}
         y_transformed = [self.transition_int_map[transition]
                          for transition in y]
 
@@ -38,16 +38,19 @@ class Decision_Tree_Guard(Guard):
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
             input_instance (list[any]): Input instance used to predict the next transition"""
-        pass
+        predicted_transition_ids = self.model.predict([input_instance])
+        # ty stackoverflow
+        return next(transition for transition, transition_id in self.transition_int_map.items() if transition_id == predicted_transition_ids[0])
 
     def is_explainable(self) -> bool:
         """Shall return wheter or not the internal classifier is explainable.
         Returns:
             explainable (bool): Wheter or not the guard is explainable"""
-        pass
+        return True
 
     def get_explainable_representation(self) -> str:
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
             explainable_representation (str): Explainable representation of the guard"""
-        pass
+        # TODO: add support for non generic feature names
+        return export_text(self.model)
