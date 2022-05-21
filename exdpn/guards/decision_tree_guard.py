@@ -4,7 +4,6 @@ from exdpn.guards import Guard
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
-import numpy as np
 
 
 class Decision_Tree_Guard(Guard):
@@ -13,7 +12,7 @@ class Decision_Tree_Guard(Guard):
         self.model = None
         self.transition_int_map = None
 
-    def train(self, X: np.ndarray, y: np.ndarray, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
+    def train(self, X: DataFrame, y: DataFrame, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (np.ndarray): Dataset used to train the classifier behind the guard (w/o the target label)
