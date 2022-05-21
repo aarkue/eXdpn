@@ -4,7 +4,6 @@ from exdpn.guards import Guard
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
-import numpy as np
 
 
 class Decision_Tree_Guard(Guard):
@@ -13,7 +12,7 @@ class Decision_Tree_Guard(Guard):
         self.model = None
         self.transition_int_map = None
 
-    def train(self, X: np.ndarray, y: np.ndarray, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
+    def train(self, X: DataFrame, y: DataFrame, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (np.ndarray): Dataset used to train the classifier behind the guard (w/o the target label)
@@ -35,13 +34,13 @@ class Decision_Tree_Guard(Guard):
 
         self.model = model.fit(X, y_transformed)
 
-    def predict(self, input_instance: list[any]) -> list[PetriNet.Transition]:
+    def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
             input_instance (list[any]): Input instances used to predict the next transition
         Returns:
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
-        predicted_transition_ids = self.model.predict([input_instance])
+        predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         return [next(trans for trans, trans_id in self.transition_int_map.items() if trans_id == pred_id) for pred_id in predicted_transition_ids]
 
@@ -56,4 +55,5 @@ class Decision_Tree_Guard(Guard):
         Returns:
             explainable_representation (str): Explainable representation of the guard"""
         # TODO: add support for non generic feature names
+        # TODO: add support for non generic target names (i.e., transition names) 
         return export_text(self.model)

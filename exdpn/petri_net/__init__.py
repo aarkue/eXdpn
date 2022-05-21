@@ -1,1 +1,1 @@
-from exdpn.petrinet.get_petri_net import get_petri_net
+from exdpn.petri_net.get_petri_net import get_petri_net
