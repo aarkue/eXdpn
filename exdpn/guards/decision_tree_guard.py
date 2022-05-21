@@ -34,13 +34,13 @@ class Decision_Tree_Guard(Guard):
 
         self.model = model.fit(X, y_transformed)
 
-    def predict(self, input_instance: list[any]) -> list[PetriNet.Transition]:
+    def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
             input_instance (list[any]): Input instances used to predict the next transition
         Returns:
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
-        predicted_transition_ids = self.model.predict([input_instance])
+        predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         return [next(trans for trans, trans_id in self.transition_int_map.items() if trans_id == pred_id) for pred_id in predicted_transition_ids]
 
@@ -55,4 +55,5 @@ class Decision_Tree_Guard(Guard):
         Returns:
             explainable_representation (str): Explainable representation of the guard"""
         # TODO: add support for non generic feature names
+        # TODO: add support for non generic target names (i.e., transition names) 
         return export_text(self.model)

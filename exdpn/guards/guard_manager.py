@@ -16,7 +16,7 @@ class Guard_Manager():
     def __init__(self, dataframe: DataFrame, ml_list: list[ML_Technique] = [ML_Technique.NN,
                                                                             ML_Technique.DT,
                                                                             ML_Technique.LG,
-                                                                            ML_Technique.SVM]) -> Dict[str, Guard]:
+                                                                            ML_Technique.SVM]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique
         Args: 
@@ -49,15 +49,18 @@ class Guard_Manager():
         self.guards_results = {}
         # evaluate all selected ml techniques for all guards of the given decision point
         for guard_name, guard in self.guards_list.items():
-            # currently proposed pipeline:
-            # 1) guards_list[guard_name].train( train portion of data )
             guard.train(self.X_train, self.y_train)
-            # 2) guards_list[guard_name].predict( test portion of data )
-            print(type(self.X_test),type(self.y_test))
+            
             y_prediction = guard.predict(self.X_test)
-            # 3) calculate F1 score using desired and predicted transitions
-            self.guards_results[guard_name] = f1_score(self.y_test, y_prediction)
-            # decide on keeping model trained w/ train portion of data
+
+            # convert Transition objects to integers so that sklearn's F1 score doesn't freak out
+            # this is ugly, we know
+            transition_int_map = {transition: index for index, transition in enumerate(list(set(y_prediction + self.y_test.tolist())))}
+            y_prediction_transformed = [transition_int_map[transition] for transition in y_prediction]
+            y_test_transformed = [transition_int_map[transition] for transition in self.y_test.tolist()]
+
+            self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
+            # TODO: decide on keeping model trained w/ train portion of data
             # or "retraining" the model w/ all data available
         return self.guards_results
 

@@ -30,7 +30,7 @@ class Guard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def predict(self, input_instance: list[any]) -> list[PetriNet.Transition]:
+    def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
             input_instance (list[any]): Input instance used to predict the next transition
