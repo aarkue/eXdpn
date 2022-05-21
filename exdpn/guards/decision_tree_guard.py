@@ -13,7 +13,7 @@ class Decision_Tree_Guard(Guard):
         self.model = None
         self.transition_int_map = None
 
-    def train(self, X: np.ndarray, y: np.ndarray, hyperparameters: Dict[str, any] = {'max_depth': 2, 'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
+    def train(self, X: np.ndarray, y: np.ndarray, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (np.ndarray): Dataset used to train the classifier behind the guard (w/o the target label)
@@ -35,13 +35,15 @@ class Decision_Tree_Guard(Guard):
 
         self.model = model.fit(X, y_transformed)
 
-    def predict(self, input_instance: list[any]) -> PetriNet.Transition:
+    def predict(self, input_instance: list[any]) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
-            input_instance (list[any]): Input instance used to predict the next transition"""
+            input_instance (list[any]): Input instances used to predict the next transition
+        Returns:
+            predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
         predicted_transition_ids = self.model.predict([input_instance])
         # ty stackoverflow
-        return next(transition for transition, transition_id in self.transition_int_map.items() if transition_id == predicted_transition_ids[0])
+        return [next(trans for trans, trans_id in self.transition_int_map.items() if trans_id == pred_id) for pred_id in predicted_transition_ids]
 
     def is_explainable(self) -> bool:
         """Shall return wheter or not the internal classifier is explainable.

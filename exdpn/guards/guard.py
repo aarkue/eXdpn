@@ -31,10 +31,12 @@ class Guard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def predict(self, input_instance: list[any]) -> PetriNet.Transition:
+    def predict(self, input_instance: list[any]) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
-            input_instance (list[any]): Input instance used to predict the next transition"""
+            input_instance (list[any]): Input instance used to predict the next transition
+        Returns:
+            predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
         pass
 
     @abc.abstractmethod
