@@ -92,7 +92,7 @@ def fit_apply_ohe(X: DataFrame) -> DataFrame:
         X_encoded (DataFrame): Encoded data
     """
     # check if data set contains categorical data, if yes: perform one hot encoding, no: skip
-    if len(X.select_dtypes(exclude = [object]).columns) == 0:
+    if len(X.select_dtypes(include = [object]).columns) == 0:
         sys.exit("Data does not contain categorical data, no One Hot Encoding is necessary")
     else: 
         # split data into categorical and non-categorical features
