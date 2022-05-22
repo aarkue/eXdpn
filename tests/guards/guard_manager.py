@@ -29,7 +29,6 @@ def get_df():
     # same goes for increasing the sliding window size
 
     df_place = guard_datasets_per_place[place_three]
-
     return df_place
 
 
@@ -38,10 +37,9 @@ class Test_Guard_Manager(unittest.TestCase):
         df_place = get_df()
 
         gm = Guard_Manager(df_place, [ML_Technique.DT])
-        res = gm.evaluate_guards()
+        _ = gm.evaluate_guards()
         technique, guard = gm.get_best()
-        representation = guard.get_explainable_representation()
-
+        _ = guard.get_explainable_representation()
         self.assertEqual(technique, ML_Technique.DT,
                          "ML technique should be equal to DT")
 

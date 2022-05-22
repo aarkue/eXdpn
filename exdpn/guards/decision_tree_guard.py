@@ -26,6 +26,9 @@ class Decision_Tree_Guard(Guard):
             raise TypeError(
                 "Wrong hyperparameters were supplied to the decision tree guard")
 
+        # store feature names for the explainable representation
+        self.feature_names = list(X.columns)
+
         # make transition to integer (i.e. ID) map
         self.transition_int_map = {
             transition: index for index, transition in enumerate(list(set(y)))}
@@ -54,6 +57,10 @@ class Decision_Tree_Guard(Guard):
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
             explainable_representation (str): Explainable representation of the guard"""
-        # TODO: add support for non generic feature names
-        # TODO: add support for non generic target names (i.e., transition names) 
-        return export_text(self.model)
+        representation = export_text(
+            self.model, feature_names=self.feature_names)
+        for transition, transition_int in self.transition_int_map.items():
+            representation = representation.replace(
+                f"class: {transition_int}", f"class: {transition.name} / {transition.label}")
+
+        return representation
