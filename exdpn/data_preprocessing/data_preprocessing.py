@@ -1,9 +1,11 @@
+from xml.etree.ElementInclude import include
 from pandas import DataFrame
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
-import pandas
+import pandas as pd 
 from sklearn.preprocessing import OneHotEncoder
 import sys
+import numpy as np
 
 def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     """ Basic preprocessing before data frames are used for machine learning modeling. Drops all columns \
@@ -16,7 +18,8 @@ def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     """
 
     # TODO define correct data types
-    # timestamp 
+    # convert timestamp to datatype "datetime"
+    dataframe["time:timestamp"] = pd.to_datetime(dataframe["time:timestamp"])
     
     # get target and feature names
     target_var = "target"
@@ -30,7 +33,7 @@ def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
 
     # drop id column, i.e., concept:name in event logs
     # TODO better solution than hard coded name?
-    df_X = df_X.drop("concept:name", axis = 1)
+    #df_X = df_X.drop("case:concept:name", axis = 1)
 
     # split data
     X_train, X_test, y_train, y_test = train_test_split(df_X, df_y)
@@ -46,7 +49,7 @@ def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     return X_train, X_test, y_train, y_test
 
 
-def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pandas.core.indexes.base.Index]:
+def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pd.core.indexes.base.Index]:
     """ Performs min-max scaling to [0, 1] on data and returns scaled data.
     Args: 
         X (DataFrame): Dataframe with data to scale
@@ -55,7 +58,7 @@ def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pandas.core.indexes.base.In
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     """
     # exclude all columns that cannot be scaled
-    scalable_columns = X.select_dtypes(exclude = [object]).columns
+    scalable_columns = X.select_dtypes(include = [np.number]).columns
     
     # define and fit scaler
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -63,7 +66,7 @@ def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pandas.core.indexes.base.In
 
     return scaler, scalable_columns
 
-def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pandas.core.indexes.base.Index) -> DataFrame:
+def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.indexes.base.Index) -> DataFrame:
     """ Performs min-max scaling to [0, 1] on data and returns scaled data.
     Args: 
         X (DataFrame): Dataframe with data to scale
@@ -93,17 +96,9 @@ def fit_apply_ohe(X: DataFrame) -> DataFrame:
         sys.exit("Data does not contain categorical data, no One Hot Encoding is necessary")
     else: 
         # split data into categorical and non-categorical features
+        # split data into categorical and non-categorical features
         X_encoded = X.copy()
-        X_encoded = X_encoded.select_dtypes(exclude = [object])
-        X_encoded_temp = X.copy()
-        X_encoded_temp = X_encoded_temp.select_dtypes(include = [object])
-
-        # define OneHotEncoder
-        enc = OneHotEncoder()
-        X_encoded_temp_enc = enc.fit_transform(X_encoded_temp) 
-        encoded_columns = enc.get_feature_names_out(X_encoded_temp.columns)
-
-        # join encoded features, column names are of type "feature_category"
-        X_encoded = X_encoded.join(DataFrame(X_encoded_temp_enc.toarray(), columns = encoded_columns))
-
+        categorical_columns = X_encoded.select_dtypes(include = [object]).columns
+        X_encoded = pd.get_dummies(X_encoded, columns = categorical_columns)
+        
         return X_encoded
