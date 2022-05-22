@@ -46,9 +46,9 @@ class TestGetAllGuardDatasets(unittest.TestCase):
         # check if instances at place_three going to transition_to_B have the desired attributes
         # we use multiple assertions to do so but still consider this an "atomic" test, i.e., good granularity
         self.assertEqual(
-            set(instances_where_transition_was_taken["resource"]), set(["Mike", "Pete"]))
+            set(instances_where_transition_was_taken["event::resource"]), set(["Mike", "Pete"]))
         self.assertEqual(
-            set(instances_where_transition_was_taken["costs"]), set([100]))
+            set(instances_where_transition_was_taken["event::costs"]), set([100]))
         self.assertEqual(len(instances_where_transition_was_taken), 2)
 
 if __name__ == "__main__":
