@@ -19,8 +19,8 @@ def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
 
     # TODO define correct data types
     # convert timestamp to datatype "datetime"
-    if "time:timestamp" in dataframe.columns:
-        dataframe["time:timestamp"] = pd.to_datetime(dataframe["time:timestamp"])
+    if "event::time:timestamp" in dataframe.columns:
+        dataframe["event::time:timestamp"] = pd.to_datetime(dataframe["event::time:timestamp"])
     
     # get target and feature names
     target_var = "target"
