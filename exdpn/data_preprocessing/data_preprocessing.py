@@ -3,7 +3,6 @@ from pandas import DataFrame
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import pandas as pd 
-from sklearn.preprocessing import OneHotEncoder
 import sys
 import numpy as np
 
@@ -32,9 +31,9 @@ def data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     # drop columns with all NaN
     df_X = df_X.dropna(how = 'all', axis = 1)
 
-    # drop id column, i.e., concept:name in event logs
-    # TODO better solution than hard coded name?
-    #df_X = df_X.drop("case:concept:name", axis = 1)
+    # drop case::concept:name in event logs - if existing
+    if "case::concept:name" in df_X.columns:
+        df_X = df_X.drop(["case::concept:name"], axis = 1)
 
     # split data
     X_train, X_test, y_train, y_test = train_test_split(df_X, df_y)
