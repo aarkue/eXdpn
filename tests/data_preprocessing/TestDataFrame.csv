@@ -1,4 +1,4 @@
-,concept:name,costs,resource,time:timestamp,amount,nans,target
+concept:name,costs,resource,time:timestamp,amount,nans,target
 0,1,500,Pete,2021-11-11 13:30:23+00:00,3,,"(init_loop_2, None)"
 1,6,550,Mike,2021-12-11 13:30:23+00:00,2,,"(init_loop_2, None)"
 2,4,0,Pete,2021-01-12 13:35:23+00:00,4,,"(skip_1, None)"
