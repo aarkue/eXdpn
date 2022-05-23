@@ -1,10 +1,10 @@
-from pandas import DataFrame
+from pandas import DataFrame, concat
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
 
 from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
-from exdpn.data_preprocessing import data_preprocessing
+from exdpn.data_preprocessing import data_preprocessing, fit_apply_ohe
 
 from sklearn.metrics import f1_score
 
@@ -27,9 +27,15 @@ class Guard_Manager():
             guards_list (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
                 mapped to the guards for the selected machine learning techniques       
         """
-        self.dataframe = dataframe
+        dataframe_ohe = fit_apply_ohe(dataframe.loc[ : , dataframe.columns != 'target']) # do not OHE the target attribute
+        self.dataframe = concat([dataframe_ohe, dataframe["target"]], axis=1)
 
-        X_train, X_test, y_train, y_test = data_preprocessing(dataframe)
+        # TODO: refactor data_preprocessing so that it does not do more than one thing
+        # or does all the things
+
+        # TODO: think about persistence of the encoders so that new unseen instances can still be encoded
+
+        X_train, X_test, y_train, y_test = data_preprocessing(self.dataframe)
         self.X_train = X_train
         self.X_test  = X_test
         self.y_train = y_train

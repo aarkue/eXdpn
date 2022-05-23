@@ -1,5 +1,6 @@
 from sklearn.tree import DecisionTreeClassifier, export_text
 from exdpn.guards import Guard
+from exdpn.data_preprocessing import fit_apply_ohe
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
@@ -20,16 +21,14 @@ class Decision_Tree_Guard(Guard):
                 "Wrong hyperparameters were supplied to the decision tree guard")
         self.transition_int_map = None
         self.feature_names = None
-        self.seen_data = None
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
-            X (np.ndarray): Dataset used to train the classifier behind the guard (w/o the target label)
-            y (np.ndarray): Target label for each instance in the X dataset used to train the model"""
+            X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
+            y (DataFrame): Target label for each instance in the X dataset used to train the model"""
         # store feature names for the explainable representation
         self.feature_names = list(X.columns)
-        self.seen_data = X # we might need this later for fitting the MinMaxScaler on unseen data to predict
 
         # make transition to integer (i.e. ID) map
         self.transition_int_map = {
@@ -42,7 +41,7 @@ class Decision_Tree_Guard(Guard):
     def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
-            input_instance (list[any]): Input instances used to predict the next transition
+            input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
         predicted_transition_ids = self.model.predict(input_instances)
