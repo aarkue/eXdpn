@@ -38,6 +38,7 @@ class Guard_Manager():
         # create list of all needed machine learning techniques to evaluate the guards
         self.ml_list = ml_list
         self.guards_list = {technique: technique.value() for technique in self.ml_list}
+        self.guards_results = None
 
     def evaluate_guards(self) -> Dict[str, any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
@@ -70,5 +71,6 @@ class Guard_Manager():
             best_guard (tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
                 chosen metric (F1 score), the returned tuple contains the machine learning technique and corresponding guard
             """
+        assert self.guards_results != None, "Guards must be evaluated first"
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
         return best_guard_name, self.guards_list[best_guard_name]
