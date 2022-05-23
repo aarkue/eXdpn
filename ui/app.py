@@ -6,9 +6,13 @@ from datetime import datetime as dt
 app = Flask("eXdpn")
 from werkzeug.utils import secure_filename
 from werkzeug.security import safe_join
+
 import pm4py
+from pm4py.visualization.petri_net import visualizer as pn_visualizer
+
 import uuid
 from exdpn.util import import_log
+# from exdpn.petri_net import get_petri_net
 from pm4py.objects.log.obj import EventLog
 
 def get_upload_path(name):
@@ -103,3 +107,22 @@ def load_log(logid: str):
         return xes_stats, 200
     else:
         return {"message": "Log not found"}, 400
+
+
+@app.route("/log/<logid>/discover/<algo_name>", methods=["GET"])
+def discover_model(logid: str, algo_name:str):
+    if logid not in loaded_event_logs:
+        return {"message": "Log not loaded"}, 400
+    else:
+        log = loaded_event_logs[logid][1]
+        if algo_name == "inductive_miner":
+            # net, im, fm = get_petri_net(log)
+            net, im, fm = pm4py.discover_petri_net_inductive(log)
+        elif algo_name == "alpha_miner":
+            net, im, fm = pm4py.discover_petri_net_alpha(log)
+        else:
+            return {"message": "Invalid algorithm name"}, 400
+
+        gviz = pn_visualizer.apply(net, im, fm)
+        dot = str(gviz)
+        return {"dot": dot}, 200
