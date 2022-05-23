@@ -15,49 +15,85 @@
     <script src="https://unpkg.com/@hpcc-js/wasm/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz/build/d3-graphviz.js"></script>
   </head>
+
   <body>
     <script>
       function loadEventLog() {
-        fetch('/log/{{log_id}}/load',{method: "GET"}).then(async (res) => {
-        if(res.ok){
-            const logStats = await res.json()
-            for (const key in logStats){
-              document.getElementById(key).innerHTML = logStats[key]
-            }
-            document.querySelectorAll("#discoverModelButtons > button").forEach((button) => {
-              button.removeAttribute("disabled")
-            })
-        }
-        }).catch((err) => {
-
+        fetch("/log/{{log_id}}/load", {
+          method: "GET",
         })
-
+          .then(async (res) => {
+            if (res.ok) {
+              const logStats = await res.json();
+              for (const key in logStats) {
+                document.getElementById(key).innerHTML = logStats[key];
+              }
+              document
+                .querySelectorAll("#discoverModelButtons > button")
+                .forEach((button) => {
+                  button.removeAttribute("disabled");
+                });
+            }
+          })
+          .catch((err) => {});
       }
 
       function loadPetriNet(algoName) {
         console.log("Loading Petri net for {{log_id}}...");
-        fetch('/log/{{log_id}}/discover/'+algoName,{method: "GET"}).then(async (res) => {
-        if(res.ok){
-            const net = await res.json()
-            let width = window.innerWidth * 0.9;
-            let height = window.innerHeight * 0.5;
-            d3.select('#discoveredPetriNet').graphviz().width(width).height(height).renderDot(net.dot).fit(true)
-        }
-        }).catch((err) => {
-          
+        fetch("/log/{{log_id}}/discover/" + algoName, {
+          method: "GET",
         })
+          .then(async (res) => {
+            if (res.ok) {
+              const net = await res.json();
+              let width = window.innerWidth * 0.9;
+              let height = window.innerHeight * 0.5;
+              d3.select("#discoveredPetriNet")
+                .graphviz()
+                .width(width)
+                .height(height)
+                .fit(true)
+                .renderDot(net.dot, () => {
+                  document.querySelectorAll("g.node").forEach((n) => {
+                    let title = n.querySelector("title");
+                    if (
+                      title &&
+                      net.decision_points.indexOf(title.textContent) > -1
+                    ) {
+                      let ellipse = n.querySelector("ellipse");
+                      if (ellipse) {
+                        ellipse.classList.add("decisionPlace");
+                        ellipse.addEventListener("click", (e) => {
+                          if (e.currentTarget.style.fill) {
+                            e.currentTarget.style.fill = null;
+                          } else {
+                            e.currentTarget.style.fill = "green";
+                          }
+                        });
+                      }
+                    }
+                  });
+                });
+            }
+          })
+          .catch((err) => {});
       }
 
-
-      document.addEventListener("DOMContentLoaded",(ev) => {
-        loadEventLog()
-      })
+      document.addEventListener("DOMContentLoaded", (ev) => {
+        loadEventLog();
+      });
     </script>
     <style>
-#discoveredPetriNet svg {
-  border: 2px dashed rgba(49, 47, 47, 0.685);
-}
+      #discoveredPetriNet svg {
+        border: 2px dashed rgba(49, 47, 47, 0.685);
+      }
 
+      .decisionPlace {
+        fill: #e9404083;
+      }
+      .decisionPlace:hover {
+        fill: #ec1b1bc2;
+      }
     </style>
 
     <div class="container mt-2">
@@ -77,17 +113,26 @@
               <tr>
                 <th scope="row">{{log.name}}</th>
                 <td id="num_activities">
-                  <div class="spinner-border spinner-border-sm text-secondary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-              </td>
+                  <div
+                    class="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                  >
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
                 <td id="num_cases">
-                  <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                  <div
+                    class="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                  >
                     <span class="visually-hidden">Loading...</span>
                   </div>
                 </td>
                 <td id="num_events">
-                  <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                  <div
+                    class="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                  >
                     <span class="visually-hidden">Loading...</span>
                   </div>
                 </td>
@@ -100,20 +145,48 @@
       <div class="text-center">
         <div class="btn-group" id="discoverModelButtons">
           <!-- Default Button -->
-          <button type="button" class="btn btn-primary" onClick="loadPetriNet('inductive_miner')" disabled><b>Discover Model</b><br/> with Inductive Miner</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick="loadPetriNet('inductive_miner')"
+            disabled
+          >
+            <b>Discover Model</b><br />
+            with Inductive Miner
+          </button>
           <!-- Dropdown for additional Discovery Algorithms -->
-          <button type="button" style="background-color: #0e5bce;" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false" disabled>
+          <button
+            type="button"
+            style="background-color: #0e5bce"
+            class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            disabled
+          >
             <span class="visually-hidden">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu">
-            <li><button class="dropdown-item" onclick="loadPetriNet('inductive_miner')">with Inductive Miner</button></li>
-            <li><button class="dropdown-item" onclick="loadPetriNet('alpha_miner')">with Alpha Miner</button></li>
+            <li>
+              <button
+                class="dropdown-item"
+                onclick="loadPetriNet('inductive_miner')"
+              >
+                with Inductive Miner
+              </button>
+            </li>
+            <li>
+              <button
+                class="dropdown-item"
+                onclick="loadPetriNet('alpha_miner')"
+              >
+                with Alpha Miner
+              </button>
+            </li>
           </ul>
         </div>
       </div>
     </div>
-    <div id="discoveredPetriNet" class="text-center mt-3">
-    </div>
+    <div id="discoveredPetriNet" class="text-center mt-3"></div>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"

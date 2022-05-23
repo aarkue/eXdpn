@@ -12,6 +12,8 @@ from pm4py.visualization.petri_net import visualizer as pn_visualizer
 
 import uuid
 from exdpn.util import import_log
+from exdpn.decisionpoints import find_decision_points
+
 # from exdpn.petri_net import get_petri_net
 from pm4py.objects.log.obj import EventLog
 
@@ -123,6 +125,8 @@ def discover_model(logid: str, algo_name:str):
         else:
             return {"message": "Invalid algorithm name"}, 400
 
+        decision_points = find_decision_points(net)
+        place_ids = [str(id(p)) for p in decision_points]
         gviz = pn_visualizer.apply(net, im, fm)
         dot = str(gviz)
-        return {"dot": dot}, 200
+        return {"dot": dot, "decision_points": place_ids}, 200
