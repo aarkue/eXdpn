@@ -1,14 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eXdpn</title>
-</head>
-<body>
-    <h1>Welcome to eXdpn</h1>
-    <h2>{{log.name}}</h2>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eXdpn - {{log.name}}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <script>
+      function loadEventLog() {
+        let loadEventLogButton = document.getElementById('loadEventLogButton');
+        let loadEventLogButtonLoadingSpan = document.querySelector('#loadEventLogButton > span.spinner-border');
+        loadEventLogButton.setAttribute('disabled',"");
+        loadEventLogButtonLoadingSpan.style.display = 'inline-block';
+        fetch('/log/{{log_id}}/load',{method: "GET"}).then(async (res) => {
+        if(res.ok){
+            const logStats = await res.json()
+            document.querySelector('#logInfo').textContent = JSON.stringify(logStats);
+        }
+        loadEventLogButton.removeAttribute('disabled'); // do we want to do that?
+        loadEventLogButtonLoadingSpan.style.display = 'none';
+            console.log(res);
+        }).catch((reas) => {
 
-</body>
+        })
+
+      }
+      function loadPetriNet() {
+        console.log("Loading Petri net for {{log_id}}...");
+      }
+    </script>
+    <div class="container mt-2">
+      <h1 class="text-center mb-5">eXdpn: {{log.name}}</h1>
+      <div class="text-center">
+        <button class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2" onclick="loadEventLog()" id="loadEventLogButton">
+          <span
+            class="spinner-border spinner-border-sm"
+            style="display: none;"
+            role="status"
+            aria-hidden="true"
+          ></span><span class="sr-only">Load Event log</span>
+        </button>
+        <p id="logInfo">
+
+        </p>
+      </div>
+      <br />
+      <div class="text-center">
+        <button class="btn btn-primary btn-lg" onclick="loadPetriNet()">
+          Mine Petri net
+        </button>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
