@@ -8,8 +8,8 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import safe_join
 import pm4py
 import uuid
-from exdpn import load_event_log
-
+from exdpn.util import import_log
+from pm4py.objects.log.obj import EventLog
 
 def get_upload_path(name):
     return safe_join("./uploads/", name)
@@ -31,7 +31,7 @@ uploaded_logs = {
 }
 
 loaded_event_logs: Dict[
-    str, Tuple[Dict[str, Any], pm4py.objects.log.obj.EventLog]
+    str, Tuple[Dict[str, Any], EventLog]
 ] = dict()
 
 
@@ -87,7 +87,7 @@ def load_log(logid: str):
             path = get_upload_path(logid)
             # Check for validity
             if path is not None and os.path.exists(path):
-                xes: pm4py.objects.log.obj.EventLog = load_event_log.import_xes(path)
+                xes: EventLog = import_log(path, verbose=False)
 
                 events = [evt for case in xes for evt in case]
                 activities = {evt["concept:name"] for evt in events}

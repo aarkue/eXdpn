@@ -15,19 +15,17 @@
   <body>
     <script>
       function loadEventLog() {
-        let loadEventLogButton = document.getElementById('loadEventLogButton');
-        let loadEventLogButtonLoadingSpan = document.querySelector('#loadEventLogButton > span.spinner-border');
-        loadEventLogButton.setAttribute('disabled',"");
-        loadEventLogButtonLoadingSpan.style.display = 'inline-block';
         fetch('/log/{{log_id}}/load',{method: "GET"}).then(async (res) => {
         if(res.ok){
             const logStats = await res.json()
-            document.querySelector('#logInfo').textContent = JSON.stringify(logStats);
+            for (const key in logStats){
+              document.getElementById(key).innerHTML = logStats[key]
+            }
+            document.querySelectorAll("#discoverModelButtons > button").forEach((button) => {
+              button.removeAttribute("disabled")
+            })
         }
-        loadEventLogButton.removeAttribute('disabled'); // do we want to do that?
-        loadEventLogButtonLoadingSpan.style.display = 'none';
-            console.log(res);
-        }).catch((reas) => {
+        }).catch((err) => {
 
         })
 
@@ -35,21 +33,46 @@
       function loadPetriNet() {
         console.log("Loading Petri net for {{log_id}}...");
       }
+
+      document.addEventListener("DOMContentLoaded",(ev) => {
+        loadEventLog()
+      })
     </script>
     <div class="container mt-2">
       <h1 class="text-center mb-5">eXdpn: {{log.name}}</h1>
       <div class="text-center">
-        <button class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2" onclick="loadEventLog()" id="loadEventLogButton">
-          <span
-            class="spinner-border spinner-border-sm"
-            style="display: none;"
-            role="status"
-            aria-hidden="true"
-          ></span><span class="sr-only">Load Event log</span>
-        </button>
-        <p id="logInfo">
-
-        </p>
+        <div id="logInfo">
+          <table class="table mt-3">
+            <thead class="table-primary">
+              <tr>
+                <th scope="col">Event Log</th>
+                <th scope="col">Number of unique activities</th>
+                <th scope="col">Number of cases</th>
+                <th scope="col">Number of events</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">{{log.name}}</th>
+                <td id="num_activities">
+                  <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+                <td id="num_cases">
+                  <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+                <td id="num_events">
+                  <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <br />
       <div class="text-center">
