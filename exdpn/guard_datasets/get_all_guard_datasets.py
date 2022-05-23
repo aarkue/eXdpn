@@ -152,7 +152,7 @@ def get_guard_dataset(place: PetriNet.Place,
 
 
 def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm: PetriNet.Place,
-                           case_level_attributes: list[str] = ["concept:name"],
+                           case_level_attributes: list[str] = [],
                            event_attributes: list[str] = [],
                            sliding_window_size: int = 3,
                            act_name_attr: str = "concept:name") -> Dict[PetriNet.Place, DataFrame]:

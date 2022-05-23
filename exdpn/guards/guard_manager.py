@@ -1,10 +1,10 @@
-from pandas import DataFrame
+from pandas import DataFrame, concat
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
 
 from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
-from exdpn.data_preprocessing import data_preprocessing
+from exdpn.data_preprocessing import data_preprocessing, fit_apply_ohe
 
 from sklearn.metrics import f1_score
 
@@ -27,9 +27,15 @@ class Guard_Manager():
             guards_list (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
                 mapped to the guards for the selected machine learning techniques       
         """
-        self.dataframe = dataframe
+        dataframe_ohe = fit_apply_ohe(dataframe.loc[ : , dataframe.columns != 'target']) # do not OHE the target attribute
+        self.dataframe = concat([dataframe_ohe, dataframe["target"]], axis=1)
 
-        X_train, X_test, y_train, y_test = data_preprocessing(dataframe)
+        # TODO: refactor data_preprocessing so that it does not do more than one thing
+        # or does all the things
+
+        # TODO: think about persistence of the encoders so that new unseen instances can still be encoded
+
+        X_train, X_test, y_train, y_test = data_preprocessing(self.dataframe)
         self.X_train = X_train
         self.X_test  = X_test
         self.y_train = y_train
@@ -38,6 +44,7 @@ class Guard_Manager():
         # create list of all needed machine learning techniques to evaluate the guards
         self.ml_list = ml_list
         self.guards_list = {technique: technique.value() for technique in self.ml_list}
+        self.guards_results = None
 
     def evaluate_guards(self) -> Dict[str, any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
@@ -70,5 +77,6 @@ class Guard_Manager():
             best_guard (tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
                 chosen metric (F1 score), the returned tuple contains the machine learning technique and corresponding guard
             """
+        assert self.guards_results != None, "Guards must be evaluated first"
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
         return best_guard_name, self.guards_list[best_guard_name]

@@ -6,8 +6,11 @@ from typing import Dict
 
 
 class Guard(metaclass=abc.ABCMeta):
-    def __init__(self) -> None:
-        """Nothing to do just yet."""
+    @abc.abstractmethod
+    def __init__(self, hyperparameters: Dict[str, any]) -> None:
+        """Initializes a guard with the provided hyperparameters
+        Args:
+            hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
         pass
 
     #@abc.abstractmethod
@@ -21,12 +24,11 @@ class Guard(metaclass=abc.ABCMeta):
     #    pass
 
     @abc.abstractmethod
-    def train(self, X: DataFrame, y: DataFrame, hyperparameters: Dict[str, any]) -> None:
+    def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (np.ndarray): Dataset used to train the classifier behind the guard (w/o the target label)
-            y (np.ndarray): Target label for each instance in the X dataset used to train the model
-            hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
+            y (np.ndarray): Target label for each instance in the X dataset used to train the model"""
         pass
 
     @abc.abstractmethod
