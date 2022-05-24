@@ -129,8 +129,11 @@ def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = [
                 if list(ohe_column_names) != list(X_encoded.columns):
                     X_encoded = X_encoded[ohe_column_names]
             # if the column names in the two data sets are not persistent, throw an error 
+
+            # TODO: we shouldnt throw an error but encode categorical cell by 0 in all expanded columns 
             else:
                 sys.exit("The columns in the Training Data and now used data do not match. Please make sure that \
                     both data sets contain the same columns.")
         
+        # TODO: ohe_column names will remain [] but should not I believe 
         return X_encoded, ohe_column_names
