@@ -51,7 +51,7 @@ class Decision_Tree_Guard(Guard):
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
 
         # one hot encoding for categorical data 
-        X = fit_apply_ohe(X, self.ohe_column_names)
+        input_instances, _ = fit_apply_ohe(input_instances, self.ohe_column_names)
         
         predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow

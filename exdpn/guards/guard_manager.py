@@ -32,8 +32,8 @@ class Guard_Manager():
 
         # TODO: think about persistence of the encoders so that new unseen instances can still be encoded
 
-        X_train, X_test, y_train, y_test = data_preprocessing_evaluation(self.dataframe)
-        #X_train, X_test, y_train, y_test, scaler, scalable_columns = data_preprocessing_evaluation(self.dataframe)
+        X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dataframe)
+        #X_train, X_test, y_train, y_test, scaler, scalable_columns = data_preprocessing_evaluation(dataframe)
         
         self.X_train = X_train
         self.X_test  = X_test
