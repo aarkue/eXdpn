@@ -27,6 +27,11 @@ class Decision_Tree_Guard(Guard):
         Args:
             X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
             y (DataFrame): Target label for each instance in the X dataset used to train the model"""
+        
+        # one hot encoding for categorical data 
+        X, ohe_column_names = fit_apply_ohe(X)
+        self.ohe_column_names = ohe_column_names
+
         # store feature names for the explainable representation
         self.feature_names = list(X.columns)
 
@@ -44,6 +49,10 @@ class Decision_Tree_Guard(Guard):
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
+
+        # one hot encoding for categorical data 
+        X = fit_apply_ohe(X, self.ohe_column_names)
+        
         predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         # finds the key (transition) where the value (transition integer / id) corresponds to the predicted integer / id

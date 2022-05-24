@@ -5,13 +5,18 @@ import pandas as pd
 import sys
 import numpy as np
 
-def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame]:
-    """ Basic preprocessing before dataframes are used for machine learning modeling, splits data \
+def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, MinMaxScaler, pd.core.indexes.base.Index]:
+    """ Data preprocessing for dataframes before they are used for the machine learning model selection. This does some \
+    basic preprocessing, such as converting all columns to the correct data type, droping of columns with only NaNs and \
+    defining feature variables and target variables. Furthermore, the data is split into a train and test data sets \
+    and each numeric feature is scaled with a MinMaxScaler to [0, 1\
     into training and test sets.
     Args:
         dataframe (DataFrame): Dataframe to be transformed for evaluation of the best model
     Returns: 
         X_train, X_test, y_train, y_test (DataFrame): Preprocessed and splitted data
+        #data_scaler (MinMaxScaler]): MinMaxScaler fitted on data set, scales to [0, 1]
+        #scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     """
 
     # perform basic preprocessing
@@ -28,11 +33,11 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame]:
     X_train = apply_scaling(X_train, data_scaler, scalable_columns)
     X_test = apply_scaling(X_test, data_scaler, scalable_columns)
 
-    return X_train, X_test, y_train, y_test
+    return X_train, X_test, y_train, y_test #, data_scaler, scalable_columns 
 
 def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
-    """ Basic preprocessing before data frames are used for machine learning modeling. Drops all columns \
-    with only NaN's, defines feature variables and target variable, performes MinMax scaling to [0, 1]
+    """ Basic preprocessing before dataframes, i.e., converting all columns to the correct data type, droping of columns \
+    with only NaNs and defining feature variables and target variables
     Args:
         dataframe (DataFrame): Dataframe to be transformed
     Returns: 
@@ -52,7 +57,7 @@ def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     df_y = dataframe.copy()
     df_y = dataframe[target_var]
 
-    # drop columns with all NaN
+    # drop columns with all NaNs
     df_X = df_X.dropna(how = 'all', axis = 1)
 
     # drop case::concept:name in event logs - if existing 
@@ -63,11 +68,11 @@ def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
 
 
 def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pd.core.indexes.base.Index]:
-    """ Performs min-max scaling to [0, 1] on data and returns scaled data.
+    """ Fits a MinMaxScaler on the data and returns a scaler for a scaling t o [0, 1] and the scalable columns 
     Args: 
         X (DataFrame): Dataframe with data to scale
     Returns: 
-        Scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
+        scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     """
     # exclude all columns that cannot be scaled
@@ -80,10 +85,10 @@ def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pd.core.indexes.base.Index]
     return scaler, scalable_columns
 
 def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.indexes.base.Index) -> DataFrame:
-    """ Performs min-max scaling to [0, 1] on data and returns scaled data.
+    """ Performs min-max scaling to [0, 1] on data with a fitted scaler on all scalable columns and returns scaled data
     Args: 
         X (DataFrame): Dataframe with data to scale
-        Scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
+        scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     Returns: 
         X_scaled (DataFrame): Scaled data, where each feature is scaled to [0, 1]
@@ -97,7 +102,7 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.
 
 
 def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = []) -> tuple[DataFrame, pd.core.indexes.base.Index]:
-    """ Performs One Hot Encoding on all categorical features in the data set. This is for machine learning \
+    """ Performs One Hot Encoding on all categorical features in the data set. This is necessary for machine learning \
     techniques that cannot handle categorical data, such as Decision Trees, SVMs and Neural Networks
     Args: 
         X (DataFrame): Dataframe with data to encode
@@ -123,8 +128,8 @@ def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = [
                 # if order is not consistent, make it consistent
                 if list(ohe_column_names) != list(X_encoded.columns):
                     X_encoded = X_encoded[ohe_column_names]
+            # if the column names in the two data sets are not persistent, throw an error 
             else:
-                # if the column names in the two data sets are not persistent, throw an error 
                 sys.exit("The columns in the Training Data and now used data do not match. Please make sure that \
                     both data sets contain the same columns.")
         

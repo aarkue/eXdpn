@@ -4,7 +4,7 @@ from typing import Dict
 
 from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
-from exdpn.data_preprocessing import data_preprocessing, fit_apply_ohe
+from exdpn.data_preprocessing import data_preprocessing_evaluation 
 
 from sklearn.metrics import f1_score
 
@@ -27,15 +27,14 @@ class Guard_Manager():
             guards_list (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
                 mapped to the guards for the selected machine learning techniques       
         """
-        dataframe_ohe = fit_apply_ohe(dataframe.loc[ : , dataframe.columns != 'target']) # do not OHE the target attribute
-        self.dataframe = concat([dataframe_ohe, dataframe["target"]], axis=1)
-
         # TODO: refactor data_preprocessing so that it does not do more than one thing
         # or does all the things
 
         # TODO: think about persistence of the encoders so that new unseen instances can still be encoded
 
-        X_train, X_test, y_train, y_test = data_preprocessing(self.dataframe)
+        X_train, X_test, y_train, y_test = data_preprocessing_evaluation(self.dataframe)
+        #X_train, X_test, y_train, y_test, scaler, scalable_columns = data_preprocessing_evaluation(self.dataframe)
+        
         self.X_train = X_train
         self.X_test  = X_test
         self.y_train = y_train
@@ -68,7 +67,7 @@ class Guard_Manager():
 
             self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
             # TODO: decide on keeping model trained w/ train portion of data
-            # or "retraining" the model w/ all data available
+            # or "retraining" the model w/ all data available -> all data
         return self.guards_results
 
     def get_best(self) -> tuple[ML_Technique, Guard]:
