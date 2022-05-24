@@ -96,15 +96,16 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.
     return X_scaled 
 
 
-def fit_apply_ohe(X: DataFrame, column_names: pd.core.indexes.base.Index = []) -> DataFrame:
+def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = []) -> tuple[DataFrame, pd.core.indexes.base.Index]:
     """ Performs One Hot Encoding on all categorical features in the data set. This is for machine learning \
     techniques that cannot handle categorical data, such as Decision Trees, SVMs and Neural Networks
     Args: 
         X (DataFrame): Dataframe with data to encode
-        column_names (pd.core.indexes.base.Index): List of column names to make One Hot Encoding persistant if new data is used
+        ohe_column_names (pd.core.indexes.base.Index): List of column names to make One Hot Encoding persistant if new data is used
     Returns: 
         X_encoded (DataFrame): Encoded data, if dataframe does not contain categorical data, the original \
         dataframe is returned
+        ohe_column_names (pd.core.indexes.base.Index): List of column names of current One Hot Encoded dataframe
     """
     X_encoded = X.copy()
     # check if data set contains categorical data, if yes: perform one hot encoding, no: skip
@@ -115,7 +116,16 @@ def fit_apply_ohe(X: DataFrame, column_names: pd.core.indexes.base.Index = []) -
         categorical_columns = X_encoded.select_dtypes(include = [object]).columns
         X_encoded = pd.get_dummies(X_encoded, columns = categorical_columns)
 
-        if list(column_names):
-            X_encoded = X_encoded.reindex(columns = column_names)
+        # check persistence for new data
+        if list(ohe_column_names):
+            # check if column names are the same in general
+            if set(ohe_column_names) == set(X_encoded.columns):
+                # if order is not consistent, make it consistent
+                if list(ohe_column_names) != list(X_encoded.columns):
+                    X_encoded = X_encoded[ohe_column_names]
+            else:
+                # if the column names in the two data sets are not persistent, throw an error 
+                sys.exit("The columns in the Training Data and now used data do not match. Please make sure that \
+                    both data sets contain the same columns.")
         
-        return X_encoded
+        return X_encoded, ohe_column_names
