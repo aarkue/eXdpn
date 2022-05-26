@@ -1,9 +1,11 @@
-from pandas import DataFrame
+from pandas import DataFrame, concat
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
-import pandas as pd 
+import pandas as pd
 import sys
 import numpy as np
+from sklearn.preprocessing import OneHotEncoder
+
 
 def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, MinMaxScaler, pd.core.indexes.base.Index]:
     """ Data preprocessing for dataframes before they are used for the machine learning model selection. This does some \
@@ -25,15 +27,16 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, MinM
     # split data
     X_train, X_test, y_train, y_test = train_test_split(df_X, df_y)
 
-    # define scaler on trainings data only to reduce bias 
+    # define scaler on trainings data only to reduce bias
     # https://datascience.stackexchange.com/questions/39932/feature-scaling-both-training-and-test-data
-    data_scaler, scalable_columns = fit_scaling(X_train) 
+    data_scaler, scalable_columns = fit_scaling(X_train)
 
     # apply scaling on training and test data
     X_train = apply_scaling(X_train, data_scaler, scalable_columns)
     X_test = apply_scaling(X_test, data_scaler, scalable_columns)
 
-    return X_train, X_test, y_train, y_test #, data_scaler, scalable_columns 
+    return X_train, X_test, y_train, y_test  # , data_scaler, scalable_columns
+
 
 def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     """ Basic preprocessing before dataframes, i.e., converting all columns to the correct data type, droping of columns \
@@ -45,24 +48,25 @@ def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
         df_y (DataFrame): Preprocessed dataframe of target variable
     """
 
-    # TODO define more correct data types? 
+    # TODO define more correct data types?
     # convert timestamp to datatype "datetime"
     if "event::time:timestamp" in dataframe.columns:
-        dataframe["event::time:timestamp"] = pd.to_datetime(dataframe["event::time:timestamp"])
-    
+        dataframe["event::time:timestamp"] = pd.to_datetime(
+            dataframe["event::time:timestamp"])
+
     # get target and feature names
     target_var = "target"
     df_X = dataframe.copy()
-    df_X = df_X.drop(target_var, axis = 1)
+    df_X = df_X.drop(target_var, axis=1)
     df_y = dataframe.copy()
     df_y = dataframe[target_var]
 
     # drop columns with all NaNs
-    df_X = df_X.dropna(how = 'all', axis = 1)
+    df_X = df_X.dropna(how='all', axis=1)
 
-    # drop case::concept:name in event logs - if existing 
-    #if "case::concept:name" in df_X.columns:
-    #    df_X = df_X.drop(["case::concept:name"], axis = 1) 
+    # drop case::concept:name in event logs - if existing
+    # if "case::concept:name" in df_X.columns:
+    #    df_X = df_X.drop(["case::concept:name"], axis = 1)
 
     return df_X, df_y
 
@@ -76,13 +80,14 @@ def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pd.core.indexes.base.Index]
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     """
     # exclude all columns that cannot be scaled
-    scalable_columns = X.select_dtypes(include = [np.number]).columns
-    
+    scalable_columns = X.select_dtypes(include=[np.number]).columns
+
     # define and fit scaler
-    scaler = MinMaxScaler(feature_range = (0, 1))
+    scaler = MinMaxScaler(feature_range=(0, 1))
     scaler.fit(X[scalable_columns])
 
     return scaler, scalable_columns
+
 
 def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.indexes.base.Index) -> DataFrame:
     """ Performs min-max scaling to [0, 1] on data with a fitted scaler on all scalable columns and returns scaled data
@@ -93,12 +98,12 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.
     Returns: 
         X_scaled (DataFrame): Scaled data, where each feature is scaled to [0, 1]
     """
-    
-    # apply scaler on data 
+
+    # apply scaler on data
     X_scaled = X.copy()
     X_scaled[scalable_columns] = scaler.transform(X_scaled[scalable_columns])
 
-    return X_scaled 
+    return X_scaled
 
 
 def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = []) -> tuple[DataFrame, pd.core.indexes.base.Index]:
@@ -114,12 +119,12 @@ def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = [
     """
     X_encoded = X.copy()
     # check if data set contains categorical data, if yes: perform one hot encoding, no: skip
-    if len(X.select_dtypes(include = [object]).columns) == 0:
-        return X_encoded 
-    else: 
+    if len(X.select_dtypes(include=[object]).columns) == 0:
+        return X_encoded
+    else:
         # split data into categorical and non-categorical features
-        categorical_columns = X_encoded.select_dtypes(include = [object]).columns
-        X_encoded = pd.get_dummies(X_encoded, columns = categorical_columns)
+        categorical_columns = X_encoded.select_dtypes(include=[object]).columns
+        X_encoded = pd.get_dummies(X_encoded, columns=categorical_columns)
 
         # check persistence for new data
         if list(ohe_column_names):
@@ -128,12 +133,28 @@ def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = [
                 # if order is not consistent, make it consistent
                 if list(ohe_column_names) != list(X_encoded.columns):
                     X_encoded = X_encoded[ohe_column_names]
-            # if the column names in the two data sets are not persistent, throw an error 
+            # if the column names in the two data sets are not persistent, throw an error
 
-            # TODO: we shouldnt throw an error but encode categorical cell by 0 in all expanded columns 
+            # TODO: we shouldnt throw an error but encode categorical cell by 0 in all expanded columns
             else:
                 sys.exit("The columns in the Training Data and now used data do not match. Please make sure that \
                     both data sets contain the same columns.")
-        
-        # TODO: ohe_column names will remain [] but should not I believe 
+
+        # TODO: ohe_column names will remain [] but should not I believe
         return X_encoded, ohe_column_names
+
+
+def fit_ohe(X: DataFrame):
+    ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
+    X_object = X.select_dtypes('object')
+
+    return ohe.fit(X_object)
+
+
+def apply_ohe(X: DataFrame, ohe: OneHotEncoder):
+    X = X.reset_index(drop=True)
+    X_object = X.select_dtypes('object')
+
+    X_object_enc = ohe.transform(X_object)
+    feature_names = ohe.get_feature_names_out(list(X_object.columns))
+    return concat([X.select_dtypes(exclude='object'), DataFrame(X_object_enc, columns=feature_names)], axis=1)
