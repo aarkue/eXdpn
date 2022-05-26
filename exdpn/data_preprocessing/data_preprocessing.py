@@ -1,4 +1,4 @@
-from pandas import DataFrame, concat
+from pandas import DataFrame, concat, Series
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -7,11 +7,11 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
 
-def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, MinMaxScaler, pd.core.indexes.base.Index]:
+def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, DataFrame, Series, Series]:
     """ Data preprocessing for dataframes before they are used for the machine learning model selection. This does some \
     basic preprocessing, such as converting all columns to the correct data type, droping of columns with only NaNs and \
     defining feature variables and target variables. Furthermore, the data is split into a train and test data sets \
-    and each numeric feature is scaled with a MinMaxScaler to [0, 1\
+    and each numeric feature is scaled with a MinMaxScaler to [0, 1]\
     into training and test sets.
     Args:
         dataframe (DataFrame): Dataframe to be transformed for evaluation of the best model
@@ -27,15 +27,7 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, MinM
     # split data
     X_train, X_test, y_train, y_test = train_test_split(df_X, df_y)
 
-    # define scaler on trainings data only to reduce bias
-    # https://datascience.stackexchange.com/questions/39932/feature-scaling-both-training-and-test-data
-    data_scaler, scalable_columns = fit_scaling(X_train)
-
-    # apply scaling on training and test data
-    X_train = apply_scaling(X_train, data_scaler, scalable_columns)
-    X_test = apply_scaling(X_test, data_scaler, scalable_columns)
-
-    return X_train, X_test, y_train, y_test  # , data_scaler, scalable_columns
+    return X_train, X_test, y_train, y_test
 
 
 def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
@@ -71,7 +63,7 @@ def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     return df_X, df_y
 
 
-def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pd.core.indexes.base.Index]:
+def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, list[str]]:
     """ Fits a MinMaxScaler on the data and returns a scaler for a scaling t o [0, 1] and the scalable columns 
     Args: 
         X (DataFrame): Dataframe with data to scale
@@ -82,14 +74,16 @@ def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, pd.core.indexes.base.Index]
     # exclude all columns that cannot be scaled
     scalable_columns = X.select_dtypes(include=[np.number]).columns
 
+    if len(scalable_columns) == 0: return None, []
+
     # define and fit scaler
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaler.fit(X[scalable_columns])
 
-    return scaler, scalable_columns
+    return scaler, list(scalable_columns)
 
 
-def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.indexes.base.Index) -> DataFrame:
+def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: list[str]) -> DataFrame:
     """ Performs min-max scaling to [0, 1] on data with a fitted scaler on all scalable columns and returns scaled data
     Args: 
         X (DataFrame): Dataframe with data to scale
@@ -98,11 +92,12 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: pd.core.
     Returns: 
         X_scaled (DataFrame): Scaled data, where each feature is scaled to [0, 1]
     """
-
     # apply scaler on data
     X_scaled = X.copy()
-    X_scaled[scalable_columns] = scaler.transform(X_scaled[scalable_columns])
 
+    if len(scalable_columns) == 0: return X
+
+    X_scaled[scalable_columns] = scaler.transform(X_scaled[scalable_columns])
     return X_scaled
 
 
@@ -144,14 +139,14 @@ def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = [
         return X_encoded, ohe_column_names
 
 
-def fit_ohe(X: DataFrame):
+def fit_ohe(X: DataFrame) -> tuple[OneHotEncoder, list[str]]:
     ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
     X_object = X.select_dtypes('object')
 
-    return ohe.fit(X_object), X_object.columns
+    return ohe.fit(X_object), list(X_object.columns)
 
 
-def apply_ohe(X: DataFrame, ohe: OneHotEncoder):
+def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
     X = X.reset_index(drop=True)
     X_object = X.select_dtypes('object')
 

@@ -1,9 +1,9 @@
 from sklearn.tree import DecisionTreeClassifier, export_text
-from exdpn.data_preprocessing.data_preprocessing import apply_ohe
+from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import fit_apply_ohe, fit_ohe
 
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
 from re import sub
@@ -21,18 +21,23 @@ class Decision_Tree_Guard(Guard):
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the decision tree guard")
+
         self.transition_int_map = None
-        self.feature_names = None
-        self.ohe = None
+        self.feature_names      = None
+        self.ohe                = None
+        self.ohe_columns        = None
+        self.scaler             = None
+        self.scaler_columns     = None
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
             y (DataFrame): Target label for each instance in the X dataset used to train the model"""
+        # scale numerical attributes
+        self.scaler, self.scaler_columns = fit_scaling(X)
+        X = apply_scaling(X, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
-        #X, ohe_column_names = fit_apply_ohe(X)
-        #self.ohe_column_names = ohe_column_names
         self.ohe, self.ohe_columns = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
 
@@ -53,9 +58,9 @@ class Decision_Tree_Guard(Guard):
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
-
+        # scale numerical attributes
+        input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
-        #input_instances, _ = fit_apply_ohe(input_instances, self.ohe_column_names)
         input_instances = apply_ohe(input_instances, self.ohe)
         
         predicted_transition_ids = self.model.predict(input_instances)
@@ -80,7 +85,25 @@ class Decision_Tree_Guard(Guard):
             representation = representation.replace(
                 f"class: {transition_int}", f"class: {transition.name} / {transition.label}")
 
-        # do 'inverse' OHE
+        # inverse scaler
+        dummy = DataFrame([[0 for _ in self.feature_names]], columns=self.feature_names)
+        # this is ugly, we know
+        for scale_column in self.scaler_columns:
+            pattern = fr'{scale_column} <= (.(\d*.\d*)?)'
+            def inverse_transform_single(match):
+                dummy[scale_column] = float(match.group(1))
+                trans = DataFrame(self.scaler.inverse_transform(dummy), columns=self.feature_names)
+                return f'{scale_column} <= {trans[scale_column][0]}'
+            representation = sub(pattern, inverse_transform_single, representation)
+
+            pattern = fr'{scale_column} >  (.(\d*.\d*)?)'
+            def inverse_transform_single(match):
+                dummy[scale_column] = float(match.group(1))
+                trans = DataFrame(self.scaler.inverse_transform(dummy), columns=self.feature_names)
+                return f'{scale_column} >  {trans[scale_column][0]}'
+            representation = sub(pattern, inverse_transform_single, representation)
+
+        # 'inverse' OHE
         for ohe_column in self.ohe_columns:
             pattern = fr'{ohe_column}_(.*?) <= 0.50'
             replacement = fr'{ohe_column} != \1'
