@@ -18,16 +18,41 @@
 
   <body>
     <script>
+      let logAttributes = null;
       function loadEventLog() {
         fetch("/log/{{log_id}}/load", {
           method: "GET",
         })
           .then(async (res) => {
             if (res.ok) {
-              const logStats = await res.json();
-              for (const key in logStats) {
-                document.getElementById(key).innerHTML = logStats[key];
+              const logInfo = await res.json();
+              for (const key in logInfo["xes_stats"]) {
+                document.getElementById(key).innerHTML =
+                  logInfo["xes_stats"][key];
               }
+              logAttributes = logInfo["attributes"];
+              for (const attributeType in logAttributes) {
+                const el = document.getElementById(attributeType);
+                if (logAttributes[attributeType].length > 0) {
+                  el.innerHTML = "";
+                  for (const attribute of logAttributes[attributeType]) {
+                    const label = document.createElement("label");
+                    label.classList.add("list-group-item");
+
+                    const input = document.createElement("input");
+                    input.classList.add("form-check-input", "me-2");
+                    input.type = "checkbox";
+                    input.dataset.attributeName = attribute;
+                    label.appendChild(input);
+                    const labelText = document.createElement("samp");
+                    labelText.textContent = attribute;
+                    label.appendChild(labelText);
+                    el.appendChild(label);
+                  }
+                }
+              }
+              console.log({ logAttributes });
+
               document
                 .querySelectorAll("#discoverModelButtons > button")
                 .forEach((button) => {
@@ -46,12 +71,9 @@
           .then(async (res) => {
             if (res.ok) {
               const net = await res.json();
-              let width = window.innerWidth * 0.9;
-              let height = window.innerHeight * 0.5;
               d3.select("#discoveredPetriNet")
                 .graphviz()
-                .width(width)
-                .height(height)
+                .width("100%")
                 .fit(true)
                 .renderDot(net.dot, () => {
                   document.querySelectorAll("g.node").forEach((n) => {
@@ -64,19 +86,32 @@
                       if (ellipse) {
                         ellipse.classList.add("decisionPlace");
                         ellipse.addEventListener("click", (e) => {
-                          if (e.currentTarget.style.fill) {
-                            e.currentTarget.style.fill = null;
+                          if (
+                            e.currentTarget.classList.contains("selectedPlace")
+                          ) {
+                            e.currentTarget.classList.remove("selectedPlace");
                           } else {
-                            e.currentTarget.style.fill = "green";
+                            e.currentTarget.classList.add("selectedPlace");
                           }
                         });
                       }
                     }
                   });
+                  document.getElementById("chooseAttributes").style.display =
+                    "block";
                 });
             }
           })
           .catch((err) => {});
+      }
+
+      function getSelectedAttributes(){
+        for(const attributeType in logAttributes){
+          const el = document.getElementById(attributeType);
+          const attributeNames = [...el.querySelectorAll('input:checked')].map(e => e.dataset.attributeName);
+          console.log(attributeType,attributeNames);
+        }
+        document.getElementById('')
       }
 
       document.addEventListener("DOMContentLoaded", (ev) => {
@@ -89,10 +124,16 @@
       }
 
       .decisionPlace {
-        fill: #e9404083;
+        fill: rgba(233, 64, 64, 0.514);
       }
       .decisionPlace:hover {
-        fill: #ec1b1bc2;
+        fill: rgba(236, 27, 27, 0.761);
+      }
+      .decisionPlace.selectedPlace {
+        fill: rgba(0, 128, 0, 0.514);
+      }
+      .decisionPlace.selectedPlace:hover {
+        fill: rgba(0, 128, 0, 0.761);
       }
     </style>
 
@@ -185,9 +226,37 @@
           </ul>
         </div>
       </div>
-    </div>
-    <div id="discoveredPetriNet" class="text-center mt-3"></div>
+      <div id="discoveredPetriNet" class="text-center mt-3"></div>
+      <div id="chooseAttributes" style="display: none;">
+          <h2 class="mt-4">Select attributes</h2>
+          <p>
+            Please select the case and event attributes you want to use.
+          </p>
+          <div class="row mt-2">
+            <div class="col">
+              <h3 class="text-center">Case attributes</h3>
+              <div class="list-group" id="case_attributes">
+                <span class="text-center text-muted">
+                  No case attributes present in log.
+                </span>
+              </div>
+            </div>
 
+            <div class="col">
+              <h3 class="text-center">Event attributes</h3>
+              <div class="list-group" id="event_attributes">
+                <span class="text-center text-muted">
+                  No event attributes present in log.
+                </span>
+              </div>
+            </div>
+        </div>
+        <div class="text-center my-2">
+          <button type="button" class="btn btn-primary btn-lg" onclick="getSelectedAttributes()">Mine decision</button>
+        </div>
+
+      </div>
+    </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"

@@ -44,6 +44,9 @@ loaded_event_logs: Dict[
 ] = dict()
 
 
+ATTR_IGNORE_LIST = ["concept:name", "time:timestamp"]
+
+
 # Index page
 @app.route("/")
 def index():
@@ -91,7 +94,7 @@ def log_page(logid: str):
 def load_log(logid: str):
     if logid in uploaded_logs:
         if logid in loaded_event_logs:
-            xes_stats = loaded_event_logs[logid][0]
+            log_info = loaded_event_logs[logid][0]
         else:
             path = get_upload_path(logid)
             # Check for validity
@@ -99,17 +102,25 @@ def load_log(logid: str):
                 xes: EventLog = import_log(path, verbose=False)
 
                 events = [evt for case in xes for evt in case]
+                event_attributes = {attr for evt in events for attr in evt if attr not in ATTR_IGNORE_LIST}
+                case_attributes = {attr for case in xes for attr in case.attributes if attr not in ATTR_IGNORE_LIST}
                 activities = {evt["concept:name"] for evt in events}
-                xes_stats = {
-                    "num_cases": len(xes),
-                    "num_events": len(events),
-                    "num_activities": len(activities),
+                log_info = {
+                    "xes_stats": {
+                        "num_cases": len(xes),
+                        "num_events": len(events),
+                        "num_activities": len(activities)
+                    },
+                    "attributes": {
+                        "event_attributes": list(event_attributes),
+                        "case_attributes": list(case_attributes)
+                    }
                 }
 
-                loaded_event_logs[logid] = (xes_stats, xes)
+                loaded_event_logs[logid] = (log_info, xes)
             else:
                 return {"message": "Invalid path"}, 400
-        return xes_stats, 200
+        return log_info, 200
     else:
         return {"message": "Log not found"}, 400
 
