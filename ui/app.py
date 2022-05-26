@@ -9,6 +9,7 @@ from werkzeug.security import safe_join
 
 import pm4py
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
+from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 
 import uuid
 from exdpn.util import import_log
@@ -32,6 +33,8 @@ def get_file_info(name):
 
 
 # Initialize uploaded logs from uploads folder
+if not os.path.exists("./uploads"):
+    os.mkdir("./uploads")
 uploaded_logs = {
     file_name: get_file_info(file_name) for file_name in os.listdir("./uploads/")
 }
@@ -119,7 +122,7 @@ def discover_model(logid: str, algo_name:str):
         log = loaded_event_logs[logid][1]
         if algo_name == "inductive_miner":
             # net, im, fm = get_petri_net(log)
-            net, im, fm = pm4py.discover_petri_net_inductive(log)
+            net, im, fm = inductive_miner.apply(log, variant=inductive_miner.Variants.IM)
         elif algo_name == "alpha_miner":
             net, im, fm = pm4py.discover_petri_net_alpha(log)
         else:
