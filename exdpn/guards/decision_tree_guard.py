@@ -1,6 +1,7 @@
 from sklearn.tree import DecisionTreeClassifier, export_text
+from exdpn.data_preprocessing.data_preprocessing import apply_ohe
 from exdpn.guards import Guard
-from exdpn.data_preprocessing import fit_apply_ohe
+from exdpn.data_preprocessing import fit_apply_ohe, fit_ohe
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
@@ -21,16 +22,18 @@ class Decision_Tree_Guard(Guard):
                 "Wrong hyperparameters were supplied to the decision tree guard")
         self.transition_int_map = None
         self.feature_names = None
+        self.ohe = None
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
             y (DataFrame): Target label for each instance in the X dataset used to train the model"""
-        
         # one hot encoding for categorical data 
-        X, ohe_column_names = fit_apply_ohe(X)
-        self.ohe_column_names = ohe_column_names
+        #X, ohe_column_names = fit_apply_ohe(X)
+        #self.ohe_column_names = ohe_column_names
+        self.ohe = fit_ohe(X)
+        X = apply_ohe(X, self.ohe)
 
         # store feature names for the explainable representation
         self.feature_names = list(X.columns)
@@ -51,7 +54,8 @@ class Decision_Tree_Guard(Guard):
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
 
         # one hot encoding for categorical data 
-        input_instances, _ = fit_apply_ohe(input_instances, self.ohe_column_names)
+        #input_instances, _ = fit_apply_ohe(input_instances, self.ohe_column_names)
+        input_instances = apply_ohe(input_instances, self.ohe)
         
         predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
