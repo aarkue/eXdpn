@@ -119,7 +119,7 @@
 			<string key="activity" value="A" />
 			<date key="timestamp" value="2011-01-06T14:02:00+00:00" />
 			<int key="costs" value="0" />
-			<string key="resource" value="Pete" />
+			<string key="resource" value="Peter" />
 			<string key="concept:name" value="A" />
 			<date key="time:timestamp" value="2011-01-06T14:02:00+00:00" />
 			<int key="@@index" value="13" />
