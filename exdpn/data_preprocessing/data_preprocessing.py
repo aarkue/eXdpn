@@ -101,45 +101,14 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: list[str
     return X_scaled
 
 
-def fit_apply_ohe(X: DataFrame, ohe_column_names: pd.core.indexes.base.Index = []) -> tuple[DataFrame, pd.core.indexes.base.Index]:
-    """ Performs One Hot Encoding on all categorical features in the data set. This is necessary for machine learning \
-    techniques that cannot handle categorical data, such as Decision Trees, SVMs and Neural Networks
+def fit_ohe(X: DataFrame) -> tuple[OneHotEncoder, list[str]]:
+    """ Fits anOneHotEncoder on all categorical features in the data set
     Args: 
         X (DataFrame): Dataframe with data to encode
-        ohe_column_names (pd.core.indexes.base.Index): List of column names to make One Hot Encoding persistant if new data is used
     Returns: 
-        X_encoded (DataFrame): Encoded data, if dataframe does not contain categorical data, the original \
-        dataframe is returned
-        ohe_column_names (pd.core.indexes.base.Index): List of column names of current One Hot Encoded dataframe
+        OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
+        ohe_column_names (list[str]): List of column names of One Hot Encoded dataframe
     """
-    X_encoded = X.copy()
-    # check if data set contains categorical data, if yes: perform one hot encoding, no: skip
-    if len(X.select_dtypes(include=[object]).columns) == 0:
-        return X_encoded
-    else:
-        # split data into categorical and non-categorical features
-        categorical_columns = X_encoded.select_dtypes(include=[object]).columns
-        X_encoded = pd.get_dummies(X_encoded, columns=categorical_columns)
-
-        # check persistence for new data
-        if list(ohe_column_names):
-            # check if column names are the same in general
-            if set(ohe_column_names) == set(X_encoded.columns):
-                # if order is not consistent, make it consistent
-                if list(ohe_column_names) != list(X_encoded.columns):
-                    X_encoded = X_encoded[ohe_column_names]
-            # if the column names in the two data sets are not persistent, throw an error
-
-            # TODO: we shouldnt throw an error but encode categorical cell by 0 in all expanded columns
-            else:
-                sys.exit("The columns in the Training Data and now used data do not match. Please make sure that \
-                    both data sets contain the same columns.")
-
-        # TODO: ohe_column names will remain [] but should not I believe
-        return X_encoded, ohe_column_names
-
-
-def fit_ohe(X: DataFrame) -> tuple[OneHotEncoder, list[str]]:
     ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
     X_object = X.select_dtypes('object')
 
@@ -147,6 +116,15 @@ def fit_ohe(X: DataFrame) -> tuple[OneHotEncoder, list[str]]:
 
 
 def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
+    """ Performs One Hot Encoding on all categorical features in the data set. This is necessary for machine learning \
+    techniques that cannot handle categorical data, such as Decision Trees, SVMs and Neural Networks
+    Args: 
+        X (DataFrame): Dataframe with data to encode
+        OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
+    Returns: 
+        X_encoded (DataFrame): Encoded data, if dataframe does not contain categorical data, the original \
+        dataframe is returned
+    """   
     X = X.reset_index(drop=True)
     X_object = X.select_dtypes('object')
 
