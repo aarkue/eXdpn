@@ -1,7 +1,8 @@
 import enum
+from exdpn.guards import Decision_Tree_Guard
 
 class ML_Technique(enum.Enum):
-    NN  = 0
-    DT  = 1
-    LG  = 2
-    SVM = 3
+    NN  = None
+    DT  = Decision_Tree_Guard
+    LG  = None
+    SVM = None
