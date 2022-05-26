@@ -148,7 +148,7 @@ def fit_ohe(X: DataFrame):
     ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
     X_object = X.select_dtypes('object')
 
-    return ohe.fit(X_object)
+    return ohe.fit(X_object), X_object.columns
 
 
 def apply_ohe(X: DataFrame, ohe: OneHotEncoder):

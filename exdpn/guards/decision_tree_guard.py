@@ -6,6 +6,7 @@ from exdpn.data_preprocessing import fit_apply_ohe, fit_ohe
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
+from re import sub
 
 
 class Decision_Tree_Guard(Guard):
@@ -32,7 +33,7 @@ class Decision_Tree_Guard(Guard):
         # one hot encoding for categorical data 
         #X, ohe_column_names = fit_apply_ohe(X)
         #self.ohe_column_names = ohe_column_names
-        self.ohe = fit_ohe(X)
+        self.ohe, self.ohe_columns = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
 
         # store feature names for the explainable representation
@@ -78,5 +79,15 @@ class Decision_Tree_Guard(Guard):
         for transition, transition_int in self.transition_int_map.items():
             representation = representation.replace(
                 f"class: {transition_int}", f"class: {transition.name} / {transition.label}")
+
+        # do 'inverse' OHE
+        for ohe_column in self.ohe_columns:
+            pattern = fr'{ohe_column}_(.*?) <= 0.50'
+            replacement = fr'{ohe_column} != \1'
+            representation = sub(pattern, replacement, representation)
+
+            pattern = fr'{ohe_column}_(.*?) >  0.50'
+            replacement = fr'{ohe_column} = \1'
+            representation = sub(pattern, replacement, representation)
 
         return representation
