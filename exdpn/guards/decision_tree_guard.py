@@ -86,22 +86,19 @@ class Decision_Tree_Guard(Guard):
                 f"class: {transition_int}", f"class: {transition.name} / {transition.label}")
 
         # inverse scaler
-        dummy = DataFrame([[0 for _ in self.feature_names]], columns=self.feature_names)
+        def inverse_transform_single(scale_column: str, match):
+            dummy = DataFrame([[0 for _ in self.scaler_columns]], columns=self.scaler_columns)
+            dummy[scale_column] = float(match.group(1))
+            dummy = DataFrame(self.scaler.inverse_transform(dummy), columns=self.scaler_columns)
+            return dummy[scale_column].values[0]
+
         # this is ugly, we know
         for scale_column in self.scaler_columns:
             pattern = fr'{scale_column} <= (.(\d*.\d*)?)'
-            def inverse_transform_single(match):
-                dummy[scale_column] = float(match.group(1))
-                trans = DataFrame(self.scaler.inverse_transform(dummy), columns=self.feature_names)
-                return f'{scale_column} <= {trans[scale_column][0]}'
-            representation = sub(pattern, inverse_transform_single, representation)
+            representation = sub(pattern, lambda match: f'{scale_column} <= {inverse_transform_single(scale_column, match)}', representation)
 
             pattern = fr'{scale_column} >  (.(\d*.\d*)?)'
-            def inverse_transform_single(match):
-                dummy[scale_column] = float(match.group(1))
-                trans = DataFrame(self.scaler.inverse_transform(dummy), columns=self.feature_names)
-                return f'{scale_column} >  {trans[scale_column][0]}'
-            representation = sub(pattern, inverse_transform_single, representation)
+            representation = sub(pattern, lambda match: f'{scale_column} >  {inverse_transform_single(scale_column, match)}', representation)
 
         # 'inverse' OHE
         for ohe_column in self.ohe_columns:
