@@ -7,11 +7,12 @@ from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
 import numpy as np 
+import shap 
 
 
 
 class Logistic_Regression_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {"C": 1}) -> None:
+    def __init__(self, hyperparameters: Dict[str, any] = {"C": 0.5}) -> None:
         """Initializes a logistic regression model based guard with the provided hyperparameters
         Args:
             hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
@@ -95,5 +96,11 @@ class Logistic_Regression_Guard(Guard):
         representation_data = {"Feature Variables": model_features, "Weights": model_weights} 
 
         representation = DataFrame(representation_data, columns = ["Feature Variables", "Weights"])
+        print(representation.sort_values(by = ["Weights"], ascending = False)) 
 
-        return representation.sort_values(by = ["Weights"], ascending = False)
+        # or this one: 
+        explainer = shap.LinearExplainer(self.model, self.input_instances, feature_dependence="independent")
+        shap_values = explainer.shap_values(self.input_instances)
+        input_instances_array = self.input_instances.to_numpy() 
+
+        return shap.summary_plot(shap_values, input_instances_array, feature_names=list(self.input_instances.columns))
