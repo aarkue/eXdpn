@@ -4,3 +4,5 @@ setuptools==47.1.0
 twine==4.0.0
 pandas==1.4.2
 Flask==2.1.2
+sklearn==1.0.2
+shap==0.40.0
