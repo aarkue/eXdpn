@@ -1,12 +1,11 @@
-from sklearn.tree import DecisionTreeClassifier, export_text
-from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from exdpn.data_preprocessing.data_preprocessing import apply_ohe
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import fit_ohe
 
-from pandas import DataFrame, Series
+from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
-from re import sub
 
 
 class Decision_Tree_Guard(Guard):
@@ -23,16 +22,16 @@ class Decision_Tree_Guard(Guard):
                 "Wrong hyperparameters were supplied to the decision tree guard")
 
         self.transition_int_map = None
-        self.feature_names      = None
-        self.ohe                = None
-        self.ohe_columns        = None
+        self.feature_names = None
+        self.ohe = None
+        self.ohe_columns = None
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
             y (DataFrame): Target label for each instance in the X dataset used to train the model"""
-        # one hot encoding for categorical data 
+        # one hot encoding for categorical data
         self.ohe, self.ohe_columns = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
 
@@ -53,9 +52,9 @@ class Decision_Tree_Guard(Guard):
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
-        # one hot encoding for categorical data 
+        # one hot encoding for categorical data
         input_instances = apply_ohe(input_instances, self.ohe)
-        
+
         predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         # finds the key (transition) where the value (transition integer / id) corresponds to the predicted integer / id
@@ -72,20 +71,11 @@ class Decision_Tree_Guard(Guard):
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
             explainable_representation (str): Explainable representation of the guard"""
-        representation = export_text(
-            self.model, feature_names=self.feature_names)
-        for transition, transition_int in self.transition_int_map.items():
-            representation = representation.replace(
-                f"class: {transition_int}", f"class: {transition.name} / {transition.label}")
-
-        # 'inverse' OHE
-        for ohe_column in self.ohe_columns:
-            pattern = fr'{ohe_column}_(.*?) <= 0.50'
-            replacement = fr'{ohe_column} != \1'
-            representation = sub(pattern, replacement, representation)
-
-            pattern = fr'{ohe_column}_(.*?) >  0.50'
-            replacement = fr'{ohe_column} = \1'
-            representation = sub(pattern, replacement, representation)
-
-        return representation
+        return export_graphviz(self.model,
+                               out_file=None,
+                               feature_names=self.feature_names,
+                               class_names=[
+                                   t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()],
+                               impurity=False,
+                               filled=True,
+                               rotate=True)
