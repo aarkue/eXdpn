@@ -112,8 +112,10 @@ def get_instances_per_place_per_transition(log: EventLog, net: PetriNet, im: Pet
 
     # create string description of attribute names of each entry in an instance tuple
     # used as column names in the guard datasets
-    attribute_list = case_level_attributes + event_attributes + \
-        [f"prev-{i+1}" for i in range(sliding_window_size)]
+    case_level_attributes_annot = [f"case::{cla}" for cla in case_level_attributes]
+    event_attributes_annot      = [f"event::{ea}" for ea in event_attributes]
+    attribute_list = case_level_attributes_annot + event_attributes_annot + \
+        [f"sw::prev-{i+1}" for i in range(sliding_window_size)]
 
     return place_transition_instance_map, attribute_list
 
@@ -150,7 +152,7 @@ def get_guard_dataset(place: PetriNet.Place,
 
 
 def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm: PetriNet.Place,
-                           case_level_attributes: list[str] = ["concept:name"],
+                           case_level_attributes: list[str] = [],
                            event_attributes: list[str] = [],
                            sliding_window_size: int = 3,
                            act_name_attr: str = "concept:name") -> Dict[PetriNet.Place, DataFrame]:

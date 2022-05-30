@@ -6,8 +6,11 @@ from typing import Dict
 
 
 class Guard(metaclass=abc.ABCMeta):
-    def __init__(self) -> None:
-        """Nothing to do just yet."""
+    @abc.abstractmethod
+    def __init__(self, hyperparameters: Dict[str, any]) -> None:
+        """Initializes a guard with the provided hyperparameters
+        Args:
+            hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
         pass
 
     #@abc.abstractmethod
@@ -21,18 +24,20 @@ class Guard(metaclass=abc.ABCMeta):
     #    pass
 
     @abc.abstractmethod
-    def train(self, dataframe: DataFrame, hyperparameters: Dict[str, any] = None) -> None:
+    def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
-            dataframe (DataFrame): Dataset used to train the classifier behind the guard
-            hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
+            X (np.ndarray): Dataset used to train the classifier behind the guard (w/o the target label)
+            y (np.ndarray): Target label for each instance in the X dataset used to train the model"""
         pass
 
     @abc.abstractmethod
-    def predict(self, input_instance: list[any]) -> PetriNet.Transition:
+    def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
-            input_instance (list[any]): Input instance used to predict the next transition"""
+            input_instance (list[any]): Input instance used to predict the next transition
+        Returns:
+            predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
         pass
 
     @abc.abstractmethod
