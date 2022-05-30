@@ -10,13 +10,16 @@ from werkzeug.security import safe_join
 import pm4py
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
+from pm4py.objects.log.obj import EventLog
+from pm4py.objects.petri_net.obj import PetriNet, Marking
 
 import uuid
 from exdpn.util import import_log
 from exdpn.decisionpoints import find_decision_points
+from exdpn.guard_datasets import get_all_guard_datasets
+from exdpn.guards import Guard_Manager, ML_Technique
 
 # from exdpn.petri_net import get_petri_net
-from pm4py.objects.log.obj import EventLog
 
 def get_upload_path(name):
     return safe_join("./uploads/", name)
@@ -42,6 +45,8 @@ uploaded_logs = {
 loaded_event_logs: Dict[
     str, Tuple[Dict[str, Any], EventLog]
 ] = dict()
+
+discovered_models: Dict[str,Tuple[PetriNet, Marking, Marking]] = dict()
 
 
 ATTR_IGNORE_LIST = ["concept:name", "time:timestamp"]
@@ -73,7 +78,10 @@ def upload_log():
 def log_page(logid: str):
     if request.method == "DELETE":
         if logid in uploaded_logs:
+            # Remove all traces of the event log
             uploaded_logs.pop(logid)
+            loaded_event_logs.pop(logid)
+            discovered_models.pop(logid)
             safe_path = get_upload_path(logid)
             if safe_path is not None:
                 os.remove(safe_path)
@@ -138,9 +146,28 @@ def discover_model(logid: str, algo_name:str):
             net, im, fm = pm4py.discover_petri_net_alpha(log)
         else:
             return {"message": "Invalid algorithm name"}, 400
-
+        discovered_models[logid] = (net,im,fm)
         decision_points = find_decision_points(net)
         place_ids = [str(id(p)) for p in decision_points]
         gviz = pn_visualizer.apply(net, im, fm)
         dot = str(gviz)
         return {"dot": dot, "decision_points": place_ids}, 200
+
+@app.route("/log/<logid>/mine-decisions", methods=["POST"])
+def mine_decisions(logid: str):
+    if logid not in loaded_event_logs and logid in discovered_models:
+        return {"message": "Log or model not loaded"}, 400
+    else:
+        body = request.get_json()
+        print(body['case_attributes'])
+        print(body['event_attributes'])
+
+        datasets = get_all_guard_datasets(loaded_event_logs[logid][1],discovered_models[logid][0],discovered_models[logid][1],discovered_models[logid][2],body['case_attributes'],body['event_attributes'])
+        managers = {}
+        for place,dataframe in datasets.items():
+            guard_manager = Guard_Manager(dataframe, [ML_Technique.DECISION_TREE])
+            guard_manager.evaluate_guards()
+            technique_name, trained_technique = guard_manager.get_best()
+            print(f"Best technique for {place.name}: {technique_name}")
+            managers[place] = guard_manager
+        return {"body": {}}, 200

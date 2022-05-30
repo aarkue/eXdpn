@@ -106,12 +106,23 @@
       }
 
       function getSelectedAttributes(){
+        let selectedAttributes = {};
         for(const attributeType in logAttributes){
           const el = document.getElementById(attributeType);
           const attributeNames = [...el.querySelectorAll('input:checked')].map(e => e.dataset.attributeName);
-          console.log(attributeType,attributeNames);
+
+          selectedAttributes[attributeType] = attributeNames;
         }
-        document.getElementById('')
+        return selectedAttributes;
+      }
+
+      function mineDecisions(){
+        let selectedAttributes = getSelectedAttributes()
+        fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then((res) => {
+          console.log({res})
+        }).catch((err) => {
+          console.error({err})
+        })
       }
 
       document.addEventListener("DOMContentLoaded", (ev) => {
@@ -252,7 +263,7 @@
             </div>
         </div>
         <div class="text-center my-2">
-          <button type="button" class="btn btn-primary btn-lg" onclick="getSelectedAttributes()">Mine decision</button>
+          <button type="button" class="btn btn-primary btn-lg" onclick="mineDecisions()">Mine decision</button>
         </div>
 
       </div>
