@@ -14,6 +14,8 @@ class Data_Petri_Net():
     def __init__(self,
                  event_log: EventLog,
                  petri_net: PetriNet = None,
+                 initial_marking: PetriNet.Place = None,
+                 final_marking: PetriNet.Place = None,
                  case_level_attributes: list[str] = [],
                  event_attributes: list[str] = [],
                  sliding_window_size: int = 3,
@@ -23,6 +25,9 @@ class Data_Petri_Net():
         """Initializes a data Petri net based on the event log provided.
         Args:
             event_log (EventLog): Event log to be used as a basis for the data Petri net
+            petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
+            initial_marking (PetriNet.Place): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
+            final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
             case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
             event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
             sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
@@ -31,10 +36,12 @@ class Data_Petri_Net():
                 implemented techniques
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
-        if petri_net == None:
+        if petri_net == None or initial_marking == None or final_marking == None:
             self.petri_net, self.im, self.fm = get_petri_net(event_log)
         else: 
             self.petri_net = petri_net
+            self.im = initial_marking
+            self.fm = final_marking
 
         self.decision_points = find_decision_points(self.petri_net)
         self.print_if_verbose("-> Mining guard datasets... ", end="")
