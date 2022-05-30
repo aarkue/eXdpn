@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eXdpn - {{log.name}}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm/dist/index.min.js"></script>
+    <script src="https://unpkg.com/d3-graphviz/build/d3-graphviz.js"></script>
+  </head>
+
+  <body>
+    <script>
+      let logAttributes = null;
+      function loadEventLog() {
+        fetch("/log/{{log_id}}/load", {
+          method: "GET",
+        })
+          .then(async (res) => {
+            if (res.ok) {
+              const logInfo = await res.json();
+              for (const key in logInfo["xes_stats"]) {
+                document.getElementById(key).innerHTML =
+                  logInfo["xes_stats"][key];
+              }
+              logAttributes = logInfo["attributes"];
+              for (const attributeType in logAttributes) {
+                const el = document.getElementById(attributeType);
+                if (logAttributes[attributeType].length > 0) {
+                  el.innerHTML = "";
+                  for (const attribute of logAttributes[attributeType]) {
+                    const label = document.createElement("label");
+                    label.classList.add("list-group-item");
+
+                    const input = document.createElement("input");
+                    input.classList.add("form-check-input", "me-2");
+                    input.type = "checkbox";
+                    input.dataset.attributeName = attribute;
+                    label.appendChild(input);
+                    const labelText = document.createElement("samp");
+                    labelText.textContent = attribute;
+                    label.appendChild(labelText);
+                    el.appendChild(label);
+                  }
+                }
+              }
+              console.log({ logAttributes });
+
+              document
+                .querySelectorAll("#discoverModelButtons > button")
+                .forEach((button) => {
+                  button.removeAttribute("disabled");
+                });
+            }
+          })
+          .catch((err) => {});
+      }
+
+      function loadPetriNet(algoName) {
+        console.log("Loading Petri net for {{log_id}}...");
+        fetch("/log/{{log_id}}/discover/" + algoName, {
+          method: "GET",
+        })
+          .then(async (res) => {
+            if (res.ok) {
+              const net = await res.json();
+              d3.select("#discoveredPetriNet")
+                .graphviz()
+                .width("100%")
+                .fit(true)
+                .renderDot(net.dot, () => {
+                  document.querySelectorAll("g.node").forEach((n) => {
+                    let title = n.querySelector("title");
+                    if (
+                      title &&
+                      net.decision_points.indexOf(title.textContent) > -1
+                    ) {
+                      let ellipse = n.querySelector("ellipse");
+                      if (ellipse) {
+                        ellipse.classList.add("decisionPlace");
+                        ellipse.addEventListener("click", (e) => {
+                          if (
+                            e.currentTarget.classList.contains("selectedPlace")
+                          ) {
+                            e.currentTarget.classList.remove("selectedPlace");
+                          } else {
+                            e.currentTarget.classList.add("selectedPlace");
+                          }
+                        });
+                      }
+                    }
+                  });
+                  document.getElementById("chooseAttributes").style.display =
+                    "block";
+                });
+            }
+          })
+          .catch((err) => {});
+      }
+
+      function getSelectedAttributes(){
+        let selectedAttributes = {};
+        for(const attributeType in logAttributes){
+          const el = document.getElementById(attributeType);
+          const attributeNames = [...el.querySelectorAll('input:checked')].map(e => e.dataset.attributeName);
+
+          selectedAttributes[attributeType] = attributeNames;
+        }
+        return selectedAttributes;
+      }
+
+      function mineDecisions(){
+        let selectedAttributes = getSelectedAttributes()
+        fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then((res) => {
+          console.log({res})
+        }).catch((err) => {
+          console.error({err})
+        })
+      }
+
+      document.addEventListener("DOMContentLoaded", (ev) => {
+        loadEventLog();
+      });
+    </script>
+    <style>
+      #discoveredPetriNet svg {
+        border: 2px dashed rgba(49, 47, 47, 0.685);
+      }
+
+      .decisionPlace {
+        fill: rgba(233, 64, 64, 0.514);
+      }
+      .decisionPlace:hover {
+        fill: rgba(236, 27, 27, 0.761);
+      }
+      .decisionPlace.selectedPlace {
+        fill: rgba(0, 128, 0, 0.514);
+      }
+      .decisionPlace.selectedPlace:hover {
+        fill: rgba(0, 128, 0, 0.761);
+      }
+    </style>
+
+    <div class="container mt-2">
+      <h1 class="text-center mb-5">eXdpn: {{log.name}}</h1>
+      <div class="text-center">
+        <div id="logInfo">
+          <table class="table mt-3">
+            <thead class="table-primary">
+              <tr>
+                <th scope="col">Event Log</th>
+                <th scope="col">Number of unique activities</th>
+                <th scope="col">Number of cases</th>
+                <th scope="col">Number of events</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">{{log.name}}</th>
+                <td id="num_activities">
+                  <div
+                    class="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                  >
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+                <td id="num_cases">
+                  <div
+                    class="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                  >
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+                <td id="num_events">
+                  <div
+                    class="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                  >
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <br />
+      <div class="text-center">
+        <div class="btn-group" id="discoverModelButtons">
+          <!-- Default Button -->
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick="loadPetriNet('inductive_miner')"
+            disabled
+          >
+            <b>Discover Model</b><br />
+            with Inductive Miner
+          </button>
+          <!-- Dropdown for additional Discovery Algorithms -->
+          <button
+            type="button"
+            style="background-color: #0e5bce"
+            class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            disabled
+          >
+            <span class="visually-hidden">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <button
+                class="dropdown-item"
+                onclick="loadPetriNet('inductive_miner')"
+              >
+                with Inductive Miner
+              </button>
+            </li>
+            <li>
+              <button
+                class="dropdown-item"
+                onclick="loadPetriNet('alpha_miner')"
+              >
+                with Alpha Miner
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div id="discoveredPetriNet" class="text-center mt-3"></div>
+      <div id="chooseAttributes" style="display: none;">
+          <h2 class="mt-4">Select attributes</h2>
+          <p>
+            Please select the case and event attributes you want to use.
+          </p>
+          <div class="row mt-2">
+            <div class="col">
+              <h3 class="text-center">Case attributes</h3>
+              <div class="list-group" id="case_attributes">
+                <span class="text-center text-muted">
+                  No case attributes present in log.
+                </span>
+              </div>
+            </div>
+
+            <div class="col">
+              <h3 class="text-center">Event attributes</h3>
+              <div class="list-group" id="event_attributes">
+                <span class="text-center text-muted">
+                  No event attributes present in log.
+                </span>
+              </div>
+            </div>
+        </div>
+        <div class="text-center my-2">
+          <button type="button" class="btn btn-primary btn-lg" onclick="mineDecisions()">Mine decision</button>
+        </div>
+
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
