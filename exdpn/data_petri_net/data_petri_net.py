@@ -84,6 +84,12 @@ class Data_Petri_Net():
 
         return self.guard_per_place
 
+    def get_guard_at_place(self, place: PetriNet.Place) -> Guard:
+        if self.guard_per_place == None:
+            self.get_best()
+        
+        return self.guard_per_place[place]
+
     def evaluate_data_petri_net_a_posteriori(self, test_event_log: EventLog) -> float:
         """Returns the a posteriori (first replay, then check conformance to guards) performance (definition TBD) on the given event log
         Args:
