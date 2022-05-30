@@ -1,11 +1,11 @@
 from sklearn.tree import DecisionTreeClassifier, export_text
-from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
-from exdpn.guards import Guard
-from exdpn.data_preprocessing import fit_ohe
+from data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
+from guards import Guard
+from data_preprocessing import fit_ohe
 
 from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict
+from typing import Dict, List
 from re import sub
 
 
@@ -52,7 +52,7 @@ class Decision_Tree_Guard(Guard):
 
         self.model = self.model.fit(X, y_transformed)
 
-    def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
+    def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
             input_instances (DataFrame): Input instances used to predict the next transition

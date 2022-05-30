@@ -2,8 +2,9 @@ import pm4py
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.log.obj import EventLog
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
+from typing import Tuple
 
-def get_petri_net (log: EventLog) -> tuple[PetriNet, PetriNet.Place, PetriNet.Place]:
+def get_petri_net (log: EventLog) -> Tuple[PetriNet, PetriNet.Place, PetriNet.Place]:
     """ Mines Petri Net based on given event log and returns found Petri Net.
 
     Args: 

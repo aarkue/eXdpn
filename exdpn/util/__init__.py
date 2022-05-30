@@ -1,1 +1,1 @@
-from exdpn.util.util import import_log
+from util.util import import_log

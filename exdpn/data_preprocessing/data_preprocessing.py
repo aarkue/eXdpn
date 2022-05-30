@@ -5,9 +5,10 @@ import pandas as pd
 import sys
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
+from typing import Tuple, List
 
 
-def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, DataFrame, Series, Series]:
+def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
     """ Data preprocessing for dataframes before they are used for the machine learning model selection. This does some \
     basic preprocessing, such as converting all columns to the correct data type, droping of columns with only NaNs and \
     defining feature variables and target variables. Furthermore, the data is split into a train and test data sets \
@@ -30,7 +31,7 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, Data
     return X_train, X_test, y_train, y_test
 
 
-def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
+def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
     """ Basic preprocessing before dataframes, i.e., converting all columns to the correct data type, droping of columns \
     with only NaNs and defining feature variables and target variables
     Args:
@@ -63,7 +64,7 @@ def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     return df_X, df_y
 
 
-def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, list[str]]:
+def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
     """ Fits a MinMaxScaler on the data and returns a scaler for a scaling t o [0, 1] and the scalable columns 
     Args: 
         X (DataFrame): Dataframe with data to scale
@@ -83,7 +84,7 @@ def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, list[str]]:
     return scaler, list(scalable_columns)
 
 
-def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: list[str]) -> DataFrame:
+def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str]) -> DataFrame:
     """ Performs min-max scaling to [0, 1] on data with a fitted scaler on all scalable columns and returns scaled data
     Args: 
         X (DataFrame): Dataframe with data to scale
@@ -101,7 +102,7 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: list[str
     return X_scaled
 
 
-def fit_ohe(X: DataFrame) -> tuple[OneHotEncoder, list[str]]:
+def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
     """ Fits anOneHotEncoder on all categorical features in the data set
     Args: 
         X (DataFrame): Dataframe with data to encode

@@ -1,10 +1,10 @@
 from pandas import DataFrame, concat
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict
+from typing import Dict, List, Tuple
 
-from exdpn.guards import ML_Technique # imports all guard classes
-from exdpn.guards import Guard
-from exdpn.data_preprocessing import data_preprocessing_evaluation 
+from guards import ML_Technique # imports all guard classes
+from guards import Guard
+from data_preprocessing import data_preprocessing_evaluation 
 
 from sklearn.metrics import f1_score
 
@@ -13,7 +13,7 @@ from sklearn.metrics import f1_score
 # machine learning techniques (all implemented) or the selected machine learning techniques
 
 class Guard_Manager():
-    def __init__(self, dataframe: DataFrame, ml_list: list[ML_Technique] = [ML_Technique.NN,
+    def __init__(self, dataframe: DataFrame, ml_list: List[ML_Technique] = [ML_Technique.NN,
                                                                             ML_Technique.DT,
                                                                             ML_Technique.LG,
                                                                             ML_Technique.SVM]) -> None:
@@ -70,7 +70,7 @@ class Guard_Manager():
             # or "retraining" the model w/ all data available -> all data
         return self.guards_results
 
-    def get_best(self) -> tuple[ML_Technique, Guard]:
+    def get_best(self) -> Tuple[ML_Technique, Guard]:
         """ Returns "best" guard for a decision point
         Returns: 
             best_guard (tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \

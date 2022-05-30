@@ -2,7 +2,7 @@ import abc  # use abstract base classes to define interfaces
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict
+from typing import Dict, List
 
 
 class Guard(metaclass=abc.ABCMeta):
@@ -32,7 +32,7 @@ class Guard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
+    def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
             input_instance (list[any]): Input instance used to predict the next transition
