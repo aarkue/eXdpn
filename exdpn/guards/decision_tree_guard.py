@@ -10,7 +10,7 @@ from re import sub
 
 
 class Decision_Tree_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
+    def __init__(self, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1, 'ccp_alpha': 0.2}) -> None:
         """Initializes a decision tree based guard with the provided hyperparameters
         Args:
             hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
