@@ -13,6 +13,7 @@ from exdpn.guards import ML_Technique
 class Data_Petri_Net():
     def __init__(self,
                  event_log: EventLog,
+                 petri_net: PetriNet = None,
                  case_level_attributes: list[str] = [],
                  event_attributes: list[str] = [],
                  sliding_window_size: int = 3,
@@ -30,7 +31,10 @@ class Data_Petri_Net():
                 implemented techniques
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
-        self.petri_net, self.im, self.fm = get_petri_net(event_log)
+        if petri_net == None:
+            self.petri_net, self.im, self.fm = get_petri_net(event_log)
+        else: 
+            self.petri_net = petri_net
 
         self.decision_points = find_decision_points(self.petri_net)
         self.print_if_verbose("-> Mining guard datasets... ", end="")
