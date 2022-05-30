@@ -1,4 +1,6 @@
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from matplotlib import pyplot as plt
+from matplotlib.figure import Figure
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import fit_ohe
@@ -67,15 +69,16 @@ class Decision_Tree_Guard(Guard):
             explainable (bool): Wheter or not the guard is explainable"""
         return True
 
-    def get_explainable_representation(self) -> str:
+    def get_explainable_representation(self) -> Figure:
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
-            explainable_representation (str): Explainable representation of the guard"""
-        return export_graphviz(self.model,
-                               out_file=None,
-                               feature_names=self.feature_names,
-                               class_names=[
-                                   t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()],
-                               impurity=False,
-                               filled=True,
-                               rotate=True)
+            explainable_representation (Figure): Matplotlib Figure of the trained decision tree classifier"""
+        fig, ax = plt.subplots()
+        plot_tree(self.model,
+                  ax=ax,
+                  feature_names=self.feature_names,
+                  class_names=[
+                      t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()],
+                  impurity=False,
+                  filled=True)
+        return fig
