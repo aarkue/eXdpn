@@ -159,15 +159,20 @@ def mine_decisions(logid: str):
         return {"message": "Log or model not loaded"}, 400
     else:
         body = request.get_json()
-        print(body['case_attributes'])
-        print(body['event_attributes'])
-
         datasets = get_all_guard_datasets(loaded_event_logs[logid][1],discovered_models[logid][0],discovered_models[logid][1],discovered_models[logid][2],body['case_attributes'],body['event_attributes'])
-        managers = {}
+        managers = dict()
+        explainers = dict()
+        evaluation_results = dict()
         for place,dataframe in datasets.items():
-            guard_manager = Guard_Manager(dataframe, [ML_Technique.DECISION_TREE])
-            guard_manager.evaluate_guards()
+            guard_manager = Guard_Manager(dataframe, [ML_Technique.DT])
+            evaluation = guard_manager.evaluate_guards()
             technique_name, trained_technique = guard_manager.get_best()
+            evaluation_results[id(place)] = evaluation[technique_name]
+            if trained_technique.is_explainable():
+                explainable_representation = trained_technique.get_explainable_representation()
+            else:
+                explainable_representation = None
+            explainers[id(place)] = explainable_representation
             print(f"Best technique for {place.name}: {technique_name}")
             managers[place] = guard_manager
-        return {"body": {}}, 200
+        return {'evaluation_results': evaluation_results}, 200
