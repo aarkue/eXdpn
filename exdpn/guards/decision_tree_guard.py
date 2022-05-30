@@ -26,17 +26,12 @@ class Decision_Tree_Guard(Guard):
         self.feature_names      = None
         self.ohe                = None
         self.ohe_columns        = None
-        self.scaler             = None
-        self.scaler_columns     = None
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
             y (DataFrame): Target label for each instance in the X dataset used to train the model"""
-        # scale numerical attributes
-        self.scaler, self.scaler_columns = fit_scaling(X)
-        X = apply_scaling(X, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
         self.ohe, self.ohe_columns = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
@@ -58,8 +53,6 @@ class Decision_Tree_Guard(Guard):
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
             predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
-        # scale numerical attributes
-        input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
         input_instances = apply_ohe(input_instances, self.ohe)
         
@@ -84,21 +77,6 @@ class Decision_Tree_Guard(Guard):
         for transition, transition_int in self.transition_int_map.items():
             representation = representation.replace(
                 f"class: {transition_int}", f"class: {transition.name} / {transition.label}")
-
-        # inverse scaler
-        def inverse_transform_single(scale_column: str, match):
-            dummy = DataFrame([[0 for _ in self.scaler_columns]], columns=self.scaler_columns)
-            dummy[scale_column] = float(match.group(1))
-            dummy = DataFrame(self.scaler.inverse_transform(dummy), columns=self.scaler_columns)
-            return dummy[scale_column].values[0]
-
-        # this is ugly, we know
-        for scale_column in self.scaler_columns:
-            pattern = fr'{scale_column} <= (.(\d*.\d*)?)'
-            representation = sub(pattern, lambda match: f'{scale_column} <= {inverse_transform_single(scale_column, match)}', representation)
-
-            pattern = fr'{scale_column} >  (.(\d*.\d*)?)'
-            representation = sub(pattern, lambda match: f'{scale_column} >  {inverse_transform_single(scale_column, match)}', representation)
 
         # 'inverse' OHE
         for ohe_column in self.ohe_columns:
