@@ -7,8 +7,10 @@ from sklearn.svm import SVC
 from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
-import numpy as np 
 import shap 
+from matplotlib.figure import Figure
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt 
 
 
 
@@ -84,9 +86,25 @@ class SVM_Guard(Guard):
     def get_explainable_representation(self) -> DataFrame:
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
-            explainable_representation (DataFrame): Explainable representation of the guard"""
+            explainable_representation (Figure): Matplotlib Figure of the trained SVM model"""
         
-        explainer = shap.KernelExplainer(self.model.predict_proba, self.X_train)
+        classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+
+        explainer = shap.LinearExplainer(self.model, self.X_train)
+
         shap_values = explainer.shap_values(self.input_instances)
-        
-        return shap.force_plot(explainer.expected_value[0], shap_values[0], self.input_instances)
+
+        fig, ax = plt.subplots()
+        shap.summary_plot(shap_values, 
+                                self.input_instances, 
+                                plot_type = "bar", 
+                                show = False,
+                                class_names = classes)
+        plt.title("Feature Impact on Probability", fontsize = 14)
+        plt.ylabel("Feature Attributes", fontsize = 14)
+        if len(classes) < 3:
+            # add label for binary manually
+            blue_patch = mpatches.Patch(color = 'dodgerblue', label = str(classes[1]))
+            plt.legend(handles = [blue_patch], loc = "lower right", frameon = False)
+
+        return  

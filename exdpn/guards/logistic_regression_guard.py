@@ -6,7 +6,6 @@ from sklearn.linear_model import LogisticRegression
 from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
-import numpy as np 
 import shap 
 from matplotlib.figure import Figure
 import matplotlib.patches as mpatches
