@@ -8,6 +8,9 @@ from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
 import numpy as np 
 import shap 
+from matplotlib.figure import Figure
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt 
 
 
 
@@ -42,6 +45,7 @@ class Logistic_Regression_Guard(Guard):
         # one hot encoding for categorical data 
         self.ohe, self.ohe_columns = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
+        self.X_train = X 
 
         # store feature names for the explainable representation
         self.feature_names = list(X.columns)
@@ -78,29 +82,30 @@ class Logistic_Regression_Guard(Guard):
             explainable (bool): Wheter or not the guard is explainable"""
         return True
 
-    def get_explainable_representation(self) -> DataFrame:
+    def get_explainable_representation(self) -> Figure:
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
-            explainable_representation (DataFrame): Explainable representation of the guard"""
+            explainable_representation (Figure): Matplotlib Figure of the trained logistic regression model"""
         
         #print("A Logistic Regression Classifier calculates the probability that a sample belongs to a certain class, if the probability is >50% the sample is assigned to that class. In a multi-class classification problem (i.e., there are more than the usual two classes), the so-called One-vs-Rest method is used. This means that the original multi-class classification problem is split into multiple binary classification problems (P(this class) vs. P(not this class)).")
 
-        # TODO hard coded for binary classification problem 
-        print("Classification Problem: P(", [k for k in self.transition_int_map.keys()][1], ") vs. P(",
-              [k for k in self.transition_int_map.keys()][0], ")")
+        classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
 
-        print("Used feature variables in the Logistic Regression Classification model, sorted by their influence on the probability. Weight < 1: negative influece, Weight > 1: positive influence.")
+        explainer = shap.LinearExplainer(self.model, self.X_train)
 
-        model_features = self.model.feature_names_in_
-        model_weights = np.round(np.exp(self.model.coef_[0]), 2)
-        representation_data = {"Feature Variables": model_features, "Weights": model_weights} 
-
-        representation = DataFrame(representation_data, columns = ["Feature Variables", "Weights"])
-        print(representation.sort_values(by = ["Weights"], ascending = False)) 
-
-        # or this one: 
-        explainer = shap.LinearExplainer(self.model, self.input_instances, feature_dependence="independent")
         shap_values = explainer.shap_values(self.input_instances)
-        input_instances_array = self.input_instances.to_numpy() 
 
-        return shap.summary_plot(shap_values, input_instances_array, feature_names=list(self.input_instances.columns))
+        fig, ax = plt.subplots()
+        shap.summary_plot(shap_values, 
+                                self.input_instances, 
+                                plot_type = "bar", 
+                                show = False,
+                                class_names = classes)
+        plt.title("Feature Impact on Probability", fontsize = 14)
+        plt.ylabel("Feature Attributes", fontsize = 14)
+        if len(classes) < 3:
+            # add label for binary manually
+            blue_patch = mpatches.Patch(color = 'dodgerblue', label = str(classes[1]))
+            plt.legend(handles = [blue_patch], loc = "lower right", frameon = False)
+
+        return fig 
