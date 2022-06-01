@@ -24,7 +24,7 @@ class Logistic_Regression_Guard(Guard):
             self.model = LogisticRegression(**hyperparameters)
         except TypeError:
             raise TypeError(
-                "Wrong hyperparameters were supplied to the decision tree guard")
+                "Wrong hyperparameters were supplied to the logistic regression guard")
 
         self.transition_int_map = None
         self.feature_names      = None
@@ -88,18 +88,19 @@ class Logistic_Regression_Guard(Guard):
         
         #print("A Logistic Regression Classifier calculates the probability that a sample belongs to a certain class, if the probability is >50% the sample is assigned to that class. In a multi-class classification problem (i.e., there are more than the usual two classes), the so-called One-vs-Rest method is used. This means that the original multi-class classification problem is split into multiple binary classification problems (P(this class) vs. P(not this class)).")
 
-        classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
-
         explainer = shap.LinearExplainer(self.model, self.X_train)
 
         shap_values = explainer.shap_values(self.input_instances)
 
+        classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+        
         fig, ax = plt.subplots()
         shap.summary_plot(shap_values, 
-                                self.input_instances, 
-                                plot_type = "bar", 
-                                show = False,
-                                class_names = classes)
+                          self.input_instances, 
+                          plot_type = "bar", 
+                          show = False,
+                          class_names = classes,
+                          class_inds = range(len(classes)))
         plt.title("Feature Impact on Probability", fontsize = 14)
         plt.ylabel("Feature Attributes", fontsize = 14)
         if len(classes) < 3:

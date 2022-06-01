@@ -3,7 +3,7 @@ from exdpn.guards import Guard
 from exdpn.data_preprocessing import fit_ohe
 
 #from sklearn.svm import LinearSVC 
-from sklearn.svm import SVC 
+from sklearn.svm import LinearSVC 
 from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict
@@ -11,21 +11,22 @@ import shap
 from matplotlib.figure import Figure
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt 
+import numpy as np 
 
 
 
 class SVM_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {"C": 0.5, "kernel": "linear", "probability": True}) -> None:
+    def __init__(self, hyperparameters: Dict[str, any] = {"C": 0.5}) -> None:
         """Initializes a support vector machine model based guard with the provided hyperparameters
         Args:
             hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
         super().__init__(hyperparameters)
         # possible hyperparameter: C (regularization parameter)
         try:
-            self.model = SVC(**hyperparameters)
+            self.model = LinearSVC(**hyperparameters)
         except TypeError:
             raise TypeError(
-                "Wrong hyperparameters were supplied to the decision tree guard")
+                "Wrong hyperparameters were supplied to the support vector machine guard")
 
         self.transition_int_map = None
         self.feature_names      = None
@@ -83,23 +84,24 @@ class SVM_Guard(Guard):
             explainable (bool): Wheter or not the guard is explainable"""
         return True
 
-    def get_explainable_representation(self) -> DataFrame:
+    def get_explainable_representation(self) -> Figure:
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
             explainable_representation (Figure): Matplotlib Figure of the trained SVM model"""
         
-        classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
-
         explainer = shap.LinearExplainer(self.model, self.X_train)
 
         shap_values = explainer.shap_values(self.input_instances)
 
+        classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+
         fig, ax = plt.subplots()
         shap.summary_plot(shap_values, 
-                                self.input_instances, 
-                                plot_type = "bar", 
-                                show = False,
-                                class_names = classes)
+                          self.input_instances, 
+                          plot_type = "bar", 
+                          show = False,
+                          class_names = classes,
+                          class_inds = range(len(classes)))
         plt.title("Feature Impact on Probability", fontsize = 14)
         plt.ylabel("Feature Attributes", fontsize = 14)
         if len(classes) < 3:
@@ -107,4 +109,4 @@ class SVM_Guard(Guard):
             blue_patch = mpatches.Patch(color = 'dodgerblue', label = str(classes[1]))
             plt.legend(handles = [blue_patch], loc = "lower right", frameon = False)
 
-        return  
+        return fig 
