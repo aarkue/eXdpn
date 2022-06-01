@@ -2,9 +2,9 @@ from pandas import DataFrame, concat
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List, Tuple
 
-from guards import ML_Technique # imports all guard classes
-from guards import Guard
-from data_preprocessing import data_preprocessing_evaluation 
+from exdpn.guards import ML_Technique # imports all guard classes
+from exdpn.guards import Guard
+from exdpn.data_preprocessing import data_preprocessing_evaluation 
 
 from sklearn.metrics import f1_score
 

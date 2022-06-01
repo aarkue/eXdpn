@@ -1,5 +1,5 @@
 import enum
-from guards import Decision_Tree_Guard, Neural_Network_Guard
+from exdpn.guards import Decision_Tree_Guard, Neural_Network_Guard
 
 class ML_Technique(enum.Enum):
     NN  = Neural_Network_Guard

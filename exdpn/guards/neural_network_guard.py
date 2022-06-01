@@ -1,9 +1,9 @@
 from re import sub
 from typing import Dict, List
 
-from data_preprocessing import fit_ohe
-from data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
-from guards import Guard
+from exdpn.data_preprocessing import fit_ohe
+from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
+from exdpn.guards import Guard
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet

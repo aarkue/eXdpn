@@ -171,7 +171,6 @@ def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm:
         Dict[PetriNet.Place, pd.DataFrame]: A dictionary mapping places where decisions are made to the dataset \
             corresponding to trace attributes with their outgoing transition (for traces which visited this place during replay)
     """
-    
     # get mapping of all places to their transitions and the corresponding attribute names
     place_transition_instance_map, attribute_list = get_instances_per_place_per_transition(
         log, net, im, fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr)

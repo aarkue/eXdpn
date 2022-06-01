@@ -1,1 +1,1 @@
-from util.util import import_log
+from util import import_log
