@@ -19,6 +19,7 @@ from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import get_all_guard_datasets
 from exdpn.guards import Guard_Manager, ML_Technique
 
+import matplotlib.pyplot as pl
 # from exdpn.petri_net import get_petri_net
 
 def get_upload_path(name):
@@ -164,14 +165,16 @@ def mine_decisions(logid: str):
         explainers = dict()
         evaluation_results = dict()
         for place,dataframe in datasets.items():
-            guard_manager = Guard_Manager(dataframe, [ML_Technique.DT])
+            guard_manager = Guard_Manager(dataframe, [ML_Technique.NN])
+            print(guard_manager.ml_list)
             evaluation = guard_manager.evaluate_guards()
             technique_name, trained_technique = guard_manager.get_best()
             evaluation_results[id(place)] = evaluation[technique_name]
             if trained_technique.is_explainable():
-                explainable_representation = trained_technique.get_explainable_representation()
+                explainable_representation:plt.Figure = trained_technique.get_explainable_representation()
             else:
                 explainable_representation = None
+            explainable_representation.savefig(f"{str(id(place))}_Explainable.png", bbox_inches='tight')
             explainers[id(place)] = explainable_representation
             print(f"Best technique for {place.name}: {technique_name}")
             managers[place] = guard_manager
