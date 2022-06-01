@@ -9,6 +9,9 @@ from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from sklearn.neural_network import MLPClassifier
 
+# Explainability
+import shap
+import matplotlib.pyplot as plt
 
 class Neural_Network_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, any] = {'hidden_layer_sizes': (10,10)}) -> None:
@@ -48,9 +51,10 @@ class Neural_Network_Guard(Guard):
         X = apply_ohe(X, self.ohe)
 
         self.training_data = X
+        print(f"Training with: {self.training_data.columns}")
         # Store feature names for the explainable representation
         self.feature_names = list(X.columns)
-
+        self.target_names = list(y.unique())
         # Make transition to integer (i.e. ID) map
         self.transition_int_map = {
             transition: index for index, transition in enumerate(list(set(y)))
@@ -75,6 +79,7 @@ class Neural_Network_Guard(Guard):
         input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # One-Hot Encoding for categorical data 
         input_instances = apply_ohe(input_instances, self.ohe)
+        print(f"Predicting with: {input_instances.columns}")
         
         predicted_transition_ids = self.model.predict(input_instances)
 
@@ -88,18 +93,24 @@ class Neural_Network_Guard(Guard):
         """Returns whether or not this guard is explainable.
         Returns:
             explainable (bool): Whether or not the guard is explainable"""
-        return False
+        return True
 
-    def get_explainable_representation(self,) -> str:
+    def get_explainable_representation(self) -> plt.Figure:
         """Get an explainable representation of the Neural Network, a Matplotlib plot using SHAP.
         Returns:
             explainable_representation (str): Explainable representation of the guard"""
-        pass
-        # import shap
+        shap.initjs()
 
+        X_train_summary = shap.kmeans(self.training_data, 10)
 
-        # def f(X):
-        #     return self.model.predict([X[:,i] for i in range(X.shape[1])]).flatten()
-        # explainer = shap.KernelExplainer(self.predict, self.training_data.iloc[:50,:])
-        # shap_values = explainer.shap_values(self.training_data.iloc[299,:], nsamples=500)
-        # shap.waterfall_plot(explainer.expected_value, shap_values, self.training_data.iloc[299,:])
+        print(self.training_data.columns)
+        #TODO: what does output_names do?
+        #explainer = shap.KernelExplainer(self.model.predict, self.training_data, output_names=self.target_names)
+        explainer = shap.KernelExplainer(self.model.predict, X_train_summary, output_names=self.target_names)
+        shap_values = explainer.shap_values(self.training_data.sample(n=min(100, len(self.training_data))))
+
+        # fig, ax = plt.subplots()
+        fig = plt.figure()
+        # Finally found the docs for this method: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
+        shap.summary_plot(shap_values, self.training_data, plot_type="bar", show=False, class_names=self.target_names, title="This is a test", plot_size="auto")
+        return fig
