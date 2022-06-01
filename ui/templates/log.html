@@ -118,8 +118,20 @@
 
       function mineDecisions(){
         let selectedAttributes = getSelectedAttributes()
-        fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then((res) => {
+        fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then(async (res) => {
           console.log({res})
+          const json = await res.json();
+          const svg_representations = json['svg_representation'];
+          const evaluation_result = json['evaluation_results'];
+          console.log({evaluation_result})
+          for(const placeId in svg_representations){
+            const blob = new Blob([svg_representations[placeId]],{type: 'image/svg+xml'})
+            const url = URL.createObjectURL(blob);
+            console.log({url})
+            const img = document.createElement('img');
+            img.src = url;
+            document.body.appendChild(img);
+          }
         }).catch((err) => {
           console.error({err})
         })

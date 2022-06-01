@@ -1,3 +1,4 @@
+import io
 from typing import Any, Dict, Tuple
 from flask import Flask, render_template, request, redirect
 import os
@@ -19,7 +20,7 @@ from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import get_all_guard_datasets
 from exdpn.guards import Guard_Manager, ML_Technique
 
-import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
 # from exdpn.petri_net import get_petri_net
 
 def get_upload_path(name):
@@ -163,6 +164,7 @@ def mine_decisions(logid: str):
         datasets = get_all_guard_datasets(loaded_event_logs[logid][1],discovered_models[logid][0],discovered_models[logid][1],discovered_models[logid][2],body['case_attributes'],body['event_attributes'])
         managers = dict()
         explainers = dict()
+        svg_representations = dict()
         evaluation_results = dict()
         for place,dataframe in datasets.items():
             guard_manager = Guard_Manager(dataframe, [ML_Technique.NN])
@@ -172,10 +174,16 @@ def mine_decisions(logid: str):
             evaluation_results[id(place)] = evaluation[technique_name]
             if trained_technique.is_explainable():
                 explainable_representation:plt.Figure = trained_technique.get_explainable_representation()
+                imgdata = io.StringIO()
+                explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
+                imgdata.seek(0)  # rewind the data
+                svg_representation = imgdata.getvalue()
+
             else:
                 explainable_representation = None
-            explainable_representation.savefig(f"{str(id(place))}_Explainable.png", bbox_inches='tight')
+                svg_representation = ""
             explainers[id(place)] = explainable_representation
+            svg_representations[id(place)] = svg_representation
             print(f"Best technique for {place.name}: {technique_name}")
             managers[place] = guard_manager
-        return {'evaluation_results': evaluation_results}, 200
+        return {'evaluation_results': evaluation_results, 'svg_representation': svg_representations}, 200
