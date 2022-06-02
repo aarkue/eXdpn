@@ -1,6 +1,6 @@
 from pandas import DataFrame, concat
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict
+from typing import Dict, List, Tuple
 
 from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
@@ -13,18 +13,18 @@ from sklearn.metrics import f1_score
 # machine learning techniques (all implemented) or the selected machine learning techniques
 
 class Guard_Manager():
-    def __init__(self, dataframe: DataFrame, ml_list: list[ML_Technique] = [ML_Technique.NN,
+    def __init__(self, dataframe: DataFrame, ml_list: List[ML_Technique] = [ML_Technique.NN,
                                                                             ML_Technique.DT,
                                                                             ML_Technique.LR,
                                                                             ML_Technique.SVM]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique
         Args: 
-            ml_list (list[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
+            ml_list (List[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
                 implemented techniques
             dataframe (DataFrame): Dataset used to evaluate the guard    
         Returns: 
-            guards_list (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
+            guards_List (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
                 mapped to the guards for the selected machine learning techniques       
         """
         # TODO: refactor data_preprocessing so that it does not do more than one thing
@@ -70,10 +70,10 @@ class Guard_Manager():
             # or "retraining" the model w/ all data available -> all data
         return self.guards_results
 
-    def get_best(self) -> tuple[ML_Technique, Guard]:
+    def get_best(self) -> Tuple[ML_Technique, Guard]:
         """ Returns "best" guard for a decision point
         Returns: 
-            best_guard (tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
+            best_guard (Tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
                 chosen metric (F1 score), the returned tuple contains the machine learning technique and corresponding guard
             """
         assert self.guards_results != None, "Guards must be evaluated first"

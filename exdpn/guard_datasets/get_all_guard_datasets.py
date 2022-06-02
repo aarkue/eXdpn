@@ -1,7 +1,7 @@
 from exdpn.decisionpoints import find_decision_points
 
 from pandas import DataFrame
-from typing import Dict
+from typing import Dict, List, Tuple
 import numpy as np
 
 from pm4py.objects.petri_net.obj import PetriNet
@@ -13,23 +13,23 @@ from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
 
 
 def get_instances_per_transition(log: EventLog, net: PetriNet, im: PetriNet.Place, fm: PetriNet.Place,
-                                 case_level_attributes: list[str],
-                                 event_attributes: list[str],
+                                 case_level_attributes: List[str],
+                                 event_attributes: List[str],
                                  sliding_window_size: int,
-                                 act_name_attr: str) -> Dict[PetriNet.Transition, list[any]]:
+                                 act_name_attr: str) -> Dict[PetriNet.Transition, List[any]]:
     """ Returns a dictionary of transitions (activities) mapped to the attribute lists of all instances that passed that activity.
     Args:
         log (EventLog): The pm4py event log to use for dataset generation
         net (PetriNet): The pm4py Petri net in which to generate the datasets
         im (PetriNet.Place): The initial marking of net
         fm (PetriNet.Place): The final marking of net
-        case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-        event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
+        case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+        event_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
         sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
         act_name_attr (str): Event level attribute name corresponding to the name of an event
     Returns:
-        transition_instance_map (Dict[PetriNet.Transition, list[any]]): Mapping of transitions (t) to instance lists \
-            corresponding to trace attributes which passed transition t. List of event attributes has to be list[any] since one \
+        transition_instance_map (Dict[PetriNet.Transition, List[any]]): Mapping of transitions (t) to instance lists \
+            corresponding to trace attributes which passed transition t. List of event attributes has to be List[any] since one \
             can not assume the type of attributes in an event log
 
     """
@@ -78,10 +78,10 @@ def get_instances_per_transition(log: EventLog, net: PetriNet, im: PetriNet.Plac
 
 
 def get_instances_per_place_per_transition(log: EventLog, net: PetriNet, im: PetriNet.Place, fm: PetriNet.Place,
-                                           case_level_attributes: list[str],
-                                           event_attributes: list[str],
+                                           case_level_attributes: List[str],
+                                           event_attributes: List[str],
                                            sliding_window_size: int,
-                                           act_name_attr: str) -> tuple[Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]], list[str]]:
+                                           act_name_attr: str) -> Tuple[Dict[PetriNet.Place, Dict[PetriNet.Transition, List[any]]], List[str]]:
     """ Returns a dictionary with all places, that are decision points, as keys and as values all transitions that follow these places corresponding transitions. \
         The transitions are mapped on the particular attribute lists of all instances that passed that activity.
     Args:
@@ -89,14 +89,14 @@ def get_instances_per_place_per_transition(log: EventLog, net: PetriNet, im: Pet
         net (PetriNet): The pm4py Petri net in which to generate the datasets
         im (PetriNet.Place): The initial marking of net
         fm (PetriNet.Place): The final marking of net
-        case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-        event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
+        case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+        event_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
         sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
         act_name_attr (str): Event level attribute name corresponding to the name of an event
     Returns:
-        place_transition_instance_map (Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]]): The mapping of places (p) to mappings of transitions (t) to instance lists \
+        place_transition_instance_map (Dict[PetriNet.Place, Dict[PetriNet.Transition, List[any]]]): The mapping of places (p) to mappings of transitions (t) to instance lists \
             corresponding to trace attributes which visited p during replay and proceeded by taking transition t
-        attribute_list (list[str]): The attribute names corresponding to the tuple entries of the instances
+        attribute_list (Öist[str]): The attribute names corresponding to the tuple entries of the instances
     """
     decision_points = find_decision_points(net)
 
@@ -123,14 +123,14 @@ def get_instances_per_place_per_transition(log: EventLog, net: PetriNet, im: Pet
 
 
 def get_guard_dataset(place: PetriNet.Place, 
-                      place_transition_instance_map: Dict[PetriNet.Place, Dict[PetriNet.Transition, list[any]]], 
-                      attribute_list: list[str]) -> DataFrame:
+                      place_transition_instance_map: Dict[PetriNet.Place, Dict[PetriNet.Transition, List[any]]], 
+                      attribute_list: List[str]) -> DataFrame:
     """ Returns a guard dataset for a specific place. This contains all contain all combinations of trace attributes and outgoing transition seen in the data for the given guard.
     Args:
         place (PetriNet.Place): The pm4py Petri net place to use for dataset generation
-        place_transition_instance_map (Dict[PetriNet.Place,Dict[PetriNet.Transition, list[any]]]): The mapping of places (p) to mappings of transitions (t) to instance lists \
+        place_transition_instance_map (Dict[PetriNet.Place,Dict[PetriNet.Transition, List[any]]]): The mapping of places (p) to mappings of transitions (t) to instance lists \
             corresponding to trace attributes which visited p during replay and proceeded by taking transition t 
-        attribute_list (list[str]): The attribute names corresponding to the instance tuple entries
+        attribute_list (List[str]): The attribute names corresponding to the instance tuple entries
     Returns:
         pd.DataFrame: A dataset corresponding to trace attributes with their outgoing transition (for traces which visited place during replay)
     """
@@ -152,8 +152,8 @@ def get_guard_dataset(place: PetriNet.Place,
 
 
 def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm: PetriNet.Place,
-                           case_level_attributes: list[str] = [],
-                           event_attributes: list[str] = [],
+                           case_level_attributes: List[str] = [],
+                           event_attributes: List[str] = [],
                            sliding_window_size: int = 3,
                            act_name_attr: str = "concept:name") -> Dict[PetriNet.Place, DataFrame]:
     """ Returns a mapping of all guards (desicion points) to their corresponding guard dataset. Thes guard dataset contains all combinations of trace attributes and outgoing \
@@ -163,15 +163,14 @@ def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm:
         net (PetriNet): The pm4py Petri net in which to generate the datasets
         im (PetriNet.Place): The initial marking of net
         fm (PetriNet.Place): The final marking of net
-        case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-        event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
+        case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+        event_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
         sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
         act_name_attr (str): Event level attribute name corresponding to the name of an event
     Returns:
         Dict[PetriNet.Place, pd.DataFrame]: A dictionary mapping places where decisions are made to the dataset \
             corresponding to trace attributes with their outgoing transition (for traces which visited this place during replay)
     """
-    
     # get mapping of all places to their transitions and the corresponding attribute names
     place_transition_instance_map, attribute_list = get_instances_per_place_per_transition(
         log, net, im, fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr)

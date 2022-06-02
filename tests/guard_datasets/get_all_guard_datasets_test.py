@@ -9,9 +9,10 @@ import os
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.log.obj import EventLog
 
+from typing import Tuple
 
 # set up test by loading test event log and extracting test data
-def get_net_and_log() -> tuple[PetriNet, PetriNet.Place, PetriNet.Place, EventLog, PetriNet.Place, PetriNet.Transition]:
+def get_net_and_log() -> Tuple[PetriNet, PetriNet.Place, PetriNet.Place, EventLog, PetriNet.Place, PetriNet.Transition]:
     # TODO: decide on structure with regards to sample event logs
     # load test eventlog
     event_log = import_xes(os.path.join(

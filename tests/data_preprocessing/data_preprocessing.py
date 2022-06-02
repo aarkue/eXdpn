@@ -7,9 +7,10 @@ from exdpn import guard_datasets
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, data_preprocessing_evaluation, apply_scaling, fit_ohe, fit_scaling
 import random 
 import pm4py 
+from typing import Tuple
 
 # set up test by loading a test dataframe and perform some preprocessing 
-def preprocess_data() -> tuple[DataFrame]:
+def preprocess_data() -> Tuple[DataFrame]:
 
     event_log = load_event_log.import_xes(os.path.join(os.getcwd(), 'example.xes'))
     net, im, fm = petri_net.get_petri_net(event_log)
