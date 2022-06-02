@@ -15,7 +15,7 @@ from sklearn.metrics import f1_score
 class Guard_Manager():
     def __init__(self, dataframe: DataFrame, ml_list: list[ML_Technique] = [ML_Technique.NN,
                                                                             ML_Technique.DT,
-                                                                            ML_Technique.LG,
+                                                                            ML_Technique.LR,
                                                                             ML_Technique.SVM]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique

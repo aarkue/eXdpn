@@ -48,7 +48,7 @@ class Guard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_explainable_representation(self) -> str:
+    def get_explainable_representation(self) -> any:
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
             explainable_representation (str): Explainable representation of the guard"""
