@@ -108,7 +108,7 @@ def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
         X (DataFrame): Dataframe with data to encode
     Returns: 
         OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
-        ohe_column_names (list[str]): List of column names of One Hot Encoded dataframe
+        ohe_column_names (List[str]): List of column names of One Hot Encoded dataframe
     """
     ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
     X_object = X.select_dtypes('object')

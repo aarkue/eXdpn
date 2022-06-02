@@ -10,11 +10,11 @@ class Guard(metaclass=abc.ABCMeta):
     def __init__(self, hyperparameters: Dict[str, any]) -> None:
         """Initializes a guard with the provided hyperparameters
         Args:
-            hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
+            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier"""
         pass
 
     #@abc.abstractmethod
-    #def evaluate(self, dataframe: DataFrame) -> tuple[float, Dict[str, any]]:
+    #def evaluate(self, dataframe: DataFrame) -> Tuple[float, Dict[str, any]]:
     #    """Shall evaluate a concrete guard and return it's score and optimal hyperparameters.
     #    Args:
     #        dataframe (DataFrame): Dataset used to evaluate the guard
@@ -35,9 +35,9 @@ class Guard(metaclass=abc.ABCMeta):
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
-            input_instance (list[any]): Input instance used to predict the next transition
+            input_instance (List[any]): Input instance used to predict the next transition
         Returns:
-            predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
+            predicted_transitions (List[PetriNet.Transition]): Predicted transitions"""
         pass
 
     @abc.abstractmethod

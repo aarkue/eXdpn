@@ -13,7 +13,7 @@ class Decision_Tree_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
         """Initializes a decision tree based guard with the provided hyperparameters
         Args:
-            hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
+            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier"""
         super().__init__(hyperparameters)
         # possible hyperparameters: max_depth, min_samples_split, min_samples_leaf
         try:
@@ -57,7 +57,7 @@ class Decision_Tree_Guard(Guard):
         Args:
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
-            predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
+            predicted_transitions (List[PetriNet.Transition]): Predicted transitions"""
         # scale numerical attributes
         input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 

@@ -20,11 +20,11 @@ class Guard_Manager():
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique
         Args: 
-            ml_list (list[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
+            ml_list (List[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
                 implemented techniques
             dataframe (DataFrame): Dataset used to evaluate the guard    
         Returns: 
-            guards_list (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
+            guards_List (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
                 mapped to the guards for the selected machine learning techniques       
         """
         # TODO: refactor data_preprocessing so that it does not do more than one thing
@@ -73,7 +73,7 @@ class Guard_Manager():
     def get_best(self) -> Tuple[ML_Technique, Guard]:
         """ Returns "best" guard for a decision point
         Returns: 
-            best_guard (tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
+            best_guard (Tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
                 chosen metric (F1 score), the returned tuple contains the machine learning technique and corresponding guard
             """
         assert self.guards_results != None, "Guards must be evaluated first"

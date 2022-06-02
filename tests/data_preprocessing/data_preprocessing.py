@@ -4,9 +4,11 @@ import pandas as pd
 from exdpn.data_preprocessing import data_preprocessing
 from exdpn.data_preprocessing import fit_apply_ohe
 
+from typing import Tuple
+
 
 # set up test by loading a test dataframe and perform some preprocessing 
-def preprocess_data() -> tuple[DataFrame]:
+def preprocess_data() -> Tuple[DataFrame]:
     # load test data frame
     data = pd.read_csv("TestDataFrame.csv")
 
