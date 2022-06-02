@@ -1,16 +1,17 @@
-from sklearn.tree import DecisionTreeClassifier, export_text
-from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from matplotlib import pyplot as plt
+from matplotlib.figure import Figure
+from exdpn.data_preprocessing.data_preprocessing import apply_ohe
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import fit_ohe
 
-from pandas import DataFrame, Series
+from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List
-from re import sub
 
 
 class Decision_Tree_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1}) -> None:
+    def __init__(self, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1, 'ccp_alpha': 0.2}) -> None:
         """Initializes a decision tree based guard with the provided hyperparameters
         Args:
             hyperparameters (Dict[str, any]): Hyperparameters used for the classifier"""
@@ -23,21 +24,16 @@ class Decision_Tree_Guard(Guard):
                 "Wrong hyperparameters were supplied to the decision tree guard")
 
         self.transition_int_map = None
-        self.feature_names      = None
-        self.ohe                = None
-        self.ohe_columns        = None
-        self.scaler             = None
-        self.scaler_columns     = None
+        self.feature_names = None
+        self.ohe = None
+        self.ohe_columns = None
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
         Args:
             X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
             y (DataFrame): Target label for each instance in the X dataset used to train the model"""
-        # scale numerical attributes
-        self.scaler, self.scaler_columns = fit_scaling(X)
-        X = apply_scaling(X, self.scaler, self.scaler_columns)
-        # one hot encoding for categorical data 
+        # one hot encoding for categorical data
         self.ohe, self.ohe_columns = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
 
@@ -58,11 +54,9 @@ class Decision_Tree_Guard(Guard):
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
             predicted_transitions (List[PetriNet.Transition]): Predicted transitions"""
-        # scale numerical attributes
-        input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
-        # one hot encoding for categorical data 
+        # one hot encoding for categorical data
         input_instances = apply_ohe(input_instances, self.ohe)
-        
+
         predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         # finds the key (transition) where the value (transition integer / id) corresponds to the predicted integer / id
@@ -75,42 +69,16 @@ class Decision_Tree_Guard(Guard):
             explainable (bool): Wheter or not the guard is explainable"""
         return True
 
-    def get_explainable_representation(self) -> str:
+    def get_explainable_representation(self) -> Figure:
         """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
         Returns:
-            explainable_representation (str): Explainable representation of the guard"""
-        representation = export_text(
-            self.model, feature_names=self.feature_names)
-        for transition, transition_int in self.transition_int_map.items():
-            representation = representation.replace(
-                f"class: {transition_int}", f"class: {transition.name} / {transition.label}")
-
-        # inverse scaler
-        dummy = DataFrame([[0 for _ in self.feature_names]], columns=self.feature_names)
-        # this is ugly, we know
-        for scale_column in self.scaler_columns:
-            pattern = fr'{scale_column} <= (.(\d*.\d*)?)'
-            def inverse_transform_single(match):
-                dummy[scale_column] = float(match.group(1))
-                trans = DataFrame(self.scaler.inverse_transform(dummy), columns=self.feature_names)
-                return f'{scale_column} <= {trans[scale_column][0]}'
-            representation = sub(pattern, inverse_transform_single, representation)
-
-            pattern = fr'{scale_column} >  (.(\d*.\d*)?)'
-            def inverse_transform_single(match):
-                dummy[scale_column] = float(match.group(1))
-                trans = DataFrame(self.scaler.inverse_transform(dummy), columns=self.feature_names)
-                return f'{scale_column} >  {trans[scale_column][0]}'
-            representation = sub(pattern, inverse_transform_single, representation)
-
-        # 'inverse' OHE
-        for ohe_column in self.ohe_columns:
-            pattern = fr'{ohe_column}_(.*?) <= 0.50'
-            replacement = fr'{ohe_column} != \1'
-            representation = sub(pattern, replacement, representation)
-
-            pattern = fr'{ohe_column}_(.*?) >  0.50'
-            replacement = fr'{ohe_column} = \1'
-            representation = sub(pattern, replacement, representation)
-
-        return representation
+            explainable_representation (Figure): Matplotlib Figure of the trained decision tree classifier"""
+        fig, ax = plt.subplots()
+        plot_tree(self.model,
+                  ax=ax,
+                  feature_names=self.feature_names,
+                  class_names=[
+                      t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()],
+                  impurity=False,
+                  filled=True)
+        return fig

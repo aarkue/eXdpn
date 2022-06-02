@@ -1,8 +1,9 @@
 import enum
-from exdpn.guards import Decision_Tree_Guard, Neural_Network_Guard
+from exdpn.guards import Decision_Tree_Guard, Logistic_Regression_Guard, SVM_Guard, Neural_Network_Guard
+
 
 class ML_Technique(enum.Enum):
     NN  = Neural_Network_Guard
     DT  = Decision_Tree_Guard
-    LG  = None
-    SVM = None
+    LR  = Logistic_Regression_Guard
+    SVM = SVM_Guard 

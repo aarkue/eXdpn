@@ -17,6 +17,6 @@ def get_petri_net (log: EventLog) -> Tuple[PetriNet, PetriNet.Place, PetriNet.Pl
     """
     
     # mine petri net using inductive miner to fit all traces
-    net, initial_marking, final_marking = inductive_miner.apply(log)
+    net, initial_marking, final_marking = inductive_miner.apply(log, variant=inductive_miner.Variants.IM)
     
     return net, initial_marking, final_marking
