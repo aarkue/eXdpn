@@ -1,4 +1,3 @@
-from re import sub
 from typing import Dict, List
 
 from exdpn.data_preprocessing import fit_ohe
@@ -8,6 +7,7 @@ from exdpn.guards import Guard
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from sklearn.neural_network import MLPClassifier
+import numpy as np
 
 # Explainability
 import shap
@@ -18,7 +18,7 @@ class Neural_Network_Guard(Guard):
         """Initializes a decision tree based guard with the provided hyperparameters
 
         Args:
-            hyperparameters (dict[str, any]): Hyperparameters used for the classifier
+            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
         """
         super().__init__(hyperparameters)
         try:
@@ -38,9 +38,11 @@ class Neural_Network_Guard(Guard):
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the Neural Network using the dataframe and the specified hyperparameters.
+        
         Args:
             X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
-            y (DataFrame): Target label for each instance in the X dataset used to train the model"""
+            y (DataFrame): Target label for each instance in the X dataset used to train the model
+        """
 
         # Scale numerical attributes
         self.scaler, self.scaler_columns = fit_scaling(X)
@@ -51,7 +53,7 @@ class Neural_Network_Guard(Guard):
         X = apply_ohe(X, self.ohe)
 
         self.training_data = X
-        print(f"Training with: {self.training_data.columns}")
+
         # Store feature names for the explainable representation
         self.feature_names = list(X.columns)
         self.target_names = list(y.unique())
@@ -73,13 +75,12 @@ class Neural_Network_Guard(Guard):
         Args:
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
-            predicted_transitions (list[PetriNet.Transition]): Predicted transitions
+            predicted_transitions (List[PetriNet.Transition]): Predicted transitions
         """
         # Scale numerical attributes
         input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # One-Hot Encoding for categorical data 
         input_instances = apply_ohe(input_instances, self.ohe)
-        print(f"Predicting with: {input_instances.columns}")
         
         predicted_transition_ids = self.model.predict(input_instances)
 
@@ -91,26 +92,42 @@ class Neural_Network_Guard(Guard):
 
     def is_explainable(self) -> bool:
         """Returns whether or not this guard is explainable.
+        
         Returns:
-            explainable (bool): Whether or not the guard is explainable"""
+            explainable (bool): Whether or not the guard is explainable
+        """
         return True
 
     def get_explainable_representation(self) -> plt.Figure:
         """Get an explainable representation of the Neural Network, a Matplotlib plot using SHAP.
+        
         Returns:
-            explainable_representation (str): Explainable representation of the guard"""
-        shap.initjs()
+            explainable_representation (str): Explainable representation of the guard
+        """
+        # X_train_summary = shap.kmeans(self.training_data, 1)
+        sampled_data = self.training_data.sample(n=min(100, len(self.training_data)))
+        
 
-        X_train_summary = shap.kmeans(self.training_data, 10)
 
-        print(self.training_data.columns)
-        #TODO: what does output_names do?
-        #explainer = shap.KernelExplainer(self.model.predict, self.training_data, output_names=self.target_names)
-        explainer = shap.KernelExplainer(self.model.predict, X_train_summary, output_names=self.target_names)
-        shap_values = explainer.shap_values(self.training_data.sample(n=min(100, len(self.training_data))))
-
-        # fig, ax = plt.subplots()
+        explainer = shap.KernelExplainer(self.model.predict, sampled_data, output_names=self.target_names)
+        
+        # explainer = shap.Explainer(self.model.predict, X_train_summary, output_names=self.target_names)
+        # shap_values = explainer(self.training_data.sample(n=min(100, len(self.training_data))))
+        shap_values = explainer.shap_values(sampled_data)
         fig = plt.figure()
-        # Finally found the docs for this method: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
-        shap.summary_plot(shap_values, self.training_data, plot_type="bar", show=False, class_names=self.target_names, title="This is a test", plot_size="auto")
+        # Force Plot
+        # shap.force_plot(explainer.expected_value[0], shap_values[0], self.training_data.sample(n=min(100, len(self.training_data))))
+
+        # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
+        shap.summary_plot(shap_values, sampled_data, plot_type="bar", show=False, class_names=self.target_names, plot_size="auto")
+        # Bee-Swarm
+        # shap.summary_plot(shap_values, self.training_data, show=False, plot_size="auto")
+        # shap.plots.beeswarm(shap_values, order=shap_values.abs.max(0))
+
+        # Decision Plot
+        # shap.decision_plot(explainer.expected_value, shap_values,self.feature_names, show=False)
+
+        # mean_shap_value = np.mean(shap_values, axis=0)
+        # explanation = shap.Explanation(mean_shap_value,0,feature_names=self.feature_names, output_names=self.target_names)
+        # shap.plots.bar(explanation)
         return fig

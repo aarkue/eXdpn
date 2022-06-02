@@ -19,6 +19,8 @@
   <body>
     <script>
       let logAttributes = null;
+
+      let decisionMined = false;
       function loadEventLog() {
         fetch("/log/{{log_id}}/load", {
           method: "GET",
@@ -64,6 +66,7 @@
       }
 
       function loadPetriNet(algoName) {
+        decisionMined = false;
         console.log("Loading Petri net for {{log_id}}...");
         fetch("/log/{{log_id}}/discover/" + algoName, {
           method: "GET",
@@ -86,13 +89,21 @@
                       if (ellipse) {
                         ellipse.classList.add("decisionPlace");
                         ellipse.addEventListener("click", (e) => {
-                          if (
-                            e.currentTarget.classList.contains("selectedPlace")
-                          ) {
-                            e.currentTarget.classList.remove("selectedPlace");
-                          } else {
-                            e.currentTarget.classList.add("selectedPlace");
-                          }
+                          if(decisionMined){
+                            document.querySelectorAll('.explainable_representation').forEach((e) => e.style.display = 'none');
+                            document.getElementById(`expl_repr_${title.textContent}`).style.display = 'block';
+                            const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
+                            bsel.show();
+                            console.log(title.textContent)
+                          }else{
+                            if (
+                              e.currentTarget.classList.contains("selectedPlace")
+                              ) {
+                                e.currentTarget.classList.remove("selectedPlace");
+                              } else {
+                                e.currentTarget.classList.add("selectedPlace");
+                              }
+                            }
                         });
                       }
                     }
@@ -116,7 +127,14 @@
         return selectedAttributes;
       }
 
+
+
       function mineDecisions(){
+        let loadDecisionButton = document.getElementById('mine-decisions-btn');
+        let loadDecisionButtonLoadingSpan = document.querySelector('#mine-decisions-btn > span.spinner-border');
+        loadDecisionButton.setAttribute('disabled',"");
+        loadDecisionButtonLoadingSpan.style.display = 'inline-block';
+
         let selectedAttributes = getSelectedAttributes()
         fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then(async (res) => {
           console.log({res})
@@ -124,13 +142,21 @@
           const svg_representations = json['svg_representation'];
           const evaluation_result = json['evaluation_results'];
           console.log({evaluation_result})
+          decisionMined = true;
+          loadDecisionButton.removeAttribute('disabled'); // do we want to do that?
+          loadDecisionButtonLoadingSpan.style.display = 'none';
           for(const placeId in svg_representations){
             const blob = new Blob([svg_representations[placeId]],{type: 'image/svg+xml'})
             const url = URL.createObjectURL(blob);
             console.log({url})
             const img = document.createElement('img');
+            img.id = `expl_repr_${placeId}`;
+            img.style.display = 'none';
+            img.style.maxWidth = '100%';
             img.src = url;
-            document.body.appendChild(img);
+            img.classList.add('explainable_representation');
+            document.getElementById('explainable_representation').appendChild(img)
+            // document.body.appendChild(img);
           }
         }).catch((err) => {
           console.error({err})
@@ -142,6 +168,12 @@
       });
     </script>
     <style>
+      .explainable_representation {
+        height: 100%;
+      }
+      .offcanvas {
+        --bs-offcanvas-height: 40vh !important;
+      }
       #discoveredPetriNet svg {
         border: 2px dashed rgba(49, 47, 47, 0.685);
       }
@@ -275,9 +307,24 @@
             </div>
         </div>
         <div class="text-center my-2">
-          <button type="button" class="btn btn-primary btn-lg" onclick="mineDecisions()">Mine decisions</button>
-        </div>
+          <button id="mine-decisions-btn" class="btn btn-primary btn-lg" onclick="mineDecisions()" type="button">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+            Mine Decisions
+          </button>
 
+        </div>
+        <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Enable body scrolling</button> -->
+        <div class="offcanvas offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Explainable Representations</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <div id="explainable_representation" class="d-flex justify-content-center h-100" >
+
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <script
