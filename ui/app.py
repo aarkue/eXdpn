@@ -167,7 +167,7 @@ def mine_decisions(logid: str):
         svg_representations = dict()
         evaluation_results = dict()
         for place,dataframe in datasets.items():
-            guard_manager = Guard_Manager(dataframe, [ML_Technique.NN])
+            guard_manager = Guard_Manager(dataframe)
             print(guard_manager.ml_list)
             evaluation = guard_manager.evaluate_guards()
             technique_name, trained_technique = guard_manager.get_best()
