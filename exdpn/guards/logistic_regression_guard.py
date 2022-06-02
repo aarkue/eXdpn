@@ -5,7 +5,7 @@ from exdpn.data_preprocessing import fit_ohe
 from sklearn.linear_model import LogisticRegression
 from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict
+from typing import Dict, List
 import shap 
 from matplotlib.figure import Figure
 import matplotlib.patches as mpatches
@@ -17,7 +17,7 @@ class Logistic_Regression_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, any] = {"C": 0.5}) -> None:
         """Initializes a logistic regression model based guard with the provided hyperparameters
         Args:
-            hyperparameters (dict[str, any]): Hyperparameters used for the classifier"""
+            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier"""
         super().__init__(hyperparameters)
         # possible hyperparameter: C (regularization parameter)
         try:
@@ -57,12 +57,12 @@ class Logistic_Regression_Guard(Guard):
 
         self.model = self.model.fit(X, y_transformed)
 
-    def predict(self, input_instances: DataFrame) -> list[PetriNet.Transition]:
+    def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
         Args:
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
-            predicted_transitions (list[PetriNet.Transition]): Predicted transitions"""
+            predicted_transitions (List[PetriNet.Transition]): Predicted transitions"""
         # scale numerical attributes
         input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
