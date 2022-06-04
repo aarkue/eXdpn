@@ -69,7 +69,7 @@ class TestDataPreprocessing(unittest.TestCase):
                   counts_train[key] if key not in counts_test else 
                   counts_test[key] if key not in counts_train else 
                   0 for key in transition_keys]
-        self.assertEqual(counts, true_classes.values)
+        self.assertListEqual(counts, list(true_classes.values))
 
 
 
