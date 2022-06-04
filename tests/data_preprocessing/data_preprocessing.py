@@ -1,5 +1,6 @@
 import unittest
 from pandas import DataFrame
+import pandas as pd 
 import os 
 from exdpn import petri_net
 from exdpn import load_event_log
@@ -19,6 +20,8 @@ def preprocess_data() -> Tuple[DataFrame]:
     # use data set of decision point p_3
     place_three = [place for place in guard_datasets_per_place.keys() if place.name == "p_3"][0]
     df = guard_datasets_per_place.get(place_three)
+
+    df = pd.concat([df, df])
 
     # drop unnedded columns 
     df = df.drop(["event::time:timestamp"], axis = 1) 
@@ -42,11 +45,11 @@ def preprocess_data() -> Tuple[DataFrame]:
     df_X_train_scaled_ohe = apply_ohe(df_X_train_scaled, ohe) 
     df_X_test_scaled_ohe = apply_ohe(df_X_test_scaled, ohe) 
 
-    return df_X_train_scaled_ohe, df_X_test_scaled_ohe
+    return df, df_X_train_scaled_ohe, df_X_test_scaled_ohe, df_y_train, df_y_test
 
 class TestDataPreprocessing(unittest.TestCase):
     def test_simple_preprocessing(self):
-        df_X_train_scaled_ohe, df_X_test_scaled_ohe = preprocess_data()
+        df, df_X_train_scaled_ohe, df_X_test_scaled_ohe, df_y_train, df_y_test = preprocess_data()
         
         # check if all nans droped
         self.assertEqual(df_X_train_scaled_ohe.shape, df_X_train_scaled_ohe.dropna(how = 'all', axis = 1).shape)
@@ -57,6 +60,19 @@ class TestDataPreprocessing(unittest.TestCase):
 
         # check if training and test data frame have same columns after one hot encoding 
         self.assertEqual(df_X_train_scaled_ohe.columns.all(), df_X_test_scaled_ohe.columns.all())
+
+        # check if mapping from transition to int and back worked and no transitions were lost during train_test_split
+        true_classes = df.target.value_counts()
+        counts_train = df_y_train.value_counts()
+        counts_test = df_y_test.value_counts()
+        transition_keys = [key for key in true_classes.keys()]
+        counts = [counts_train[key] + counts_test[key] if (key in counts_test and key in counts_train) else 
+                  counts_train[key] if key not in counts_test else 
+                  counts_test[key] if key not in counts_train else 
+                  0 for key in transition_keys]
+        self.assertListEqual(counts, list(true_classes.values))
+
+
 
 if __name__ == "__main__":
     unittest.main()

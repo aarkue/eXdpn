@@ -10,6 +10,7 @@ import shap
 from matplotlib.figure import Figure
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt 
+import numpy as np 
 
 
 
@@ -55,7 +56,13 @@ class Logistic_Regression_Guard(Guard):
         y_transformed = [self.transition_int_map[transition]
                          for transition in y]
 
-        self.model = self.model.fit(X, y_transformed)
+        # check if more than 1 class in training set
+        if(len(np.unique(y_transformed))) == 1:
+            self.single_class = True
+            self.class_label = np.unique(y_transformed)
+        else:
+            self.single_class = False
+            self.model = self.model.fit(X, y_transformed)
 
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Shall use the classifier/model behind the guard to predict the next transition.
@@ -69,7 +76,10 @@ class Logistic_Regression_Guard(Guard):
         input_instances = apply_ohe(input_instances, self.ohe)
         self.input_instances = input_instances
         
-        predicted_transition_ids = self.model.predict(input_instances)
+        if self.single_class:
+            predicted_transition_ids = np.full(len(self.input_instances), self.class_label) 
+        else:
+            predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         # finds the key (transition) where the value (transition integer / id) corresponds to the predicted integer / id
         # for all predicted integers
@@ -86,26 +96,34 @@ class Logistic_Regression_Guard(Guard):
         Returns:
             explainable_representation (Figure): Matplotlib Figure of the trained logistic regression model"""
         
-        #print("A Logistic Regression Classifier calculates the probability that a sample belongs to a certain class, if the probability is >50% the sample is assigned to that class. In a multi-class classification problem (i.e., there are more than the usual two classes), the so-called One-vs-Rest method is used. This means that the original multi-class classification problem is split into multiple binary classification problems (P(this class) vs. P(not this class)).")
-
-        explainer = shap.LinearExplainer(self.model, self.X_train)
-
-        shap_values = explainer.shap_values(self.input_instances)
-
         classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
         
-        fig, ax = plt.subplots()
-        shap.summary_plot(shap_values, 
-                          self.input_instances, 
-                          plot_type = "bar", 
-                          show = False,
-                          class_names = classes,
-                          class_inds = range(len(classes)))
-        plt.title("Feature Impact on Probability", fontsize = 14)
-        plt.ylabel("Feature Attributes", fontsize = 14)
-        if len(classes) < 3:
-            # add label for binary manually
-            blue_patch = mpatches.Patch(color = 'dodgerblue', label = str(classes[1]))
-            plt.legend(handles = [blue_patch], loc = "lower right", frameon = False)
+        if self.single_class:
+            fig = plt.figure()
+            ax = fig.add_subplot()
+            fig.subplots_adjust(top = 0.85)
+            plt.figure(figsize = (9, 8))
+            ax.text(0, 0.7, 
+                    "Since only one class was represented in the training data, \nall samples are predicted as:\n" + str(classes[0]), 
+                    fontsize = 14)
+            ax.axis('off')
+        else:
+            explainer = shap.LinearExplainer(self.model, self.X_train)
+
+            shap_values = explainer.shap_values(self.input_instances)
+
+            fig, ax = plt.subplots()
+            shap.summary_plot(shap_values, 
+                              self.input_instances, 
+                              plot_type = "bar", 
+                              show = False,
+                              class_names = classes,
+                              class_inds = range(len(classes)))
+            plt.title("Feature Impact on Probability", fontsize = 14)
+            plt.ylabel("Feature Attributes", fontsize = 14)
+            if len(classes) < 3:
+                # add label for binary manually
+                blue_patch = mpatches.Patch(color = 'dodgerblue', label = str(classes[1]))
+                plt.legend(handles = [blue_patch], loc = "lower right", frameon = False)
 
         return fig 
