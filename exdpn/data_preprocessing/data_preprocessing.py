@@ -25,9 +25,17 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> tuple[DataFrame, Data
     df_X, df_y = basic_data_preprocessing(dataframe)
 
     # split data
-    X_train, X_test, y_train, y_test = train_test_split(df_X, df_y)
+    # use mapping for stratify (map transition to integers)
+    transition_int_map = {transition: index for index, transition in enumerate(list(set(df_y)))}
+    df_y_transformed = [transition_int_map[transition] for transition in df_y]
+    X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(df_X, df_y_transformed, stratify = df_y_transformed)
 
-    return X_train, X_test, y_train, y_test
+    # map back to transitions
+    y_train = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped]
+    y_test = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_test_mapped]
+
+
+    return X_train, X_test, pd.Series(y_train), pd.Series(y_test) 
 
 
 def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
@@ -49,12 +57,12 @@ def basic_data_preprocessing(dataframe: DataFrame) -> tuple[DataFrame]:
     # get target and feature names
     target_var = "target"
     df_X = dataframe.copy()
-    df_X = df_X.drop(target_var, axis=1)
+    df_X = df_X.drop(target_var, axis = 1)
     df_y = dataframe.copy()
     df_y = dataframe[target_var]
 
     # drop columns with all NaNs
-    df_X = df_X.dropna(how='all', axis=1)
+    df_X = df_X.dropna(how = 'all', axis = 1)
 
     # drop case::concept:name in event logs - if existing
     # if "case::concept:name" in df_X.columns:
@@ -72,12 +80,12 @@ def fit_scaling(X: DataFrame) -> tuple[MinMaxScaler, list[str]]:
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     """
     # exclude all columns that cannot be scaled
-    scalable_columns = X.select_dtypes(include=[np.number]).columns
+    scalable_columns = X.select_dtypes(include = [np.number]).columns
 
     if len(scalable_columns) == 0: return None, []
 
     # define and fit scaler
-    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler = MinMaxScaler(feature_range = (0, 1))
     scaler.fit(X[scalable_columns])
 
     return scaler, list(scalable_columns)
@@ -109,7 +117,7 @@ def fit_ohe(X: DataFrame) -> tuple[OneHotEncoder, list[str]]:
         OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
         ohe_column_names (list[str]): List of column names of One Hot Encoded dataframe
     """
-    ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
+    ohe = OneHotEncoder(sparse = False, handle_unknown = 'ignore')
     X_object = X.select_dtypes('object')
 
     return ohe.fit(X_object), list(X_object.columns)
@@ -125,9 +133,9 @@ def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
         X_encoded (DataFrame): Encoded data, if dataframe does not contain categorical data, the original \
         dataframe is returned
     """   
-    X = X.reset_index(drop=True)
+    X = X.reset_index(drop = True)
     X_object = X.select_dtypes('object')
 
     X_object_enc = ohe.transform(X_object)
     feature_names = ohe.get_feature_names_out(list(X_object.columns))
-    return concat([X.select_dtypes(exclude='object'), DataFrame(X_object_enc, columns=feature_names)], axis=1)
+    return concat([X.select_dtypes(exclude = 'object'), DataFrame(X_object_enc, columns = feature_names)], axis=1)
