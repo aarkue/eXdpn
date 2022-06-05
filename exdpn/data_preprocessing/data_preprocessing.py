@@ -29,7 +29,10 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     # use mapping for stratify (map transition to integers)
     transition_int_map = {transition: index for index, transition in enumerate(list(set(df_y)))}
     df_y_transformed = [transition_int_map[transition] for transition in df_y]
-    X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(df_X, df_y_transformed, stratify = df_y_transformed)
+    try:
+        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(df_X, df_y_transformed, stratify = df_y_transformed)
+    except ValueError:
+        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(df_X, df_y_transformed)
 
     # map back to transitions
     y_train = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped]
