@@ -1,3 +1,4 @@
+from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.log.obj import EventLog
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
@@ -112,36 +113,38 @@ class Data_Petri_Net():
     def get_mean_guard_conformance(self, test_event_log: EventLog) -> float:
         """Returns the mean conformance (percentage of traces where ALL guards were respected) from the given event log.
         Args:
-            test_event_log (EventLog): The event log used to test the performance of the data Perti net"""
+            test_event_log (EventLog): The event log used to test the performance of the data Perti net
+        Returns:
+            mean conformace (float): Fraction of traces that respected ALL decision points passed during token based replay. \
+                Respecting a decision point means moving to the transition predicted by the guard at the corresponding place"""
         if self.guard_per_place == None:
             self.get_best()
 
+        # remember which entry in a guard dataset belongs to which trace
+        TRACE_NUMBER_ATTR_NAME = '__trace_number__'
+        assert TRACE_NUMBER_ATTR_NAME not in self.case_level_attributes, \
+            f"Error: case level attribute name '{TRACE_NUMBER_ATTR_NAME}' is reserved for internal purposes"
+
         for i in range(len(test_event_log)):
-            test_event_log[i].attributes['__trace_number__'] = i
+            test_event_log[i].attributes[TRACE_NUMBER_ATTR_NAME] = i
 
         self.print_if_verbose("-> Computing guard datasets for replay")
-
-        assert '__trace_number__' not in self.case_level_attributes, \
-            "Error: case level attribute name '__trace_number__' is reserved for internal purposes"
-
         guard_datasets = get_all_guard_datasets(test_event_log,
                                                 self.petri_net, self.im, self.fm,
                                                 self.case_level_attributes +
-                                                ['__trace_number__'],
+                                                [TRACE_NUMBER_ATTR_NAME],
                                                 self.event_attributes,
                                                 self.sliding_window_size,
                                                 self.act_name_attr)
-        # TODO: add support for bringing your own ds with you
 
         prediction_result = {i: 1 for i in range(len(test_event_log))}
-
         for decision_point, dp_dataset in guard_datasets.items():
             if len(dp_dataset) == 0:
                 continue
 
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
-            trace_nums = dp_dataset['case::__trace_number__']
+            trace_nums = dp_dataset[f'case::{TRACE_NUMBER_ATTR_NAME}']
             X = dp_dataset[cols_to_keep]
             y = list(dp_dataset["target"])
 
