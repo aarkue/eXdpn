@@ -1,4 +1,5 @@
 from pandas import DataFrame, concat
+from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List, Tuple
 
@@ -33,8 +34,8 @@ class Guard_Manager():
         # TODO: think about persistence of the encoders so that new unseen instances can still be encoded
 
         X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dataframe)
-        #X_train, X_test, y_train, y_test, scaler, scalable_columns = data_preprocessing_evaluation(dataframe)
         
+        #self.dataframe = dataframe
         self.X_train = X_train
         self.X_test  = X_test
         self.y_train = y_train
@@ -44,6 +45,7 @@ class Guard_Manager():
         self.ml_list = ml_list
         self.guards_list = {technique: technique.value() for technique in self.ml_list}
         self.guards_results = None
+
 
     def evaluate_guards(self) -> Dict[str, any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
@@ -66,9 +68,13 @@ class Guard_Manager():
             y_test_transformed = [transition_int_map[transition] for transition in self.y_test.tolist()]
 
             self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
-            # TODO: decide on keeping model trained w/ train portion of data
-            # or "retraining" the model w/ all data available -> all data
+            
+            # TODO retrain model on all available data, decide at which point would be best
+            #df_X, df_y = basic_data_preprocessing(self.dataframe)
+            #guard.train(df_X, df_y)
+        
         return self.guards_results
+
 
     def get_best(self) -> Tuple[ML_Technique, Guard]:
         """ Returns "best" guard for a decision point
@@ -78,4 +84,5 @@ class Guard_Manager():
             """
         assert self.guards_results != None, "Guards must be evaluated first"
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
+        
         return best_guard_name, self.guards_list[best_guard_name]
