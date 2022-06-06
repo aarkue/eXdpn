@@ -52,7 +52,6 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
         df_y (DataFrame): Preprocessed dataframe of target variable
     """
 
-    # TODO define more correct data types?
     # convert timestamp to datatype "datetime"
     if "event::time:timestamp" in dataframe.columns:
         dataframe["event::time:timestamp"] = pd.to_datetime(
@@ -67,10 +66,6 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
 
     # drop columns with all NaNs
     df_X = df_X.dropna(how = 'all', axis = 1)
-
-    # drop case::concept:name in event logs - if existing
-    # if "case::concept:name" in df_X.columns:
-    #    df_X = df_X.drop(["case::concept:name"], axis = 1)
 
     return df_X, df_y
 
@@ -142,4 +137,5 @@ def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
 
     X_object_enc = ohe.transform(X_object)
     feature_names = ohe.get_feature_names_out(list(X_object.columns))
+    
     return concat([X.select_dtypes(exclude = 'object'), DataFrame(X_object_enc, columns = feature_names)], axis=1)
