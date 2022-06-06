@@ -120,6 +120,10 @@ class Data_Petri_Net():
             test_event_log[i].attributes['__trace_number__'] = i
 
         self.print_if_verbose("-> Computing guard datasets for replay")
+
+        assert '__trace_number__' not in self.case_level_attributes, \
+            "Error: case level attribute name '__trace_number__' is reserved for internal purposes"
+
         guard_datasets = get_all_guard_datasets(test_event_log,
                                                 self.petri_net, self.im, self.fm,
                                                 self.case_level_attributes +
@@ -129,11 +133,11 @@ class Data_Petri_Net():
                                                 self.act_name_attr)
         # TODO: add support for bringing your own ds with you
 
-        prediction_result = {dp: {i:1 for i in range(len(test_event_log))} for dp in guard_datasets.keys()}
+        prediction_result = {i: 1 for i in range(len(test_event_log))}
 
         for decision_point, dp_dataset in guard_datasets.items():
             if len(dp_dataset) == 0:
-                    continue
+                continue
 
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
@@ -142,45 +146,9 @@ class Data_Petri_Net():
             y = list(dp_dataset["target"])
 
             prediction = self.guard_per_place[decision_point].predict(X)
-    
+
             for j in range(len(y)):
-                if y[j] != prediction[j]: 
-                    prediction_result[decision_point][trace_nums[j]] = 0
+                if y[j] != prediction[j]:
+                    prediction_result[trace_nums[j]] = 0
 
-        trace_performance = 0
-        for i in tqdm(range(len(test_event_log))):
-            conform = 1
-            for conform_at_dp in prediction_result.values():
-                if conform_at_dp[i] == 0:
-                    conform = 0
-                    break
-            trace_performance = trace_performance + conform
-            
-
-        #trace_performance = 0
-
-        #for i in tqdm(range(len(test_event_log))):
-        #    conformance = 1 # no guards passed leads to a conformance value of 1
-        #    for decision_point, dp_dataset in guard_datasets.items():
-        #        dp_dataset = dp_dataset[dp_dataset['case::__trace_number__'] == i]
-
-        #        if len(dp_dataset) == 0:
-        #            continue
-
-        #        cols_to_keep = [col for col in dp_dataset.columns
-        #                        if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
-        #        X = dp_dataset[cols_to_keep]
-        #        y = list(dp_dataset["target"])
-
-        #        respected = 0  # count the number of instances where this trace respected the guard
-        #        prediction = self.guard_per_place[decision_point].predict(X)
-
-        #        for j in range(len(y)):
-        #            if y[j] == prediction[j]:
-        #                respected = respected + 1
-
-        #        conformance = conformance * \
-        #            (respected / len(y))
-        #    trace_performance = trace_performance + conformance
-
-        return trace_performance / len(test_event_log)
+        return sum(list(prediction_result.values())) / len(test_event_log)
