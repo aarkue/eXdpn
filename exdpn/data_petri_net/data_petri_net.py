@@ -1,5 +1,5 @@
 from pandas import DataFrame
-from pm4py.objects.petri_net.obj import PetriNet
+from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
 from typing import Dict
@@ -17,30 +17,33 @@ from exdpn.guard_datasets import get_all_guard_datasets
 class Data_Petri_Net():
     def __init__(self,
                  event_log: EventLog,
+                 case_level_attributes: list[str],
+                 event_attributes: list[str],
                  petri_net: PetriNet = None,
-                 initial_marking: PetriNet.Place = None,
-                 final_marking: PetriNet.Place = None,
-                 case_level_attributes: list[str] = [],
-                 event_attributes: list[str] = [],
+                 initial_marking: Marking = [],
+                 final_marking: Marking = [],
                  sliding_window_size: int = 3,
                  act_name_attr: str = "concept:name",
-                 ml_list: list[ML_Technique] = [ML_Technique.DT],
+                 ml_list: list[ML_Technique] = [ML_Technique.NN,
+                                                ML_Technique.DT,
+                                                ML_Technique.LR,
+                                                ML_Technique.SVM],
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
         Args:
             event_log (EventLog): Event log to be used as a basis for the data Petri net
+            case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+            event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
             initial_marking (PetriNet.Place): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
             final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
-            case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-            event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
             sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
             act_name_attr (str): Event level attribute name corresponding to the name of an event
             ml_list (list[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
                 implemented techniques
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
-        if petri_net == None or initial_marking == None or final_marking == None:
+        if petri_net == None or (len(initial_marking) == 0) or (len(final_marking) == 0):
             self.petri_net, self.im, self.fm = get_petri_net(event_log)
         else:
             self.petri_net = petri_net
@@ -69,7 +72,7 @@ class Data_Petri_Net():
             self.print_if_verbose(
                 f"-> Evaluating guards at decision point '{place.name}'... ", end='')
             guard_manager.evaluate_guards()
-            self.print_if_verbose("Done")
+            self.print_if_verbose("Done") 
 
         self.guard_per_place = None
         self.ml_technique_per_place = {}
@@ -100,7 +103,7 @@ class Data_Petri_Net():
             self.print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}")
             self.print_if_verbose(
-                guard.get_explainable_representation(), end="\n")
+                guard.get_explainable_representation())
 
         return self.guard_per_place
 
