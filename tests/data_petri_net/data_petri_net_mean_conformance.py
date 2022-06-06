@@ -1,4 +1,3 @@
-from matplotlib.pyplot import eventplot
 from exdpn.data_petri_net import Data_Petri_Net
 from exdpn.load_event_log import import_xes
 
