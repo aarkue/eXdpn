@@ -19,7 +19,7 @@ class Data_Petri_Net():
                  event_log: EventLog,
                  case_level_attributes: list[str],
                  event_attributes: list[str],
-                 numeric_attributes: List[str],
+                 numeric_attributes: List[str] = [],
                  petri_net: PetriNet = None,
                  initial_marking: Marking = [],
                  final_marking: Marking = [],
@@ -61,7 +61,8 @@ class Data_Petri_Net():
         self.event_attributes = event_attributes
         self.sliding_window_size = sliding_window_size
         self.act_name_attr = act_name_attr
-        # TODO: remove default values in get all guard ds
+        # TODO: remove default values in get all guard ds -> DONE, also removed
+        # the default value for ml_list in guard manager 
 
         # initialize all gms
         # TODO: add support for custom parameters per ml technique

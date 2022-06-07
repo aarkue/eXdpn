@@ -17,15 +17,11 @@ class Guard_Manager():
     def __init__(self, 
                  dataframe: DataFrame, 
                  numeric_attributes: List[str], 
-                 ml_list: List[ML_Technique] = [ML_Technique.NN,
-                                                ML_Technique.DT,
-                                                ML_Technique.LR,
-                                                ML_Technique.SVM]) -> None:
+                 ml_list: List[ML_Technique]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique
         Args: 
-            ml_list (List[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
-                implemented techniques
+            ml_list (List[ML_technique]): List of all machine learning techniques that should be evaluated
             dataframe (DataFrame): Dataset used to evaluate the guard    
         Returns: 
             guards_List (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \

@@ -152,10 +152,10 @@ def get_guard_dataset(place: PetriNet.Place,
 
 
 def get_all_guard_datasets(log: EventLog, net: PetriNet, im: PetriNet.Place, fm: PetriNet.Place,
-                           case_level_attributes: List[str] = [],
-                           event_attributes: List[str] = [],
-                           sliding_window_size: int = 3,
-                           act_name_attr: str = "concept:name") -> Dict[PetriNet.Place, DataFrame]:
+                           case_level_attributes: List[str],
+                           event_attributes: List[str],
+                           sliding_window_size: int,
+                           act_name_attr: str) -> Dict[PetriNet.Place, DataFrame]:
     """ Returns a mapping of all guards (desicion points) to their corresponding guard dataset. Thes guard dataset contains all combinations of trace attributes and outgoing \
         transition seen in the data for the particular guard, i.e., the attribute values of all instances that passed the corresponding decision point as well as the outgoing transition.
     Args:
