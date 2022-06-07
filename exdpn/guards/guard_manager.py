@@ -14,10 +14,13 @@ from sklearn.metrics import f1_score
 # machine learning techniques (all implemented) or the selected machine learning techniques
 
 class Guard_Manager():
-    def __init__(self, dataframe: DataFrame, ml_list: List[ML_Technique] = [ML_Technique.NN,
-                                                                            ML_Technique.DT,
-                                                                            ML_Technique.LR,
-                                                                            ML_Technique.SVM]) -> None:
+    def __init__(self, 
+                 dataframe: DataFrame, 
+                 numeric_attributes: List[str], 
+                 ml_list: List[ML_Technique] = [ML_Technique.NN,
+                                                ML_Technique.DT,
+                                                ML_Technique.LR,
+                                                ML_Technique.SVM]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique
         Args: 
@@ -33,7 +36,7 @@ class Guard_Manager():
 
         # TODO: think about persistence of the encoders so that new unseen instances can still be encoded
 
-        X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dataframe)
+        X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dataframe, numeric_attributes)
         
         #self.dataframe = dataframe
         self.X_train = X_train

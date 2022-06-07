@@ -2,7 +2,7 @@ from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
-from typing import Dict
+from typing import Dict, List 
 from tqdm import tqdm
 
 from exdpn.decisionpoints import find_decision_points
@@ -19,6 +19,7 @@ class Data_Petri_Net():
                  event_log: EventLog,
                  case_level_attributes: list[str],
                  event_attributes: list[str],
+                 numeric_attributes: List[str],
                  petri_net: PetriNet = None,
                  initial_marking: Marking = [],
                  final_marking: Marking = [],
@@ -65,7 +66,7 @@ class Data_Petri_Net():
         # initialize all gms
         # TODO: add support for custom parameters per ml technique
         self.guard_manager_per_place = {place: Guard_Manager(
-            self.guard_ds_per_place[place], ml_list=ml_list) for place in self.decision_points.keys()}
+            self.guard_ds_per_place[place], numeric_attributes=numeric_attributes, ml_list=ml_list) for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers
         for place, guard_manager in self.guard_manager_per_place.items():

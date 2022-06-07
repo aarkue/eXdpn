@@ -8,7 +8,7 @@ from sklearn.preprocessing import OneHotEncoder
 from typing import Tuple, List
 
 
-def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
+def data_preprocessing_evaluation(dataframe: DataFrame, numeric_attributes: List[str]) -> Tuple[DataFrame, DataFrame, Series, Series]:
     """ Data preprocessing for dataframes before they are used for the machine learning model selection. This does some \
     basic preprocessing, such as converting all columns to the correct data type, droping of columns with only NaNs and \
     defining feature variables and target variables. Furthermore, the data is split into a train and test data sets \
@@ -23,7 +23,7 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     """
 
     # perform basic preprocessing
-    df_X, df_y = basic_data_preprocessing(dataframe)
+    df_X, df_y = basic_data_preprocessing(dataframe, numeric_attributes)
 
     # split data
     # use mapping for stratify (map transition to integers)
@@ -42,11 +42,12 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     return X_train, X_test, pd.Series(y_train), pd.Series(y_test) 
 
 
-def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
+def basic_data_preprocessing(dataframe: DataFrame, numeric_attributes: List[str]) -> Tuple[DataFrame]:
     """ Basic preprocessing before dataframes, i.e., converting all columns to the correct data type, droping of columns \
     with only NaNs and defining feature variables and target variables
     Args:
         dataframe (DataFrame): Dataframe to be transformed
+        numeric_attributes (List[str]): Convert numeric attributes to float, optional 
     Returns: 
         df_X (DataFrame): Preprocessed dataframe of feature variables
         df_y (DataFrame): Preprocessed dataframe of target variable
@@ -54,8 +55,12 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
 
     # convert timestamp to datatype "datetime"
     if "event::time:timestamp" in dataframe.columns:
-        dataframe["event::time:timestamp"] = pd.to_datetime(
-            dataframe["event::time:timestamp"])
+        dataframe["event::time:timestamp"] = pd.to_datetime(dataframe["event::time:timestamp"])
+    # convert numeric attributes to float
+    if numeric_attributes:
+        for na in numeric_attributes:
+            dataframe = dataframe.astype({na: float})
+
 
     # get target and feature names
     target_var = "target"
