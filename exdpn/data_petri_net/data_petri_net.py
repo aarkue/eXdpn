@@ -1,4 +1,6 @@
+from unicodedata import numeric
 from pandas import DataFrame
+from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
@@ -59,6 +61,7 @@ class Data_Petri_Net():
 
         self.case_level_attributes = case_level_attributes
         self.event_attributes = event_attributes
+        self.numeric_attributes = numeric_attributes
         self.sliding_window_size = sliding_window_size
         self.act_name_attr = act_name_attr
         # TODO: remove default values in get all guard ds -> DONE, also removed
@@ -99,13 +102,13 @@ class Data_Petri_Net():
 
         for place, guard_manager in self.guard_manager_per_place.items():
             ml_technique, guard = guard_manager.get_best()
-            self.guard_per_place[place] = guard
+            self.guard_per_place[place] = guard[1] # use model based on all data
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}")
             self.print_if_verbose(
-                guard.get_explainable_representation())
+                guard[0].get_explainable_representation()) # use "training" model for representation
 
         return self.guard_per_place
 
@@ -150,8 +153,9 @@ class Data_Petri_Net():
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
             trace_nums = dp_dataset[f'case::{TRACE_NUMBER_ATTR_NAME}']
-            X = dp_dataset[cols_to_keep]
-            y = list(dp_dataset["target"])
+            X_raw, y_raw = basic_data_preprocessing(dp_dataset, self.numeric_attributes)
+            X = X_raw[cols_to_keep]
+            y = list(y_raw)
 
             prediction = self.guard_per_place[decision_point].predict(X)
 

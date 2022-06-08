@@ -34,7 +34,8 @@ class Guard_Manager():
 
         X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dataframe, numeric_attributes)
         
-        #self.dataframe = dataframe
+        self.dataframe = dataframe
+        self.numeric_attributes = numeric_attributes
         self.X_train = X_train
         self.X_test  = X_test
         self.y_train = y_train
@@ -42,7 +43,7 @@ class Guard_Manager():
 
         # create list of all needed machine learning techniques to evaluate the guards
         self.ml_list = ml_list
-        self.guards_list = {technique: technique.value() for technique in self.ml_list}
+        self.guards_list = {technique: [technique.value(), technique.value()] for technique in self.ml_list}
         self.guards_results = None
 
 
@@ -55,11 +56,10 @@ class Guard_Manager():
             """
         self.guards_results = {}
         # evaluate all selected ml techniques for all guards of the given decision point
-        for guard_name, guard in self.guards_list.items():
-            guard.train(self.X_train, self.y_train)
-            
-            y_prediction = guard.predict(self.X_test)
-
+        for guard_name, guard_models in self.guards_list.items():
+            guard_models[0].train(self.X_train, self.y_train)
+            y_prediction = guard_models[0].predict(self.X_test)
+             
             # convert Transition objects to integers so that sklearn's F1 score doesn't freak out
             # this is ugly, we know
             transition_int_map = {transition: index for index, transition in enumerate(list(set(y_prediction + self.y_test.tolist())))}
@@ -68,18 +68,20 @@ class Guard_Manager():
 
             self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
             
-            # TODO retrain model on all available data, decide at which point would be best
-            #df_X, df_y = basic_data_preprocessing(self.dataframe)
-            #guard.train(df_X, df_y)
+            # retrain model on all available data
+            df_X, df_y = basic_data_preprocessing(self.dataframe, self.numeric_attributes)
+            guard_models_temp = guard_models[1]
+            guard_models_temp.train(df_X, df_y)
         
         return self.guards_results
 
 
-    def get_best(self) -> Tuple[ML_Technique, Guard]:
+    def get_best(self) -> Tuple[ML_Technique, List[Guard]]:
         """ Returns "best" guard for a decision point
         Returns: 
-            best_guard (Tuple[ML_Technique, Guard]): Returns "best" guard for a decision point with respect to the \
-                chosen metric (F1 score), the returned tuple contains the machine learning technique and corresponding guard
+            best_guard (Tuple[ML_Technique, List[Guard, Guard]]): Returns "best" guard for a decision point with respect to the \
+                chosen metric (F1 score), the returned tuple contains the machine learning technique and a list with the \
+                corresponding training guard (on position 0) and final guard (position 1)
             """
         assert self.guards_results != None, "Guards must be evaluated first"
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
