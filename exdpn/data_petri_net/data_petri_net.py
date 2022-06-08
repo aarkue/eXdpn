@@ -1,4 +1,3 @@
-from unicodedata import numeric
 from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
