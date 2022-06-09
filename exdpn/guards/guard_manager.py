@@ -19,14 +19,13 @@ class Guard_Manager():
                  numeric_attributes: List[str], 
                  ml_list: List[ML_Technique]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
-        returns a dictionary with the list of all guards for each machine learning technique
-        Args: 
+        returns a dictionary with the list of all guards for each machine learning technique.
+        Args:
             ml_list (List[ML_technique]): List of all machine learning techniques that should be evaluated
-            dataframe (DataFrame): Dataset used to evaluate the guard    
-        Returns: 
-            guards_List (Dict[str, Guard]): Returns a dictionary with all used machine learning techniques \
-                mapped to the guards for the selected machine learning techniques       
+            numeric_attributes (List[str]): Convert numeric attributes to float
+            dataframe (DataFrame): Dataset used to evaluate the guard        
         """
+        
         # TODO: refactor data_preprocessing so that it does not do more than one thing
         # or does all the things
 
@@ -49,11 +48,12 @@ class Guard_Manager():
 
     def evaluate_guards(self) -> Dict[str, any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
-        using the specified machine learning techniques
+        using the specified machine learning techniques.
         Returns:
             guards_results (Dict[str, any]): Returns a mapping of all selected machine learning techniques \
-                to the achieved F1-score and the trained model
-            """
+            to the achieved F1-score and two trained guard models: the "training" guard (position 0) and final guard (position 1)
+        """
+        
         self.guards_results = {}
         # evaluate all selected ml techniques for all guards of the given decision point
         for guard_name, guard_models in self.guards_list.items():
@@ -77,12 +77,13 @@ class Guard_Manager():
 
 
     def get_best(self) -> Tuple[ML_Technique, List[Guard]]:
-        """ Returns "best" guard for a decision point
-        Returns: 
+        """ Returns "best" guard for a decision point.
+        Returns:
             best_guard (Tuple[ML_Technique, List[Guard, Guard]]): Returns "best" guard for a decision point with respect to the \
-                chosen metric (F1 score), the returned tuple contains the machine learning technique and a list with the \
-                corresponding training guard (on position 0) and final guard (position 1)
-            """
+            chosen metric (F1 score), the returned tuple contains the machine learning technique and a list with the \
+            corresponding "training" guard (position 0) and final guard (position 1)
+        """
+        
         assert self.guards_results != None, "Guards must be evaluated first"
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
         

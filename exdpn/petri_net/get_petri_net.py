@@ -1,4 +1,3 @@
-from sre_constants import MIN_REPEAT
 import pm4py
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.log.obj import EventLog
@@ -7,11 +6,9 @@ from typing import Tuple
 
 def get_petri_net (log: EventLog, miner_type: str = "AM") -> Tuple[PetriNet, PetriNet.Place, PetriNet.Place]:
     """ Mines Petri Net based on given event log and returns found Petri Net.
-
     Args: 
         log (EventLog): Given event log, as EventLog
         miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default) 
-    
     Returns: 
         net (PetriNet): Petri Net based on input data, later used to find decision find decision points 
         initial_marking (PetriNet.Place): Initial Marking

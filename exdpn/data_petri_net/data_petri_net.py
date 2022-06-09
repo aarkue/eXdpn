@@ -20,7 +20,7 @@ class Data_Petri_Net():
                  event_log: EventLog,
                  case_level_attributes: list[str],
                  event_attributes: list[str],
-                 numeric_attributes: List[str] = [],
+                 numeric_attributes: list[str] = [],
                  petri_net: PetriNet = None,
                  initial_marking: Marking = [],
                  final_marking: Marking = [],
@@ -36,14 +36,17 @@ class Data_Petri_Net():
             event_log (EventLog): Event log to be used as a basis for the data Petri net
             case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
             event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
+            numeric_attributes (list[str]): Attribute list to be converted to float, optional
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
             initial_marking (PetriNet.Place): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
             final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
-            sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
+            sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events, default is last 3 events
             act_name_attr (str): Event level attribute name corresponding to the name of an event
             ml_list (list[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
                 implemented techniques
-            verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
+            verbose (bool): Specifies if the execution of all methods should print status-esque messages or not, default is true
+        """
+        
         self.verbose = verbose
         if petri_net == None or (len(initial_marking) == 0) or (len(final_marking) == 0):
             self.petri_net, self.im, self.fm = get_petri_net(event_log)
@@ -82,17 +85,19 @@ class Data_Petri_Net():
         self.ml_technique_per_place = {}
         self.performance_per_place = {}
 
+
     def print_if_verbose(self, string: str, end: str = '\n'):
-        """Internal method used as a shortcut for printing messages only if self.verbose is set to True"""
+        """Internal method used as a shortcut for printing messages only if self.verbose is set to True."""
         if self.verbose:
             print(string, end=end)
 
     def get_best(self) -> Dict[PetriNet.Place, Guard]:
-        """ Returns "best" guard for each decision point in the data Petri net
-        Returns: 
+        """ Returns "best" guard for each decision point in the data Petri net.
+        Returns:
             best_guards (Dict[PetriNet.Place, Guard]): Best performing guard for each decision point with respect to the \
                 chosen metric (F1 score)
         """
+        
         # TODO: add support for taking no guard if the best performance is bad / below threshold
         if self.guard_per_place != None:
             return
@@ -111,11 +116,20 @@ class Data_Petri_Net():
 
         return self.guard_per_place
 
+
     def get_guard_at_place(self, place: PetriNet.Place) -> Guard:
+        """ Returns "best" guard for given decision point.
+        Args:
+            place (PetriNet.Place): Decision point to be evaluated 
+        Returns:
+            guard (Guard): "Best" guard for given decision point
+        """
+        
         if self.guard_per_place == None:
             self.get_best()
 
         return self.guard_per_place[place]
+
 
     def get_mean_guard_conformance(self, test_event_log: EventLog) -> float:
         """Returns the mean conformance (percentage of traces where ALL guards were respected) from the given event log.
@@ -123,7 +137,9 @@ class Data_Petri_Net():
             test_event_log (EventLog): The event log used to test the performance of the data Perti net
         Returns:
             mean conformace (float): Fraction of traces that respected ALL decision points passed during token based replay. \
-                Respecting a decision point means moving to the transition predicted by the guard at the corresponding place"""
+                Respecting a decision point means moving to the transition predicted by the guard at the corresponding place
+        """
+        
         if self.guard_per_place == None:
             self.get_best()
 
@@ -143,12 +159,14 @@ class Data_Petri_Net():
                                                 self.event_attributes,
                                                 self.sliding_window_size,
                                                 self.act_name_attr)
-
+        
+        # initialize dict for results, assume all guards were respected for each trace
         prediction_result = {i: 1 for i in range(len(test_event_log))}
         for decision_point, dp_dataset in guard_datasets.items():
             if len(dp_dataset) == 0:
                 continue
 
+            # extract data for prediction 
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
             trace_nums = dp_dataset[f'case::{TRACE_NUMBER_ATTR_NAME}']
@@ -156,10 +174,10 @@ class Data_Petri_Net():
             X = X_raw[cols_to_keep]
             y = list(y_raw)
 
+            # check if prediction with current guard is correct 
             prediction = self.guard_per_place[decision_point].predict(X)
-
             for j in range(len(y)):
                 if y[j] != prediction[j]:
                     prediction_result[trace_nums[j]] = 0
-
+        
         return sum(list(prediction_result.values())) / len(test_event_log)
