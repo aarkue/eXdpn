@@ -20,7 +20,7 @@ class Data_Petri_Net():
                  event_attributes: List[str] = [],
                  sliding_window_size: int = 3,
                  act_name_attr: str = "concept:name",
-                 ml_list: List[ML_Technique] = [ML_Technique.DT],
+                 ml_list: List[ML_Technique] = [ML_Technique.DT, ML_Technique.LR, ML_Technique.SVM, ML_Technique.NN],
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
         Args:
