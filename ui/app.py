@@ -10,18 +10,16 @@ from werkzeug.security import safe_join
 
 import pm4py
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
-from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.objects.log.obj import EventLog
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 
 import uuid
 from exdpn.util import import_log
 from exdpn.decisionpoints import find_decision_points
-from exdpn.guard_datasets import get_all_guard_datasets
-from exdpn.guards import Guard_Manager, ML_Technique
-
+from exdpn.guards import ML_Technique
+from exdpn.data_petri_net import Data_Petri_Net
 import matplotlib.pyplot as plt
-# from exdpn.petri_net import get_petri_net
+from exdpn.petri_net import get_petri_net
 
 def get_upload_path(name):
     return safe_join("./uploads/", name)
@@ -142,8 +140,7 @@ def discover_model(logid: str, algo_name:str):
     else:
         log = loaded_event_logs[logid][1]
         if algo_name == "inductive_miner":
-            # net, im, fm = get_petri_net(log)
-            net, im, fm = inductive_miner.apply(log, variant=inductive_miner.Variants.IM)
+            net, im, fm = get_petri_net(log)
         elif algo_name == "alpha_miner":
             net, im, fm = pm4py.discover_petri_net_alpha(log)
         else:
@@ -161,29 +158,36 @@ def mine_decisions(logid: str):
         return {"message": "Log or model not loaded"}, 400
     else:
         body = request.get_json()
-        datasets = get_all_guard_datasets(loaded_event_logs[logid][1],discovered_models[logid][0],discovered_models[logid][1],discovered_models[logid][2],body['case_attributes'],body['event_attributes'])
-        managers = dict()
-        explainers = dict()
-        svg_representations = dict()
-        evaluation_results = dict()
-        for place,dataframe in datasets.items():
-            guard_manager = Guard_Manager(dataframe)
-            print(guard_manager.ml_list)
-            evaluation = guard_manager.evaluate_guards()
-            technique_name, trained_technique = guard_manager.get_best()
-            evaluation_results[id(place)] = evaluation[technique_name]
-            if trained_technique.is_explainable():
-                explainable_representation:plt.Figure = trained_technique.get_explainable_representation()
+
+        
+        dpn = Data_Petri_Net(loaded_event_logs[logid][1], discovered_models[logid][0], discovered_models[logid][1],discovered_models[logid][2],body['case_attributes'],body['event_attributes'])
+        return_info = dict()
+        def convert_ML_enum_to_name(ml_technique):
+            if ml_technique == ML_Technique.DT:
+                return "Decision Tree"
+            elif ml_technique == ML_Technique.SVM:
+                return "Support Vector Machine"
+            elif ml_technique == ML_Technique.LR:
+                return "Logistic Regression"
+            elif ml_technique == ML_Technique.NN:
+                return "Neural Network"
+            else:
+                return "Unknown"
+        for p in dpn.get_best():
+            best_guard = dpn.get_guard_at_place(p)
+            if best_guard.is_explainable():
+                # Find Explainable Representation
+                explainable_representation:plt.Figure = best_guard.get_explainable_representation()
                 imgdata = io.StringIO()
                 explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
                 imgdata.seek(0)  # rewind the data
                 svg_representation = imgdata.getvalue()
-
             else:
-                explainable_representation = None
                 svg_representation = ""
-            explainers[id(place)] = explainable_representation
-            svg_representations[id(place)] = svg_representation
-            print(f"Best technique for {place.name}: {technique_name}")
-            managers[place] = guard_manager
-        return {'evaluation_results': evaluation_results, 'svg_representation': svg_representations}, 200
+            return_info[id(p)] = {
+                'performance': dpn.performance_per_place[p],
+                'name': convert_ML_enum_to_name(dpn.ml_technique_per_place[p]),
+                'svg_representation': svg_representation
+            }
+        
+        return return_info, 200;
