@@ -2,16 +2,13 @@ from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
-from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
 from typing import Dict, List 
-from tqdm import tqdm
 
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import get_all_guard_datasets
 from exdpn.guards.guard import Guard
 from exdpn.petri_net import get_petri_net
 from exdpn.guards import Guard_Manager
-from exdpn.guards import ML_Technique
 from exdpn.guard_datasets import get_all_guard_datasets
 
 
@@ -26,10 +23,13 @@ class Data_Petri_Net():
                  final_marking: Marking = [],
                  sliding_window_size: int = 3,
                  act_name_attr: str = "concept:name",
-                 ml_list: list[ML_Technique] = [ML_Technique.NN,
-                                                ML_Technique.DT,
-                                                ML_Technique.LR,
-                                                ML_Technique.SVM],
+                 ml_list: list[str] = ["NN", "DT", "LR", "SVM"],
+                 hyperparameters: Dict[str, Dict[str, any]] = {"NN": {'hidden_layer_sizes': (10, 10)},
+                                                          "DT": {'min_samples_split': 0.1, 
+                                                                 'min_samples_leaf': 0.1, 
+                                                                 'ccp_alpha': 0.2},
+                                                          "LR": {"C": 0.5},
+                                                          "SVM": {"C": 0.5}},
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
         Args:
@@ -42,8 +42,10 @@ class Data_Petri_Net():
             final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
             sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events, default is last 3 events
             act_name_attr (str): Event level attribute name corresponding to the name of an event
-            ml_list (list[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
-                implemented techniques
+            ml_list (list[str]): List of all machine learning techniques that should be evaluated, default is all \
+            implemented techniques
+            hyperparameters (Dict[str, Dict[str, any]]): Hyperparameters that should be used for the machine learning techniques, \
+            if not specified default parameters are used
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not, default is true
         """
         
@@ -71,8 +73,11 @@ class Data_Petri_Net():
 
         # initialize all gms
         # TODO: add support for custom parameters per ml technique
-        self.guard_manager_per_place = {place: Guard_Manager(
-            self.guard_ds_per_place[place], numeric_attributes=numeric_attributes, ml_list=ml_list) for place in self.decision_points.keys()}
+        self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place], 
+                                                             numeric_attributes = self.numeric_attributes, 
+                                                             ml_list = ml_list,
+                                                             hyperparameters = hyperparameters) 
+                                        for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers
         for place, guard_manager in self.guard_manager_per_place.items():
@@ -110,7 +115,7 @@ class Data_Petri_Net():
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
-                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}")
+                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
             self.print_if_verbose(
                 guard[0].get_explainable_representation()) # use "training" model for representation
 
