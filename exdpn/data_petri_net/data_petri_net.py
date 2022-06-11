@@ -70,7 +70,8 @@ class Data_Petri_Net():
         # the default value for ml_list in guard manager 
 
         # initialize all gms
-        # TODO: add support for custom parameters per ml technique
+        # TODO: add support for custom parameters per ml technique 
+        # -> done: see new branch feat/hyperparameter_support s
         self.guard_manager_per_place = {place: Guard_Manager(
             self.guard_ds_per_place[place], numeric_attributes=numeric_attributes, ml_list=ml_list) for place in self.decision_points.keys()}
 
