@@ -135,4 +135,7 @@ class Neural_Network_Guard(Guard):
         # mean_shap_value = np.mean(shap_values, axis=0)
         # explanation = shap.Explanation(mean_shap_value,0,feature_names=self.feature_names, output_names=self.target_names)
         # shap.plots.bar(explanation)
+
+        plt.title("Feature Impact on Model Prediction", fontsize = 14)
+        plt.ylabel("Features", fontsize = 14)
         return fig
