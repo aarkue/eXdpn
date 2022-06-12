@@ -30,6 +30,7 @@ class Data_Petri_Net():
                                                 ML_Technique.DT,
                                                 ML_Technique.LR,
                                                 ML_Technique.SVM],
+                 guard_threshold: float = 0.6,
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
         Args:
@@ -85,6 +86,7 @@ class Data_Petri_Net():
         self.guard_per_place = None
         self.ml_technique_per_place = {}
         self.performance_per_place = {}
+        self.guard_threshold = guard_threshold
 
 
     def print_if_verbose(self, string: str, end: str = '\n'):
@@ -100,6 +102,7 @@ class Data_Petri_Net():
         """
         
         # TODO: add support for taking no guard if the best performance is bad / below threshold
+        # -> done
         if self.guard_per_place != None:
             return
 
@@ -107,6 +110,11 @@ class Data_Petri_Net():
 
         for place, guard_manager in self.guard_manager_per_place.items():
             ml_technique, guard = guard_manager.get_best()
+            if max(guard_manager.guards_results.values()) < self.guard_threshold:
+                max_performance = max(guard_manager.guards_results.values())
+                self.print_if_verbose(
+                    f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
+                continue
             self.guard_per_place[place] = guard[1] # use model based on all data
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
