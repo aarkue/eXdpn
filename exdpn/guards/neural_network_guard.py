@@ -117,7 +117,7 @@ class Neural_Network_Guard(Guard):
         # explainer = shap.Explainer(self.model.predict, X_train_summary, output_names=self.target_names)
         # shap_values = explainer(self.training_data.sample(n=min(100, len(self.training_data))))
 
-        shap_values = explainer.shap_values(sampled_data, l1_reg=f"num_features({len(self.feature_names)})")
+        shap_values = explainer.shap_values(sampled_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         fig = plt.figure()
 
         # Force Plot
