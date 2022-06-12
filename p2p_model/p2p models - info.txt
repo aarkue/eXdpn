@@ -1,0 +1,4 @@
+p2p_base: 2 decision points
+
+p2p-base-expanded: like base but guards more overlapping, plus 3 additional decision points (guards after "invoice waiting", random decision for "payment reminder", decision after "goods inspected" depends on "invoice waitig")
+
