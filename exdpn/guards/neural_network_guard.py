@@ -106,15 +106,20 @@ class Neural_Network_Guard(Guard):
         """
         # X_train_summary = shap.kmeans(self.training_data, 1)
         sampled_data = self.training_data.sample(n=min(100, len(self.training_data)))
-        
 
+        def shap_predict(data:np.ndarray):
+            data_asframe = DataFrame(data, columns=self.feature_names)
+            ret =  self.model.predict(data_asframe);
+            return ret
 
-        explainer = shap.KernelExplainer(self.model.predict, sampled_data, output_names=self.target_names)
+        explainer = shap.KernelExplainer(shap_predict, sampled_data, output_names=self.target_names)
         
         # explainer = shap.Explainer(self.model.predict, X_train_summary, output_names=self.target_names)
         # shap_values = explainer(self.training_data.sample(n=min(100, len(self.training_data))))
+
         shap_values = explainer.shap_values(sampled_data)
         fig = plt.figure()
+
         # Force Plot
         # shap.force_plot(explainer.expected_value[0], shap_values[0], self.training_data.sample(n=min(100, len(self.training_data))))
 
