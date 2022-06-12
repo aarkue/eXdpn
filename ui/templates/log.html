@@ -21,6 +21,8 @@
       let logAttributes = null;
 
       let decisionMined = false;
+
+      let guardDataPerPlace = {};
       function loadEventLog() {
         fetch("/log/{{log_id}}/load", {
           method: "GET",
@@ -90,20 +92,15 @@
                         ellipse.classList.add("decisionPlace");
                         ellipse.addEventListener("click", (e) => {
                           if(decisionMined){
-                            document.querySelectorAll('.explainable_representation').forEach((e) => e.style.display = 'none');
-                            document.getElementById(`expl_repr_${title.textContent}`).style.display = 'block';
-                            const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
+                            const placeId = title.textContent;
+                            // Show data for selected place & guard
+                            document.getElementById('selected_guard_name').textContent = guardDataPerPlace[placeId]['name']
+                            document.getElementById('selected_guard_performance').textContent = Math.round(parseFloat(guardDataPerPlace[placeId]['performance'])*100)/100;
+                            document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
+                             const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
                             bsel.show();
                             console.log(title.textContent)
-                          }else{
-                            if (
-                              e.currentTarget.classList.contains("selectedPlace")
-                              ) {
-                                e.currentTarget.classList.remove("selectedPlace");
-                              } else {
-                                e.currentTarget.classList.add("selectedPlace");
-                              }
-                            }
+                          }
                         });
                       }
                     }
@@ -139,24 +136,14 @@
         fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then(async (res) => {
           console.log({res})
           const json = await res.json();
-          const svg_representations = json['svg_representation'];
-          const evaluation_result = json['evaluation_results'];
-          console.log({evaluation_result})
           decisionMined = true;
           loadDecisionButton.removeAttribute('disabled'); // do we want to do that?
           loadDecisionButtonLoadingSpan.style.display = 'none';
-          for(const placeId in svg_representations){
-            const blob = new Blob([svg_representations[placeId]],{type: 'image/svg+xml'})
+          guardDataPerPlace = json;
+          for(const placeId in json){
+            const blob = new Blob([json[placeId]['svg_representation']],{type: 'image/svg+xml'})
             const url = URL.createObjectURL(blob);
-            console.log({url})
-            const img = document.createElement('img');
-            img.id = `expl_repr_${placeId}`;
-            img.style.display = 'none';
-            img.style.maxWidth = '100%';
-            img.src = url;
-            img.classList.add('explainable_representation');
-            document.getElementById('explainable_representation').appendChild(img)
-            // document.body.appendChild(img);
+            guardDataPerPlace[placeId]['svg_url'] = url;
           }
         }).catch((err) => {
           console.error({err})
@@ -193,6 +180,9 @@
     </style>
 
     <div class="container mt-2">
+      <div class="d-flex justify-content-center">
+        <a href=".." class="link-primary">Back</a>
+      </div>
       <h1 class="text-center mb-5">eXdpn: {{log.name}}</h1>
       <div class="text-center">
         <div id="logInfo">
@@ -313,15 +303,17 @@
           </button>
 
         </div>
-        <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Enable body scrolling</button> -->
         <div class="offcanvas offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Explainable Representations</h5>
+          <div class="offcanvas-header align-items-start">
+            <div>
+              <h4 class="text-muted">Technique: <span id="selected_guard_name" class="text-success">No name</span></h4>
+              <p class="text-muted fs-4">F1 Score: <span id="selected_guard_performance" class="text-success"></span></p>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
             <div id="explainable_representation" class="d-flex justify-content-center h-100" >
-
+              <img id="selected_guard_svg"/>
             </div>
           </div>
         </div>

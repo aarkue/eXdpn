@@ -1,6 +1,6 @@
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.log.obj import EventLog
-from typing import Dict
+from typing import Dict, List
 
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import get_all_guard_datasets
@@ -16,11 +16,11 @@ class Data_Petri_Net():
                  petri_net: PetriNet = None,
                  initial_marking: PetriNet.Place = None,
                  final_marking: PetriNet.Place = None,
-                 case_level_attributes: list[str] = [],
-                 event_attributes: list[str] = [],
+                 case_level_attributes: List[str] = [],
+                 event_attributes: List[str] = [],
                  sliding_window_size: int = 3,
                  act_name_attr: str = "concept:name",
-                 ml_list: list[ML_Technique] = [ML_Technique.DT],
+                 ml_list: List[ML_Technique] = [ML_Technique.DT, ML_Technique.LR, ML_Technique.SVM, ML_Technique.NN],
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
         Args:
@@ -36,7 +36,7 @@ class Data_Petri_Net():
                 implemented techniques
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
-        if petri_net == None or initial_marking == None or final_marking == None:
+        if petri_net is None or initial_marking is None or final_marking is None:
             self.petri_net, self.im, self.fm = get_petri_net(event_log)
         else: 
             self.petri_net = petri_net
