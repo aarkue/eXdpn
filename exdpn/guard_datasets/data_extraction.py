@@ -56,12 +56,7 @@ def extract_all_datasets(
 
     # Get attributes if necessary (Were not specified)
     if case_level_attributes is None or event_level_attributes is None:
-        case_attrs = set()
-        event_attrs = set()
-        for case in log:
-            for event in case:
-                case_attrs.update(case.attributes.keys())
-                event_attrs.update(event.keys())
+        case_attrs, event_attrs = _get_log_attributes(log)
         if case_level_attributes is None:
             case_level_attributes = case_attrs
         if event_level_attributes is None:
@@ -73,7 +68,7 @@ def extract_all_datasets(
     datasets = dict()
     for place in places:
         # TODO: Iterate over replay only once, handle all places simultaneously??
-        datasets[place] = extract_dataset_for_place(place, target_transitions, log, replay, event_level_attributes, case_level_attributes, tail_length, activityName_key, padding)
+        datasets[place] = extract_dataset_for_place(place, target_transitions, log, replay, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
     return datasets
 
 
@@ -98,8 +93,25 @@ def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_m
     }
     return token_replay.apply(log, net, initial_marking, final_marking, variant=variant, parameters=replay_params)
 
+def _get_log_attributes(log: EventLog) -> Tuple[List[str], List[str]]:
+    """Extracts a Tuple containing the case-level attributes and event-level attributes of the log (in that order).
 
-def extract_dataset_for_place(place: PetriNet.Place, target_transitions:Dict[PetriNet.Place, PetriNet.Transition], log: EventLog, replay:Union[List[Dict[str,Any]], Tuple[PetriNet, Marking, Marking]], event_level_attributes: List[str], case_level_attributes: List[str], tail_length: int = 3, activityName_key:str = xes.DEFAULT_NAME_KEY, padding:Any="#"):
+    Args:
+        log (EventLog): The Event Log for which to extract the information
+
+    Returns:
+        Tuple[List[str], List[str]]: List of case-level attributes names and list of event-level attributes names (In that order).
+    """
+    # Get attributes if necessary (Were not specified)
+    case_attrs = set()
+    event_attrs = set()
+    for case in log:
+            for event in case:
+                case_attrs.update(case.attributes.keys())
+                event_attrs.update(event.keys())
+    return case_attrs, event_attrs
+
+def extract_dataset_for_place(place: PetriNet.Place, target_transitions:Dict[PetriNet.Place, PetriNet.Transition], log: EventLog, replay:Union[List[Dict[str,Any]], Tuple[PetriNet, Marking, Marking]], case_level_attributes: List[str] = None, event_level_attributes: List[str] = None, tail_length: int = 3, activityName_key:str = xes.DEFAULT_NAME_KEY, padding:Any="#"):
     """Extracts the dataset for a single place using Token-Based Replay. For each instance of this decision found in the log, the following data is extracted:
     1. The specified Case-Level attributes of the case
     2. The specified Event-Level attributes of the last event of the case before this decision is made
@@ -112,8 +124,8 @@ def extract_dataset_for_place(place: PetriNet.Place, target_transitions:Dict[Pet
         target_transitions (Dict[PetriNet.Place, PetriNet.Transition]): The transitions which have an input arc with this place.
         log (EventLog): The Event Log from which to extract the data.
         replay (List[Dict[str, Any]] | Tuple[PetriNet, Marking, Marking]): Either the token-based replay computed by PM4Py, or the net which to use to compute the replay.
-        event_level_attributes (List[str]): List of attributes to be extracted on an Event level.
-        case_level_attributes (List[str]): List of attributes to be extracted on a Case level.
+        case_level_attributes (List[str], optional): List of attributes to be extracted on a Case level. If none specified, all are used.
+        event_level_attributes (List[str], optional): List of attributes to be extracted on an Event level. If none specified, all are used.
         tail_length (int, optional): Number of events to be extracted before the decision. Defaults to 3.
         activityName_key (str, optional): Key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
     """    
@@ -122,6 +134,15 @@ def extract_dataset_for_place(place: PetriNet.Place, target_transitions:Dict[Pet
     if type(replay) is tuple:
         net, im, fm = replay
         replay = _compute_replay(log, net, im, fm, activityName_key, False)
+
+    # Get attributes if necessary (Were not specified)
+    if case_level_attributes is None or event_level_attributes is None:
+        case_attrs, event_attrs = _get_log_attributes(log)
+        if case_level_attributes is None:
+            case_level_attributes = case_attrs
+        if event_level_attributes is None:
+            event_level_attributes = event_attrs
+
 
     # Extract the data for the place
     instances = []
