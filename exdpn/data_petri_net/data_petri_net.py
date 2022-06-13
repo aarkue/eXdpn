@@ -10,6 +10,7 @@ from exdpn.guards.guard import Guard
 from exdpn.petri_net import get_petri_net
 from exdpn.guards import Guard_Manager
 from exdpn.guard_datasets import get_all_guard_datasets
+from exdpn.guards import ML_Technique
 
 
 class Data_Petri_Net():
@@ -23,13 +24,16 @@ class Data_Petri_Net():
                  final_marking: Marking = None,
                  sliding_window_size: int = 3,
                  act_name_attr: str = "concept:name",
-                 ml_list: List[str] = ["NN", "DT", "LR", "SVM"],
-                 hyperparameters: Dict[str, Dict[str, Any]] = {"NN": {'hidden_layer_sizes': (10, 10)},
-                                                          "DT": {'min_samples_split': 0.1, 
-                                                                 'min_samples_leaf': 0.1, 
-                                                                 'ccp_alpha': 0.2},
-                                                          "LR": {"C": 0.5},
-                                                          "SVM": {"C": 0.5}},
+                 ml_list: List[ML_Technique] = [ML_Technique.NN,
+                                       ML_Technique.DT,
+                                       ML_Technique.LR,
+                                       ML_Technique.SVM],
+                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                                                                        ML_Technique.DT: {'min_samples_split': 0.1, 
+                                                                                          'min_samples_leaf': 0.1, 
+                                                                                          'ccp_alpha': 0.2},
+                                                                        ML_Technique.LR: {"C": 0.5},
+                                                                        ML_Technique.SVM: {"C": 0.5}},
                  guard_threshold: float = 0.6,
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
@@ -43,9 +47,9 @@ class Data_Petri_Net():
             final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
             sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events, default is last 3 events
             act_name_attr (str): Event level attribute name corresponding to the name of an event
-            ml_list (List[str]): List of all machine learning techniques that should be evaluated, default is all \
+            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
             implemented techniques
-            hyperparameters (Dict[str, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
+            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
             is smaller than the threshold the guard is not added. Default is 0.6 

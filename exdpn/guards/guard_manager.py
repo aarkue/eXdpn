@@ -7,6 +7,7 @@ from typing import Dict, List, Tuple
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import data_preprocessing_evaluation 
 from exdpn.guards.model_builder import model_builder
+from exdpn.guards import ML_Technique
 
 from sklearn.metrics import f1_score
 
@@ -18,13 +19,13 @@ class Guard_Manager():
     def __init__(self, 
                  dataframe: DataFrame, 
                  numeric_attributes: List[str], 
-                 ml_list: List[str],
-                 hyperparameters: Dict[str, Dict[str, any]]) -> None:
+                 ml_list: List[ML_Technique],
+                 hyperparameters: Dict[ML_Technique, Dict[str, any]]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
         Args:
-            ml_list (List[str]): List of all machine learning techniques that should be evaluated
-            numeric_attributes (List[str]): Convert numeric attributes to float
+            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated
+            numeric_attributes (List[ML_Technique]): Convert numeric attributes to float
             dataframe (DataFrame): Dataset used to evaluate the guard        
         """
         
