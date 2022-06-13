@@ -14,7 +14,7 @@ class Test_Data_Petri_Net(unittest.TestCase):
     def test_simple(self):
         # "Checks" that no exceptions are raised
         event_log = get_p2p_event_log()
-        dpn = Data_Petri_Net(event_log, case_level_attributes=['concept:name'], event_attributes=[
+        dpn = Data_Petri_Net(event_log, case_level_attributes=['concept:name'], event_level_attributes=[
                              "total_price", "item_id", "item_amount", "supplier", "item_category"], verbose=False)
 
         self.assertEqual(1,1)

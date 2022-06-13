@@ -1,5 +1,5 @@
 from exdpn.decisionpoints import find_decision_points
-from exdpn.guard_datasets import get_all_guard_datasets
+from exdpn.guard_datasets import extract_all_datasets
 from exdpn.load_event_log import import_xes
 from exdpn.petri_net import get_petri_net
 
@@ -37,8 +37,8 @@ class TestGetAllGuardDatasets(unittest.TestCase):
         net, im, fm, event_log, place_three, transition_to_B = get_net_and_log()
 
         # use function to get guard dataset
-        guard_datasets_per_place = get_all_guard_datasets(
-            event_log, net, im, fm, event_attributes=["costs", "resource"])
+        guard_datasets_per_place = extract_all_datasets(
+            event_log, net, im, fm, case_level_attributes=[], event_level_attributes=["costs", "resource"])
         
         # extract dataframe for place p_3 and instances that passed transition B 
         df_place = guard_datasets_per_place[place_three]

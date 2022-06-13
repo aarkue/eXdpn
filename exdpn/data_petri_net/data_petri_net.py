@@ -1,9 +1,11 @@
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.log.obj import EventLog
+import pm4py.util.xes_constants as xes
+
 from typing import Dict, List
 
 from exdpn.decisionpoints import find_decision_points
-from exdpn.guard_datasets import get_all_guard_datasets
+from exdpn.guard_datasets import extract_all_datasets
 from exdpn.guards.guard import Guard
 from exdpn.petri_net import get_petri_net
 from exdpn.guards import Guard_Manager
@@ -17,9 +19,9 @@ class Data_Petri_Net():
                  initial_marking: PetriNet.Place = None,
                  final_marking: PetriNet.Place = None,
                  case_level_attributes: List[str] = [],
-                 event_attributes: List[str] = [],
-                 sliding_window_size: int = 3,
-                 act_name_attr: str = "concept:name",
+                 event_level_attributes: List[str] = [],
+                 tail_length: int = 3,
+                 activityName_key: str = xes.DEFAULT_NAME_KEY,
                  ml_list: List[ML_Technique] = [ML_Technique.DT, ML_Technique.LR, ML_Technique.SVM, ML_Technique.NN],
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
@@ -28,11 +30,11 @@ class Data_Petri_Net():
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
             initial_marking (PetriNet.Place): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
             final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
-            case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-            event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
-            sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events
-            act_name_attr (str): Event level attribute name corresponding to the name of an event
-            ml_list (list[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
+            case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+            event_level_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
+            tail_length (int): Number of events lookback to extract executed activity. Defaults to 3.
+            activityName_key (str): Event level attribute name corresponding to the name of an event. Defaults to "concept:name"
+            ml_list (List[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
                 implemented techniques
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
@@ -45,8 +47,8 @@ class Data_Petri_Net():
 
         self.decision_points = find_decision_points(self.petri_net)
         self.print_if_verbose("-> Mining guard datasets... ", end="")
-        self.guard_ds_per_place = get_all_guard_datasets(
-            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr
+        self.guard_ds_per_place = extract_all_datasets(
+            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_level_attributes, tail_length, activityName_key
         )
         self.print_if_verbose("Done")
         # TODO: remove default values in get all guard ds
