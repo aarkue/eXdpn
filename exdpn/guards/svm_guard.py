@@ -5,7 +5,7 @@ from exdpn.data_preprocessing import fit_ohe
 from sklearn.svm import LinearSVC 
 from pandas import DataFrame, Series
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List
+from typing import Dict, List, Any 
 import shap 
 from matplotlib.figure import Figure
 import matplotlib.patches as mpatches
@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 import numpy as np 
 
 class SVM_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {"C": 0.5}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {"C": 0.5}) -> None:
         """Initializes a support vector machine based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier
         """
         
         super().__init__(hyperparameters)

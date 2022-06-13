@@ -1,7 +1,6 @@
-from pandas import DataFrame, concat
+from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
-from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any 
 
 #from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
@@ -20,13 +19,14 @@ class Guard_Manager():
                  dataframe: DataFrame, 
                  numeric_attributes: List[str], 
                  ml_list: List[ML_Technique],
-                 hyperparameters: Dict[ML_Technique, Dict[str, any]]) -> None:
+                 hyperparameter: Dict[ML_Technique, Dict[str, Any]]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
         Args:
-            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated
+            dataframe (DataFrame): Dataset used to evaluate the guard   
             numeric_attributes (List[ML_Technique]): Convert numeric attributes to float
-            dataframe (DataFrame): Dataset used to evaluate the guard        
+            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated
+            hyperparameter (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques
         """
         
         # TODO: refactor data_preprocessing so that it does not do more than one thing
@@ -45,17 +45,17 @@ class Guard_Manager():
 
         # create list of all needed machine learning techniques to evaluate the guards
         # first value is for training model, second value for final model
-        self.guards_list = {technique: [model_builder(technique, hyperparameters[technique]), 
-                                        model_builder(technique, hyperparameters[technique])] for technique in ml_list}
+        self.guards_list = {technique: [model_builder(technique, hyperparameter[technique]), 
+                                        model_builder(technique, hyperparameter[technique])] for technique in ml_list}
         
         self.guards_results = None
 
 
-    def train_test(self) -> Dict[str, any]:
+    def train_test(self) -> Dict[str, Any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
         using the specified machine learning techniques.
         Returns:
-            guards_results (Dict[str, any]): Returns a mapping of all selected machine learning techniques \
+            guards_results (Dict[str, Any]): Returns a mapping of all selected machine learning techniques \
             to the achieved F1-score and two trained guard models: the "training" guard (position 0) and final guard (position 1)
         """
         

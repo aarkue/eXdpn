@@ -28,7 +28,7 @@ class Data_Petri_Net():
                                        ML_Technique.DT,
                                        ML_Technique.LR,
                                        ML_Technique.SVM],
-                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                 hyperparameter: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1, 
                                                                                           'min_samples_leaf': 0.1, 
                                                                                           'ccp_alpha': 0.2},
@@ -49,7 +49,7 @@ class Data_Petri_Net():
             act_name_attr (str): Event level attribute name corresponding to the name of an event
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
             implemented techniques
-            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
+            hyperparameter (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
             is smaller than the threshold the guard is not added. Default is 0.6 
@@ -81,7 +81,7 @@ class Data_Petri_Net():
         self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place], 
                                                              numeric_attributes = self.numeric_attributes, 
                                                              ml_list = ml_list,
-                                                             hyperparameters = hyperparameters) 
+                                                             hyperparameter = hyperparameter) 
                                         for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers
@@ -128,7 +128,7 @@ class Data_Petri_Net():
             self.print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
             self.print_if_verbose(
-                guard[0].get_explainable_representation()) # use "training" model for representation
+                guard[1].get_explainable_representation()) # use "training" model for representation
 
         return self.guard_per_place
 

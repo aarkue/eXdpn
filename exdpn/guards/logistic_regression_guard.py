@@ -15,10 +15,10 @@ import numpy as np
 
 
 class Logistic_Regression_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {"C": 0.5}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {"C": 0.5}) -> None:
         """Initializes a logistic regression based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier
         """
         
         super().__init__(hyperparameters)
