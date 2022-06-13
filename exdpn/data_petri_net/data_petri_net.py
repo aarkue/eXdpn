@@ -61,7 +61,7 @@ class Data_Petri_Net():
             self.print_if_verbose(
                 f"-> Evaluating guards at decision point '{place.name}'... ", end=''
             )
-            guard_manager.evaluate_guards()
+            guard_manager.train_test()
             self.print_if_verbose("Done")
 
         self.guard_per_place = None
