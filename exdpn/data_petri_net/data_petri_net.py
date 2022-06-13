@@ -46,7 +46,8 @@ class Data_Petri_Net():
         self.decision_points = find_decision_points(self.petri_net)
         self.print_if_verbose("-> Mining guard datasets... ", end="")
         self.guard_ds_per_place = get_all_guard_datasets(
-            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr)
+            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr
+        )
         self.print_if_verbose("Done")
         # TODO: remove default values in get all guard ds
 
@@ -58,7 +59,8 @@ class Data_Petri_Net():
         # evaluate all guards for all guard managers
         for place, guard_manager in self.guard_manager_per_place.items():
             self.print_if_verbose(
-                f"-> Evaluating guards at decision point '{place.name}'... ", end='')
+                f"-> Evaluating guards at decision point '{place.name}'... ", end=''
+            )
             guard_manager.evaluate_guards()
             self.print_if_verbose("Done")
 
@@ -89,9 +91,8 @@ class Data_Petri_Net():
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
-                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}")
-            self.print_if_verbose(
-                guard.get_explainable_representation(), end="\n")
+                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}"
+            )
 
         return self.guard_per_place
 
