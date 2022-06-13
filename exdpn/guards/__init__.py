@@ -8,3 +8,4 @@ from exdpn.guards.ml_technique import ML_Technique
 from exdpn.guards.guard_manager import Guard_Manager
 from exdpn.guards.logistic_regression_guard import Logistic_Regression_Guard
 from exdpn.guards.svm_guard import SVM_Guard
+from exdpn.guards.model_builder import model_builder
