@@ -104,7 +104,6 @@ class Neural_Network_Guard(Guard):
         Returns:
             explainable_representation (str): Explainable representation of the guard
         """
-        # X_train_summary = shap.kmeans(self.training_data, 1)
         sampled_data = self.training_data.sample(n=min(100, len(self.training_data)))
 
         def shap_predict(data:np.ndarray):
@@ -114,27 +113,14 @@ class Neural_Network_Guard(Guard):
 
         explainer = shap.KernelExplainer(shap_predict, sampled_data, output_names=self.target_names)
         
-        # explainer = shap.Explainer(self.model.predict, X_train_summary, output_names=self.target_names)
-        # shap_values = explainer(self.training_data.sample(n=min(100, len(self.training_data))))
-
         shap_values = explainer.shap_values(sampled_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         fig = plt.figure()
 
-        # Force Plot
-        # shap.force_plot(explainer.expected_value[0], shap_values[0], self.training_data.sample(n=min(100, len(self.training_data))))
-
         # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
         shap.summary_plot(shap_values, sampled_data, plot_type="bar", show=False, class_names=self.target_names, plot_size="auto")
-        # Bee-Swarm
-        # shap.summary_plot(shap_values, self.training_data, show=False, plot_size="auto")
-        # shap.plots.beeswarm(shap_values, order=shap_values.abs.max(0))
 
         # Decision Plot
         # shap.decision_plot(explainer.expected_value, shap_values,self.feature_names, show=False)
-
-        # mean_shap_value = np.mean(shap_values, axis=0)
-        # explanation = shap.Explanation(mean_shap_value,0,feature_names=self.feature_names, output_names=self.target_names)
-        # shap.plots.bar(explanation)
 
         plt.title("Feature Impact on Model Prediction", fontsize = 14)
         plt.ylabel("Features", fontsize = 14)
