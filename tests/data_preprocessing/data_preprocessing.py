@@ -13,7 +13,7 @@ from typing import Tuple
 # set up test by loading a test dataframe and perform some preprocessing 
 def preprocess_data() -> Tuple[DataFrame]:
 
-    event_log = load_event_log.import_xes(os.path.join(os.getcwd(), 'example.xes'))
+    event_log = load_event_log.import_xes(os.path.join(os.getcwd(), 'tests', 'data_preprocessing', 'example.xes'))
     net, im, fm = petri_net.get_petri_net(event_log)
     guard_datasets_per_place = guard_datasets.get_all_guard_datasets(event_log, net, im, fm, event_attributes=pm4py.get_event_attributes(event_log))
 

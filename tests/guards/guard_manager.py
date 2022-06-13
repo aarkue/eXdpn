@@ -30,7 +30,7 @@ class Test_Guard_Manager(unittest.TestCase):
         df_place = get_df()
 
         gm = Guard_Manager(df_place, [ML_Technique.DT])
-        _ = gm.evaluate_guards()
+        _ = gm.train_test()
         technique, guard = gm.get_best()
         _ = guard.get_explainable_representation()
         self.assertEqual(technique, ML_Technique.DT,

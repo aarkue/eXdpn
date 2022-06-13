@@ -4,6 +4,7 @@ from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
 from typing import Dict, List 
 
+
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import get_all_guard_datasets
 from exdpn.guards.guard import Guard
@@ -60,7 +61,8 @@ class Data_Petri_Net():
         self.decision_points = find_decision_points(self.petri_net)
         self.print_if_verbose("-> Mining guard datasets... ", end="")
         self.guard_ds_per_place = get_all_guard_datasets(
-            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr)
+            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr
+        )
         self.print_if_verbose("Done")
 
         self.case_level_attributes = case_level_attributes
@@ -82,13 +84,15 @@ class Data_Petri_Net():
         # evaluate all guards for all guard managers
         for place, guard_manager in self.guard_manager_per_place.items():
             self.print_if_verbose(
-                f"-> Evaluating guards at decision point '{place.name}'... ", end='')
-            guard_manager.evaluate_guards()
-            self.print_if_verbose("Done") 
+                f"-> Evaluating guards at decision point '{place.name}'... ", end=''
+            )
+            guard_manager.train_test()
+            self.print_if_verbose("Done")
 
         self.guard_per_place = None
         self.ml_technique_per_place = {}
         self.performance_per_place = {}
+        self.guard_threshold = guard_threshold
 
 
     def print_if_verbose(self, string: str, end: str = '\n'):
@@ -104,6 +108,7 @@ class Data_Petri_Net():
         """
         
         # TODO: add support for taking no guard if the best performance is bad / below threshold
+        # -> done
         if self.guard_per_place != None:
             return
 
@@ -111,6 +116,11 @@ class Data_Petri_Net():
 
         for place, guard_manager in self.guard_manager_per_place.items():
             ml_technique, guard = guard_manager.get_best()
+            if max(guard_manager.guards_results.values()) < self.guard_threshold:
+                max_performance = max(guard_manager.guards_results.values())
+                self.print_if_verbose(
+                    f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
+                continue
             self.guard_per_place[place] = guard[1] # use model based on all data
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
