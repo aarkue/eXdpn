@@ -1,10 +1,7 @@
-from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
-from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
-from typing import Dict, List 
-from tqdm import tqdm
+from typing import Dict, List, Any 
 
 
 from exdpn.decisionpoints import find_decision_points
@@ -12,45 +9,55 @@ from exdpn.guard_datasets import get_all_guard_datasets
 from exdpn.guards.guard import Guard
 from exdpn.petri_net import get_petri_net
 from exdpn.guards import Guard_Manager
-from exdpn.guards import ML_Technique
 from exdpn.guard_datasets import get_all_guard_datasets
+from exdpn.guards import ML_Technique
 
 
 class Data_Petri_Net():
     def __init__(self,
                  event_log: EventLog,
-                 case_level_attributes: list[str],
-                 event_attributes: list[str],
-                 numeric_attributes: list[str] = [],
+                 case_level_attributes: List[str],
+                 event_attributes: List[str],
+                 numeric_attributes: List[str] = [],
                  petri_net: PetriNet = None,
-                 initial_marking: Marking = [],
-                 final_marking: Marking = [],
+                 initial_marking: Marking = None,
+                 final_marking: Marking = None,
                  sliding_window_size: int = 3,
                  act_name_attr: str = "concept:name",
-                 ml_list: list[ML_Technique] = [ML_Technique.NN,
-                                                ML_Technique.DT,
-                                                ML_Technique.LR,
-                                                ML_Technique.SVM],
+                 ml_list: List[ML_Technique] = [ML_Technique.NN,
+                                       ML_Technique.DT,
+                                       ML_Technique.LR,
+                                       ML_Technique.SVM],
+                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                                                                        ML_Technique.DT: {'min_samples_split': 0.1, 
+                                                                                          'min_samples_leaf': 0.1, 
+                                                                                          'ccp_alpha': 0.2},
+                                                                        ML_Technique.LR: {"C": 0.5},
+                                                                        ML_Technique.SVM: {"C": 0.5}},
                  guard_threshold: float = 0.6,
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
         Args:
             event_log (EventLog): Event log to be used as a basis for the data Petri net
-            case_level_attributes (list[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-            event_attributes (list[str]): Attribute list on the level of events to be considered for each instance in the datasets
-            numeric_attributes (list[str]): Attribute list to be converted to float, optional
+            case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+            event_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
+            numeric_attributes (List[str]): Attribute list to be converted to float, optional
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
             initial_marking (PetriNet.Place): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
             final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
             sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events, default is last 3 events
             act_name_attr (str): Event level attribute name corresponding to the name of an event
-            ml_list (list[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
-                implemented techniques
+            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
+            implemented techniques
+            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
+            if not specified default parameters are used
+            guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
+            is smaller than the threshold the guard is not added. Default is 0.6 
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not, default is true
         """
         
         self.verbose = verbose
-        if petri_net == None or (len(initial_marking) == 0) or (len(final_marking) == 0):
+        if petri_net is None or initial_marking is None or final_marking is None:
             self.petri_net, self.im, self.fm = get_petri_net(event_log)
         else:
             self.petri_net = petri_net
@@ -69,14 +76,13 @@ class Data_Petri_Net():
         self.numeric_attributes = numeric_attributes
         self.sliding_window_size = sliding_window_size
         self.act_name_attr = act_name_attr
-        # TODO: remove default values in get all guard ds -> DONE, also removed
-        # the default value for ml_list in guard manager 
 
         # initialize all gms
-        # TODO: add support for custom parameters per ml technique 
-        # -> done: see new branch feat/hyperparameter_support s
-        self.guard_manager_per_place = {place: Guard_Manager(
-            self.guard_ds_per_place[place], numeric_attributes=numeric_attributes, ml_list=ml_list) for place in self.decision_points.keys()}
+        self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place], 
+                                                             numeric_attributes = self.numeric_attributes, 
+                                                             ml_list = ml_list,
+                                                             hyperparameters = hyperparameters) 
+                                        for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers
         for place, guard_manager in self.guard_manager_per_place.items():
@@ -104,8 +110,6 @@ class Data_Petri_Net():
                 chosen metric (F1 score)
         """
         
-        # TODO: add support for taking no guard if the best performance is bad / below threshold
-        # -> done
         if self.guard_per_place != None:
             return
 
@@ -122,8 +126,9 @@ class Data_Petri_Net():
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
-                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}"
-            )
+                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
+            self.print_if_verbose(
+                guard[0].get_explainable_representation()) # use "training" model for representation
 
         return self.guard_per_place
 
@@ -177,6 +182,9 @@ class Data_Petri_Net():
             if len(dp_dataset) == 0:
                 continue
 
+            # ignore guard if not added to data petri net
+            if decision_point not in self.guard_per_place.keys():
+                continue
             # extract data for prediction 
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
