@@ -16,9 +16,11 @@ import numpy as np
 
 class Logistic_Regression_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, any] = {"C": 0.5}) -> None:
-        """Initializes a logistic regression model based guard with the provided hyperparameters
+        """Initializes a logistic regression based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier"""
+            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
+        """
+        
         super().__init__(hyperparameters)
         # possible hyperparameter: C (regularization parameter)
         try:
@@ -35,10 +37,12 @@ class Logistic_Regression_Guard(Guard):
         self.scaler_columns     = None
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
-        """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
+        """Trains the logistic regression guard using the dataframe and the specified hyperparameters.
         Args:
-            X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
-            y (DataFrame): Target label for each instance in the X dataset used to train the model"""
+            X (DataFrame): Feature variables of the provided dataset, used to train the classifier behind the guard 
+            y (DataFrame): Target variable of the provided dataset, is to be predicted using X
+        """
+        
         # scale numerical attributes
         self.scaler, self.scaler_columns = fit_scaling(X)
         X = apply_scaling(X, self.scaler, self.scaler_columns)
@@ -64,12 +68,15 @@ class Logistic_Regression_Guard(Guard):
             self.single_class = False
             self.model = self.model.fit(X, y_transformed)
 
+
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
-        """Shall use the classifier/model behind the guard to predict the next transition.
+        """Predicts the next transition based on the input instances.
         Args:
-            input_instances (DataFrame): Input instances used to predict the next transition
+            input_instances (DataFrame): Dataset of input instances used to predict the target variable, i.e., the next transition
         Returns:
-            predicted_transitions (List[PetriNet.Transition]): Predicted transitions"""
+            predicted_transitions (List[PetriNet.Transition]): Predicted transitions
+        """
+        
         # scale numerical attributes
         input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
@@ -85,17 +92,25 @@ class Logistic_Regression_Guard(Guard):
         # for all predicted integers
         return [next(trans for trans, trans_id in self.transition_int_map.items() if trans_id == pred_id) for pred_id in predicted_transition_ids]
 
+
     def is_explainable(self) -> bool:
-        """Shall return wheter or not the internal classifier is explainable.
+        """Returns whether or not this guard is explainable.
         Returns:
-            explainable (bool): Wheter or not the guard is explainable"""
+            explainable (bool): Whether or not the guard is explainable
+        """
+        
         return True
 
+
     def get_explainable_representation(self) -> Figure:
-        """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
+        """Get an explainable representation of the logistic regression guard, a Matplotlib plot using SHAP.
         Returns:
-            explainable_representation (Figure): Matplotlib Figure of the trained logistic regression model"""
+            explainable_representation (Figure): Matplotlib Figure of the trained logistic regression model
+        """
         
+        if self.is_explainable() == False:
+            raise Exception("Guard is not explainable and therefore has no explainable representation")
+
         classes = [t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()]
         
         if self.single_class:

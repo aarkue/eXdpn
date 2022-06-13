@@ -12,20 +12,21 @@ import numpy as np
 # Explainability
 import shap
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 class Neural_Network_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, any] = {'hidden_layer_sizes': (10,10)}) -> None:
-        """Initializes a decision tree based guard with the provided hyperparameters
-
+        """Initializes a neural network based guard with the provided hyperparameters.
         Args:
             hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
         """
+
         super().__init__(hyperparameters)
         try:
             self.model = MLPClassifier(**hyperparameters)
         except TypeError:
             raise TypeError(
-                "Wrong hyperparameters were supplied to the decision tree guard"
+                "Wrong hyperparameters were supplied to the neural network guard"
             )
 
         self.transition_int_map = None
@@ -36,12 +37,12 @@ class Neural_Network_Guard(Guard):
         self.scaler_columns     = None
         self.training_data      = None
 
+
     def train(self, X: DataFrame, y: DataFrame) -> None:
-        """Trains the Neural Network using the dataframe and the specified hyperparameters.
-        
+        """Trains the neural network guard using the dataframe and the specified hyperparameters.
         Args:
-            X (DataFrame): Dataset used to train the classifier behind the guard (w/o the target label)
-            y (DataFrame): Target label for each instance in the X dataset used to train the model
+            X (DataFrame): Feature variables of the provided dataset, used to train the classifier behind the guard 
+            y (DataFrame): Target variable of the provided dataset, is to be predicted using X
         """
 
         # Scale numerical attributes
@@ -69,14 +70,15 @@ class Neural_Network_Guard(Guard):
 
         self.model = self.model.fit(X, y_transformed)
 
+
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Predicts the next transition based on the input instances.
-
         Args:
-            input_instances (DataFrame): Input instances used to predict the next transition
+            input_instances (DataFrame): Dataset of input instances used to predict the target variable, i.e., the next transition
         Returns:
             predicted_transitions (List[PetriNet.Transition]): Predicted transitions
         """
+
         # Scale numerical attributes
         input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # One-Hot Encoding for categorical data 
@@ -90,19 +92,19 @@ class Neural_Network_Guard(Guard):
         }
         return [reverse_dict[pred_id] for pred_id in predicted_transition_ids]
 
+
     def is_explainable(self) -> bool:
         """Returns whether or not this guard is explainable.
-        
         Returns:
             explainable (bool): Whether or not the guard is explainable
         """
+
         return True
 
-    def get_explainable_representation(self) -> plt.Figure:
-        """Get an explainable representation of the Neural Network, a Matplotlib plot using SHAP.
-        
+    def get_explainable_representation(self) -> Figure:
+        """Get an explainable representation of the neural network guard, a Matplotlib plot using SHAP.
         Returns:
-            explainable_representation (str): Explainable representation of the guard
+            explainable_representation (Figure): Explainable representation of the guard
         """
         sampled_data = self.training_data.sample(n=min(100, len(self.training_data)))
 
