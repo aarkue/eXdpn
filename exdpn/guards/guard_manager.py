@@ -20,7 +20,7 @@ class Guard_Manager():
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique
         Args: 
-            ml_list (List[ML_technique]): List of all machine learning techniques that should be evaluated, default is all \
+            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
                 implemented techniques
             dataframe (DataFrame): Dataset used to evaluate the guard    
         Returns: 
