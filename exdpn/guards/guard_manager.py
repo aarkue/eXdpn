@@ -46,7 +46,7 @@ class Guard_Manager():
         self.guards_results = None
 
 
-    def evaluate_guards(self) -> Dict[str, any]:
+    def train_test(self) -> Dict[str, any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
         using the specified machine learning techniques.
         Returns:

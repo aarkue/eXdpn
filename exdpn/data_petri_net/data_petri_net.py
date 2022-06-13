@@ -60,7 +60,8 @@ class Data_Petri_Net():
         self.decision_points = find_decision_points(self.petri_net)
         self.print_if_verbose("-> Mining guard datasets... ", end="")
         self.guard_ds_per_place = get_all_guard_datasets(
-            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr)
+            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr
+        )
         self.print_if_verbose("Done")
 
         self.case_level_attributes = case_level_attributes
@@ -80,9 +81,10 @@ class Data_Petri_Net():
         # evaluate all guards for all guard managers
         for place, guard_manager in self.guard_manager_per_place.items():
             self.print_if_verbose(
-                f"-> Evaluating guards at decision point '{place.name}'... ", end='')
-            guard_manager.evaluate_guards()
-            self.print_if_verbose("Done") 
+                f"-> Evaluating guards at decision point '{place.name}'... ", end=''
+            )
+            guard_manager.train_test()
+            self.print_if_verbose("Done")
 
         self.guard_per_place = None
         self.ml_technique_per_place = {}
@@ -120,9 +122,8 @@ class Data_Petri_Net():
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
-                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}")
-            self.print_if_verbose(
-                guard[0].get_explainable_representation()) # use "training" model for representation
+                f"-> Best machine learning technique at decision point '{place.name}': {ml_technique.name} w/ performance {self.performance_per_place[place]}"
+            )
 
         return self.guard_per_place
 
