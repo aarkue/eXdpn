@@ -1,4 +1,9 @@
 p2p_base: 2 decision points
 
+p2p_base_no_randomness: 3 decision points
+	- 1: Request Manager Approval if total_price >= 800, otherwise Request Standard Approval 
+	- 2: Manager Rejection if "unprofessional" items are being bought, i.e., "RECARO Exo Gaming Stuhl" or "Ducky One 3 Matcha TKL". Otherwise, Approval
+	- 3: Standard Rejection if item_category is "Fun" or if the Supplier is "Scamming Corp." 
+
 p2p-base-expanded: like base but guards more overlapping, plus 3 additional decision points (guards after "invoice waiting", random decision for "payment reminder", decision after "goods inspected" depends on "invoice waitig")
 
