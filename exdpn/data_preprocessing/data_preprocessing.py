@@ -16,7 +16,7 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     into training and test sets.
     Args:
         dataframe (DataFrame): Dataframe to be transformed for evaluation of the best model
-    Returns: 
+    Returns:
         X_train, X_test, y_train, y_test (DataFrame): Preprocessed and splitted data
         #data_scaler (MinMaxScaler]): MinMaxScaler fitted on data set, scales to [0, 1]
         #scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
@@ -29,7 +29,10 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     # use mapping for stratify (map transition to integers)
     transition_int_map = {transition: index for index, transition in enumerate(list(set(df_y)))}
     df_y_transformed = [transition_int_map[transition] for transition in df_y]
-    X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(df_X, df_y_transformed, stratify = df_y_transformed)
+    try:
+        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(df_X, df_y_transformed, stratify = df_y_transformed)
+    except ValueError:
+        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(df_X, df_y_transformed)
 
     # map back to transitions
     y_train = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped]
@@ -44,16 +47,19 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
     with only NaNs and defining feature variables and target variables
     Args:
         dataframe (DataFrame): Dataframe to be transformed
-    Returns: 
+    Returns:
         df_X (DataFrame): Preprocessed dataframe of feature variables
         df_y (DataFrame): Preprocessed dataframe of target variable
     """
 
-    # TODO define more correct data types?
     # convert timestamp to datatype "datetime"
     if "event::time:timestamp" in dataframe.columns:
-        dataframe["event::time:timestamp"] = pd.to_datetime(
-            dataframe["event::time:timestamp"])
+        dataframe["event::time:timestamp"] = pd.to_datetime(dataframe["event::time:timestamp"])
+
+    # don't use case attributes for prediction
+    if any("case::" in cols for cols in dataframe.columns):
+        idx = [index for index in dataframe.columns if "case::" in index]
+        dataframe = dataframe.drop(idx, axis = 1)
 
     # get target and feature names
     target_var = "target"
@@ -64,10 +70,6 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
 
     # drop columns with all NaNs
     df_X = df_X.dropna(how = 'all', axis = 1)
-
-    # drop case::concept:name in event logs - if existing
-    # if "case::concept:name" in df_X.columns:
-    #    df_X = df_X.drop(["case::concept:name"], axis = 1)
 
     return df_X, df_y
 
@@ -94,11 +96,11 @@ def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
 
 def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str]) -> DataFrame:
     """ Performs min-max scaling to [0, 1] on data with a fitted scaler on all scalable columns and returns scaled data
-    Args: 
+    Args:
         X (DataFrame): Dataframe with data to scale
         scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
-    Returns: 
+    Returns:
         X_scaled (DataFrame): Scaled data, where each feature is scaled to [0, 1]
     """
     # apply scaler on data
@@ -112,9 +114,9 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str
 
 def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
     """ Fits anOneHotEncoder on all categorical features in the data set
-    Args: 
+    Args:
         X (DataFrame): Dataframe with data to encode
-    Returns: 
+    Returns:
         OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
         ohe_column_names (List[str]): List of column names of One Hot Encoded dataframe
     """
@@ -127,10 +129,10 @@ def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
 def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
     """ Performs One Hot Encoding on all categorical features in the data set. This is necessary for machine learning \
     techniques that cannot handle categorical data, such as Decision Trees, SVMs and Neural Networks
-    Args: 
+    Args:
         X (DataFrame): Dataframe with data to encode
         OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
-    Returns: 
+    Returns:
         X_encoded (DataFrame): Encoded data, if dataframe does not contain categorical data, the original \
         dataframe is returned
     """   
@@ -139,4 +141,5 @@ def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
 
     X_object_enc = ohe.transform(X_object)
     feature_names = ohe.get_feature_names_out(list(X_object.columns))
+    
     return concat([X.select_dtypes(exclude = 'object'), DataFrame(X_object_enc, columns = feature_names)], axis=1)

@@ -14,4 +14,5 @@ def import_log(path: str, verbose: bool = False) -> EventLog:
     """
     variant = xes_importer.Variants.ITERPARSE
     parameters = {variant.value.Parameters.SHOW_PROGRESS_BAR: verbose}
+    
     return xes_importer.apply(path, variant=variant, parameters=parameters)

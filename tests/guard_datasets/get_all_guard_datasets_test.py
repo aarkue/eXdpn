@@ -1,6 +1,6 @@
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import extract_all_datasets
-from exdpn.load_event_log import import_xes
+from exdpn.util import import_log
 from exdpn.petri_net import get_petri_net
 
 import unittest
@@ -15,7 +15,7 @@ from typing import Tuple
 def get_net_and_log() -> Tuple[PetriNet, PetriNet.Place, PetriNet.Place, EventLog, PetriNet.Place, PetriNet.Transition]:
     # TODO: decide on structure with regards to sample event logs
     # load test eventlog
-    event_log = import_xes(os.path.join(
+    event_log = import_log(os.path.join(
         os.getcwd(), 'tests', 'guard_datasets', 'example.xes'))
 
     # get petri net and find decision points 
