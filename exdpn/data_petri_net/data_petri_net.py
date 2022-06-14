@@ -19,6 +19,7 @@ class Data_Petri_Net():
                  petri_net: PetriNet = None,
                  initial_marking: Marking = None,
                  final_marking: Marking = None,
+                 miner_type: str = "AM",
                  case_level_attributes: List[str] = [],
                  event_level_attributes: List[str] = [],
                  tail_length: int = 3,
@@ -27,8 +28,7 @@ class Data_Petri_Net():
                     ML_Technique.DT,
                     ML_Technique.LR,
                     ML_Technique.SVM,
-                    ML_Technique.NN
-                ],
+                    ML_Technique.NN],
                  hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1, 
                                                                                           'min_samples_leaf': 0.1, 
@@ -43,20 +43,21 @@ class Data_Petri_Net():
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
             initial_marking (Marking): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
             final_marking (Marking): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
+            miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)
             case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
             event_level_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
             tail_length (int): Number of events lookback to extract executed activity. Defaults to 3.
             activityName_key (str): Event level attribute name corresponding to the name of an event. Defaults to "concept:name"
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
             implemented techniques
-            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
+            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
             is smaller than the threshold the guard is not added. Default is 0.6 
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:
-            self.petri_net, self.im, self.fm = get_petri_net(event_log)
+            self.petri_net, self.im, self.fm = get_petri_net(event_log, miner_type)
         else:
             self.petri_net = petri_net
             self.im = initial_marking
@@ -118,7 +119,7 @@ class Data_Petri_Net():
                 self.print_if_verbose(
                     f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
                 continue
-            self.guard_per_place[place] = guard[1] # use model based on all data
+            self.guard_per_place[place] = guard 
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
