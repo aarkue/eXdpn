@@ -20,9 +20,8 @@ class Guard_Manager():
                     ML_Technique.DT,
                     ML_Technique.LR,
                     ML_Technique.SVM,
-                    ML_Technique.NN
-                ],
-                hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                    ML_Technique.NN],
+                 hyperparameter: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1, 
                                                                                           'min_samples_leaf': 0.1, 
                                                                                           'ccp_alpha': 0.2},
@@ -50,9 +49,7 @@ class Guard_Manager():
         self.y_test  = y_test
 
         # create list of all needed machine learning techniques to evaluate the guards
-        # first value is for training model, second value for final model
-        self.guards_list = {technique: [model_builder(technique, hyperparameter[technique]), 
-                                        model_builder(technique, hyperparameter[technique])] for technique in ml_list}
+        self.guards_list = {technique: model_builder(technique, hyperparameter[technique]) for technique in ml_list}
         
         self.guards_results = None
 
@@ -68,8 +65,8 @@ class Guard_Manager():
         self.guards_results = {}
         # evaluate all selected ml techniques for all guards of the given decision point
         for guard_name, guard_models in self.guards_list.items():
-            guard_models[0].train(self.X_train, self.y_train)
-            y_prediction = guard_models[0].predict(self.X_test)
+            guard_models.train(self.X_train, self.y_train)
+            y_prediction = guard_models.predict(self.X_test)
              
             # convert Transition objects to integers so that sklearn's F1 score doesn't freak out
             # this is ugly, we know
@@ -81,7 +78,7 @@ class Guard_Manager():
             
             # retrain model on all available data
             df_X, df_y = basic_data_preprocessing(self.dataframe)
-            guard_models_temp = guard_models[1]
+            guard_models_temp = guard_models
             guard_models_temp.train(df_X, df_y)
         
         return self.guards_results

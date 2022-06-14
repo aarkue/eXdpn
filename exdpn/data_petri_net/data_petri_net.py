@@ -19,6 +19,7 @@ class Data_Petri_Net():
                  petri_net: PetriNet = None,
                  initial_marking: Marking = None,
                  final_marking: Marking = None,
+                 miner_type: str = "AM",
                  case_level_attributes: List[str] = [],
                  event_level_attributes: List[str] = [],
                  tail_length: int = 3,
@@ -27,9 +28,8 @@ class Data_Petri_Net():
                     ML_Technique.DT,
                     ML_Technique.LR,
                     ML_Technique.SVM,
-                    ML_Technique.NN
-                ],
-                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                    ML_Technique.NN],
+                 hyperparameter: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1, 
                                                                                           'min_samples_leaf': 0.1, 
                                                                                           'ccp_alpha': 0.2},
@@ -43,6 +43,7 @@ class Data_Petri_Net():
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
             initial_marking (Marking): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
             final_marking (Marking): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
+            miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)
             case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
             event_level_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
             tail_length (int): Number of events lookback to extract executed activity. Defaults to 3.
@@ -118,14 +119,14 @@ class Data_Petri_Net():
                 self.print_if_verbose(
                     f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
                 continue
-            self.guard_per_place[place] = guard[1] # use model based on all data
+            self.guard_per_place[place] = guard 
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
             self.print_if_verbose(
-                guard[0].get_explainable_representation()) # use "training" model for representation
-
+                guard.get_explainable_representation()) 
+                
         return self.guard_per_place
 
 
