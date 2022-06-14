@@ -15,11 +15,10 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 class Neural_Network_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any]) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'hidden_layer_sizes': (10,10)}) -> None:
         """Initializes a neural network based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier \
-            (default suggestion: 'hidden_layer_sizes': (10,10))
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier 
         """
 
         super().__init__(hyperparameters)
