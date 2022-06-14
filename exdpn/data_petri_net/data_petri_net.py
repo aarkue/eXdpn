@@ -1,35 +1,35 @@
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
-from typing import Dict, List, Any 
+import pm4py.util.xes_constants as xes
 
+from typing import Dict, List, Any
 
 from exdpn.decisionpoints import find_decision_points
-from exdpn.guard_datasets import get_all_guard_datasets
+from exdpn.guard_datasets import extract_all_datasets
 from exdpn.guards.guard import Guard
 from exdpn.petri_net import get_petri_net
 from exdpn.guards import Guard_Manager
-from exdpn.guard_datasets import get_all_guard_datasets
 from exdpn.guards import ML_Technique
 
 
 class Data_Petri_Net():
     def __init__(self,
                  event_log: EventLog,
-                 case_level_attributes: List[str],
-                 event_attributes: List[str],
-                 numeric_attributes: List[str] = [],
                  petri_net: PetriNet = None,
                  initial_marking: Marking = None,
                  final_marking: Marking = None,
-                 miner_type: str = "AM",
-                 sliding_window_size: int = 3,
-                 act_name_attr: str = "concept:name",
-                 ml_list: List[ML_Technique] = [ML_Technique.NN,
-                                       ML_Technique.DT,
-                                       ML_Technique.LR,
-                                       ML_Technique.SVM],
-                 hyperparameter: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                 case_level_attributes: List[str] = [],
+                 event_level_attributes: List[str] = [],
+                 tail_length: int = 3,
+                 activityName_key: str = xes.DEFAULT_NAME_KEY,
+                 ml_list: List[ML_Technique] = [
+                    ML_Technique.DT,
+                    ML_Technique.LR,
+                    ML_Technique.SVM,
+                    ML_Technique.NN
+                ],
+                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1, 
                                                                                           'min_samples_leaf': 0.1, 
                                                                                           'ccp_alpha': 0.2},
@@ -40,24 +40,20 @@ class Data_Petri_Net():
         """Initializes a data Petri net based on the event log provided.
         Args:
             event_log (EventLog): Event log to be used as a basis for the data Petri net
-            case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-            event_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
-            numeric_attributes (List[str]): Attribute list to be converted to float, optional
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
-            initial_marking (PetriNet.Place): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
-            final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
-            miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)
-            sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events, default is last 3 events
-            act_name_attr (str): Event level attribute name corresponding to the name of an event
+            initial_marking (Marking): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
+            final_marking (Marking): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
+            case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
+            event_level_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
+            tail_length (int): Number of events lookback to extract executed activity. Defaults to 3.
+            activityName_key (str): Event level attribute name corresponding to the name of an event. Defaults to "concept:name"
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
             implemented techniques
             hyperparameter (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
             is smaller than the threshold the guard is not added. Default is 0.6 
-            verbose (bool): Specifies if the execution of all methods should print status-esque messages or not, default is true
-        """
-        
+            verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:
             self.petri_net, self.im, self.fm = get_petri_net(event_log, miner_type)
@@ -68,20 +64,18 @@ class Data_Petri_Net():
 
         self.decision_points = find_decision_points(self.petri_net)
         self.print_if_verbose("-> Mining guard datasets... ", end="")
-        self.guard_ds_per_place = get_all_guard_datasets(
-            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_attributes, sliding_window_size, act_name_attr
+        self.guard_ds_per_place = extract_all_datasets(
+            event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_level_attributes, tail_length, activityName_key
         )
         self.print_if_verbose("Done")
 
         self.case_level_attributes = case_level_attributes
-        self.event_attributes = event_attributes
-        self.numeric_attributes = numeric_attributes
-        self.sliding_window_size = sliding_window_size
-        self.act_name_attr = act_name_attr
+        self.event_level_attributes = event_level_attributes
+        self.tail_length = tail_length
+        self.activityName_key = activityName_key
 
         # initialize all gms
         self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place], 
-                                                             numeric_attributes = self.numeric_attributes, 
                                                              ml_list = ml_list,
                                                              hyperparameter = hyperparameter) 
                                         for place in self.decision_points.keys()}
@@ -170,13 +164,15 @@ class Data_Petri_Net():
             test_event_log[i].attributes[TRACE_NUMBER_ATTR_NAME] = i
 
         self.print_if_verbose("-> Computing guard datasets for replay")
-        guard_datasets = get_all_guard_datasets(test_event_log,
-                                                self.petri_net, self.im, self.fm,
-                                                self.case_level_attributes +
-                                                [TRACE_NUMBER_ATTR_NAME],
-                                                self.event_attributes,
-                                                self.sliding_window_size,
-                                                self.act_name_attr)
+        guard_datasets = extract_all_datasets(
+                            test_event_log,
+                            self.petri_net, self.im, self.fm,
+                            self.case_level_attributes +
+                            [TRACE_NUMBER_ATTR_NAME],
+                            self.event_level_attributes,
+                            self.tail_length,
+                            self.activityName_key
+                        )
         
         # initialize dict for results, assume all guards were respected for each trace
         prediction_result = {i: 1 for i in range(len(test_event_log))}
@@ -191,7 +187,7 @@ class Data_Petri_Net():
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
             trace_nums = dp_dataset[f'case::{TRACE_NUMBER_ATTR_NAME}']
-            X_raw, y_raw = basic_data_preprocessing(dp_dataset, self.numeric_attributes)
+            X_raw, y_raw = basic_data_preprocessing(dp_dataset)
             X = X_raw[cols_to_keep]
             y = list(y_raw)
 

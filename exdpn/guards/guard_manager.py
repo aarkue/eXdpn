@@ -1,5 +1,6 @@
 from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
+
 from typing import Dict, List, Tuple, Any 
 
 from exdpn.guards import ML_Technique # imports all guard classes
@@ -15,16 +16,24 @@ from sklearn.metrics import f1_score
 class Guard_Manager():
     def __init__(self, 
                  dataframe: DataFrame, 
-                 numeric_attributes: List[str], 
-                 ml_list: List[ML_Technique],
-                 hyperparameter: Dict[ML_Technique, Dict[str, Any]]) -> None:
+                 ml_list: List[ML_Technique] = [
+                    ML_Technique.DT,
+                    ML_Technique.LR,
+                    ML_Technique.SVM,
+                    ML_Technique.NN
+                ],
+                hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                                                                        ML_Technique.DT: {'min_samples_split': 0.1, 
+                                                                                          'min_samples_leaf': 0.1, 
+                                                                                          'ccp_alpha': 0.2},
+                                                                        ML_Technique.LR: {"C": 0.5},
+                                                                        ML_Technique.SVM: {"C": 0.5}}
+    ) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
         Args:
-            dataframe (DataFrame): Dataset used to evaluate the guard   
-            numeric_attributes (List[ML_Technique]): Convert numeric attributes to float
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated
-            hyperparameter (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques
+            dataframe (DataFrame): Dataset used to evaluate the guard        
         """
         
         # TODO: refactor data_preprocessing so that it does not do more than one thing
@@ -32,10 +41,9 @@ class Guard_Manager():
 
         # TODO: think about persistence of the encoders so that new unseen instances can still be encoded
 
-        X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dataframe, numeric_attributes)
+        X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dataframe)
         
         self.dataframe = dataframe
-        self.numeric_attributes = numeric_attributes
         self.X_train = X_train
         self.X_test  = X_test
         self.y_train = y_train
@@ -72,7 +80,7 @@ class Guard_Manager():
             self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
             
             # retrain model on all available data
-            df_X, df_y = basic_data_preprocessing(self.dataframe, self.numeric_attributes)
+            df_X, df_y = basic_data_preprocessing(self.dataframe)
             guard_models_temp = guard_models[1]
             guard_models_temp.train(df_X, df_y)
         

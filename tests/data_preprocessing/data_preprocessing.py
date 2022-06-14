@@ -3,7 +3,7 @@ from pandas import DataFrame
 import pandas as pd 
 import os 
 from exdpn import petri_net
-from exdpn import load_event_log
+from exdpn.util import import_log
 from exdpn import guard_datasets
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, data_preprocessing_evaluation, apply_scaling, fit_ohe, fit_scaling
 import random 
@@ -13,9 +13,9 @@ from typing import Tuple
 # set up test by loading a test dataframe and perform some preprocessing 
 def preprocess_data() -> Tuple[DataFrame]:
 
-    event_log = load_event_log.import_xes(os.path.join(os.getcwd(), 'tests', 'data_preprocessing', 'example.xes'))
+    event_log = import_log(os.path.join(os.getcwd(), 'tests', 'data_preprocessing', 'example.xes'))
     net, im, fm = petri_net.get_petri_net(event_log)
-    guard_datasets_per_place = guard_datasets.get_all_guard_datasets(event_log, net, im, fm, event_attributes=pm4py.get_event_attributes(event_log))
+    guard_datasets_per_place = guard_datasets.extract_all_datasets(event_log, net, im, fm, case_level_attributes=[], event_level_attributes=pm4py.get_event_attributes(event_log))
 
     # use data set of decision point p_3
     place_three = [place for place in guard_datasets_per_place.keys() if place.name == "p_3"][0]
