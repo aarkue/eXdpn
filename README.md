@@ -9,6 +9,7 @@ The easiest way to do so is with the included `docker-compose.yml` file.
 ### Using Docker Compose ###
 1. `docker-compose up`
 
+To force re-creation of the container add the `--build` flag to the `docker-compose` command: `docker-compose up --build`.
 The web ui will then be available on port 8080.
 
 ### Building the Docker Container ###
