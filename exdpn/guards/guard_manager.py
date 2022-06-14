@@ -2,12 +2,10 @@ from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from typing import Dict, List, Tuple, Any 
 
-#from exdpn.guards import ML_Technique # imports all guard classes
+from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import data_preprocessing_evaluation 
 from exdpn.guards.model_builder import model_builder
-from exdpn.guards import ML_Technique
-
 from sklearn.metrics import f1_score
 
 

@@ -22,6 +22,7 @@ class Data_Petri_Net():
                  petri_net: PetriNet = None,
                  initial_marking: Marking = None,
                  final_marking: Marking = None,
+                 miner_type: str = "AM",
                  sliding_window_size: int = 3,
                  act_name_attr: str = "concept:name",
                  ml_list: List[ML_Technique] = [ML_Technique.NN,
@@ -45,6 +46,7 @@ class Data_Petri_Net():
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
             initial_marking (PetriNet.Place): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
             final_marking (PetriNet.Place): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
+            miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)
             sliding_window_size (int): Size of the sliding window recording the last sliding_window_size events, default is last 3 events
             act_name_attr (str): Event level attribute name corresponding to the name of an event
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
@@ -58,7 +60,7 @@ class Data_Petri_Net():
         
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:
-            self.petri_net, self.im, self.fm = get_petri_net(event_log)
+            self.petri_net, self.im, self.fm = get_petri_net(event_log, miner_type)
         else:
             self.petri_net = petri_net
             self.im = initial_marking
@@ -128,7 +130,7 @@ class Data_Petri_Net():
             self.print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
             self.print_if_verbose(
-                guard[1].get_explainable_representation()) # use "training" model for representation
+                guard[0].get_explainable_representation()) # use "training" model for representation
 
         return self.guard_per_place
 

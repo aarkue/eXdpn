@@ -2,7 +2,6 @@ from pandas import DataFrame, concat, Series
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import sys
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from typing import Tuple, List
@@ -18,8 +17,6 @@ def data_preprocessing_evaluation(dataframe: DataFrame, numeric_attributes: List
         dataframe (DataFrame): Dataframe to be transformed for evaluation of the best model
     Returns:
         X_train, X_test, y_train, y_test (DataFrame): Preprocessed and splitted data
-        #data_scaler (MinMaxScaler]): MinMaxScaler fitted on data set, scales to [0, 1]
-        #scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     """
 
     # perform basic preprocessing
