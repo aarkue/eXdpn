@@ -1,6 +1,7 @@
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.objects.log.obj import EventLog
 import pm4py.util.xes_constants as xes
+from pm4py.statistics.attributes.log.get import get_all_event_attributes_from_log
 
 
 def import_log(path: str, verbose: bool = False) -> EventLog:
@@ -27,7 +28,7 @@ def extend_event_log_with_total_elapsed_time(log: EventLog, total_elapsed_time_a
         total_elapsed_time_attribute_name (str, optional): Event level attribute name to be used. Default is "eXdpn::total_elapsed_time"
         timestamp_attribute_name (str, optional): Timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY ("time:timestamp")
     """
-    assert timestamp_attribute_name in list(log[0][0].keys()), \
+    assert timestamp_attribute_name in get_all_event_attributes_from_log(log), \
         f"Error: attribute '{timestamp_attribute_name}' needs to be present in the event log"
 
     for case in log:
@@ -45,7 +46,7 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
         preceding_event_delay_attribute_name (str, optional): Event level attribute name to be used. Default is "eXdpn::preceding_event_delay"
         timestamp_attribute_name (str, optional): Timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY ("time:timestamp")
     """
-    assert timestamp_attribute_name in list(log[0][0].keys()), \
+    assert timestamp_attribute_name in get_all_event_attributes_from_log(log), \
         f"Error: attribute '{timestamp_attribute_name}' needs to be present in the event log"
 
     for case in log:
