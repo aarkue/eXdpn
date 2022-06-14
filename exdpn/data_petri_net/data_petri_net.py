@@ -124,9 +124,7 @@ class Data_Petri_Net():
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
             self.print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
-            self.print_if_verbose(
-                guard.get_explainable_representation()) 
-                
+
         return self.guard_per_place
 
 
