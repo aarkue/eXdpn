@@ -1,14 +1,12 @@
-from pandas import DataFrame, concat
+from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
-from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List, Tuple, Any
 
-#from exdpn.guards import ML_Technique # imports all guard classes
+from typing import Dict, List, Tuple, Any 
+
+from exdpn.guards import ML_Technique # imports all guard classes
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import data_preprocessing_evaluation 
 from exdpn.guards.model_builder import model_builder
-from exdpn.guards import ML_Technique
-
 from sklearn.metrics import f1_score
 
 
@@ -53,17 +51,17 @@ class Guard_Manager():
 
         # create list of all needed machine learning techniques to evaluate the guards
         # first value is for training model, second value for final model
-        self.guards_list = {technique: [model_builder(technique, hyperparameters[technique]), 
-                                        model_builder(technique, hyperparameters[technique])] for technique in ml_list}
+        self.guards_list = {technique: [model_builder(technique, hyperparameter[technique]), 
+                                        model_builder(technique, hyperparameter[technique])] for technique in ml_list}
         
         self.guards_results = None
 
 
-    def train_test(self) -> Dict[str, any]:
+    def train_test(self) -> Dict[str, Any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
         using the specified machine learning techniques.
         Returns:
-            guards_results (Dict[str, any]): Returns a mapping of all selected machine learning techniques \
+            guards_results (Dict[str, Any]): Returns a mapping of all selected machine learning techniques \
             to the achieved F1-score and two trained guard models: the "training" guard (position 0) and final guard (position 1)
         """
         

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Any 
 
 from exdpn.data_preprocessing import fit_ohe
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
@@ -15,10 +15,11 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 class Neural_Network_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {'hidden_layer_sizes': (10,10)}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any]) -> None:
         """Initializes a neural network based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier \
+            (default suggestion: 'hidden_layer_sizes': (10,10))
         """
 
         super().__init__(hyperparameters)

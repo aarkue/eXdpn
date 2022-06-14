@@ -49,14 +49,14 @@ class Data_Petri_Net():
             activityName_key (str): Event level attribute name corresponding to the name of an event. Defaults to "concept:name"
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
             implemented techniques
-            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
+            hyperparameter (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
             is smaller than the threshold the guard is not added. Default is 0.6 
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:
-            self.petri_net, self.im, self.fm = get_petri_net(event_log)
+            self.petri_net, self.im, self.fm = get_petri_net(event_log, miner_type)
         else:
             self.petri_net = petri_net
             self.im = initial_marking
@@ -77,7 +77,7 @@ class Data_Petri_Net():
         # initialize all gms
         self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place], 
                                                              ml_list = ml_list,
-                                                             hyperparameters = hyperparameters) 
+                                                             hyperparameter = hyperparameter) 
                                         for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers
