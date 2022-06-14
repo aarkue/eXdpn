@@ -1,16 +1,16 @@
 import abc  # use abstract base classes to define interfaces
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List
+from typing import Dict, List, Any 
 from matplotlib.figure import Figure
 
 
 class Guard(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def __init__(self, hyperparameters: Dict[str, any]) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any]) -> None:
         """Initializes a guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier
         """
         
         pass

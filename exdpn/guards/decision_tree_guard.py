@@ -7,14 +7,15 @@ from exdpn.data_preprocessing import fit_ohe
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List
+from typing import Dict, List, Any 
 
 
 class Decision_Tree_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, any] = {'min_samples_split': 0.1, 'min_samples_leaf': 0.1, 'ccp_alpha': 0.2}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any]) -> None:
         """Initializes a decision tree based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, any]): Hyperparameters used for the classifier
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier \
+            (default suggestion: 'min_samples_split': 0.1, 'min_samples_leaf': 0.1, 'ccp_alpha': 0.2
         """
         
         super().__init__(hyperparameters)
