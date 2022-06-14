@@ -2,6 +2,20 @@
 E**x**plainable **d**ata **P**etri **n**ets
 Tool to mine and evaluate explainable data Petri nets using different classification techniques. 
 
+## Docker Deployment ##
+The project can be run with Docker.
+The easiest way to do so is with the included `docker-compose.yml` file.
+
+### Using Docker Compose ###
+1. `docker-compose up`
+
+The web ui will then be available on port 8080.
+
+### Building the Docker Container ###
+1. `docker build .`
+2. `docker run -p 8080:5000 <container id>`
+
+The web ui will then be available on port 8080.
 
 
 ## Development ##
@@ -17,3 +31,5 @@ Tool to mine and evaluate explainable data Petri nets using different classifica
 
 ### Generating Documentation ###
 - Run `pdoc ./exdpn -o ./docs -d google`
+
+

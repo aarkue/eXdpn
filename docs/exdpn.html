@@ -25,6 +25,7 @@
         <ul>
   <li><a href="#exdpn">eXdpn</a>
   <ul>
+    <li><a href="#docker-deployment">Docker Deployment</a></li>
     <li><a href="#development">Development</a></li>
   </ul></li>
 </ul>
@@ -59,6 +60,28 @@ exdpn    </h1>
 
 <p>E<strong>x</strong>plainable <strong>d</strong>ata <strong>P</strong>etri <strong>n</strong>ets
 Tool to mine and evaluate explainable data Petri nets using different classification techniques. </p>
+
+<h2 id="docker-deployment">Docker Deployment</h2>
+
+<p>The project can be run with Docker.
+The easiest way to do so is with the included <code>docker-compose.yml</code> file.</p>
+
+<h3 id="using-docker-compose">Using Docker Compose</h3>
+
+<ol>
+<li><code>docker-compose up</code></li>
+</ol>
+
+<p>The web ui will then be available on port 8080.</p>
+
+<h3 id="building-the-docker-container">Building the Docker Container</h3>
+
+<ol>
+<li><code>docker build .</code></li>
+<li><code>docker run -p 8080:5000 &lt;container id&gt;</code></li>
+</ol>
+
+<p>The web ui will then be available on port 8080.</p>
 
 <h2 id="development">Development</h2>
 
