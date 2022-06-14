@@ -16,13 +16,23 @@ from sklearn.metrics import f1_score
 class Guard_Manager():
     def __init__(self, 
                  dataframe: DataFrame, 
-                 ml_list: List[ML_Technique],
-                 hyperparameters: Dict[ML_Technique, Dict[str, Any]]) -> None:
+                 ml_list: List[ML_Technique] = [ML_Technique.DT,
+                                                ML_Technique.LR,
+                                                ML_Technique.SVM,
+                                                ML_Technique.NN],
+                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                                                                        ML_Technique.DT: {'min_samples_split': 0.1, 
+                                                                                          'min_samples_leaf': 0.1, 
+                                                                                          'ccp_alpha': 0.2},
+                                                                        ML_Technique.LR: {"C": 0.5},
+                                                                        ML_Technique.SVM: {"C": 0.5}}) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
         Args:
-            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated
-            dataframe (DataFrame): Dataset used to evaluate the guard        
+            dataframe (DataFrame): Dataset used to evaluate the guard  
+            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all implemented 
+            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
+            if not specified default parameters are used    
         """
         
         # TODO: refactor data_preprocessing so that it does not do more than one thing

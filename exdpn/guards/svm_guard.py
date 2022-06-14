@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 import numpy as np 
 
 class SVM_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any]) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {"C": 0.5}) -> None:
         """Initializes a support vector machine based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier (default suggestion: "C": 0.5)
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier
         """
         
         super().__init__(hyperparameters)
@@ -75,7 +75,9 @@ class SVM_Guard(Guard):
         Args:
             input_instances (DataFrame): Input instances used to predict the next transition
         Returns:
-            predicted_transitions (List[PetriNet.Transition]): Predicted transitions"""
+            predicted_transitions (List[PetriNet.Transition]): Predicted transitions
+        """
+        
         # scale numerical attributes
         input_instances = apply_scaling(input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
@@ -90,6 +92,7 @@ class SVM_Guard(Guard):
         # finds the key (transition) where the value (transition integer / id) corresponds to the predicted integer / id
         # for all predicted integers
         return [next(trans for trans, trans_id in self.transition_int_map.items() if trans_id == pred_id) for pred_id in predicted_transition_ids]
+
 
     def is_explainable(self) -> bool:
         """Returns whether or not this guard is explainable.
@@ -132,7 +135,7 @@ class SVM_Guard(Guard):
                               show = False,
                               class_names = classes,
                               class_inds = range(len(classes)))
-            plt.title("Feature Impact on Probability", fontsize = 14)
+            plt.title("Feature Impact on Model Prediction", fontsize = 14)
             plt.ylabel("Feature Attributes", fontsize = 14)
             if len(classes) < 3:
                 # add label for binary manually

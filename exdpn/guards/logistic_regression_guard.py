@@ -15,10 +15,10 @@ import numpy as np
 
 
 class Logistic_Regression_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any]) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {"C": 0.5}) -> None:
         """Initializes a logistic regression based guard with the provided hyperparameters.
         Args:
-            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier (default suggestion: "C": 0.5)
+            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier
         """
         
         super().__init__(hyperparameters)
@@ -134,7 +134,7 @@ class Logistic_Regression_Guard(Guard):
                               show = False,
                               class_names = classes,
                               class_inds = range(len(classes)))
-            plt.title("Feature Impact on Probability", fontsize = 14)
+            plt.title("Feature Impact on Model Prediction", fontsize = 14)
             plt.ylabel("Feature Attributes", fontsize = 14)
             if len(classes) < 3:
                 # add label for binary manually
