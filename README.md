@@ -14,3 +14,6 @@ Tool to mine and evaluate explainable data Petri nets using different classifica
 ### UI: Flask Webserver ###
 1. Set the FLASK_ENV env. variable `export FLASK_ENV=development` (bash) or `$env:FLASK_ENV = "development"` (powershell)
 2. Navigate into the ui/ directory and run `flask run`
+
+### Generating Documentation ###
+- Run `pdoc ./exdpn -o ./docs -d google`
