@@ -14,8 +14,10 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     defining feature variables and target variables. Furthermore, the data is split into a train and test data sets \
     and each numeric feature is scaled with a MinMaxScaler to [0, 1]\
     into training and test sets.
+
     Args:
         dataframe (DataFrame): Dataframe to be transformed for evaluation of the best model
+
     Returns:
         X_train, X_test, y_train, y_test (DataFrame): Preprocessed and splitted data
         #data_scaler (MinMaxScaler]): MinMaxScaler fitted on data set, scales to [0, 1]
@@ -43,18 +45,16 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
 
 
 def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
-    """ Basic preprocessing before dataframes, i.e., converting all columns to the correct data type, droping of columns \
+    """ Basic preprocessing before dataframes, i.e., dropping of columns \
     with only NaNs and defining feature variables and target variables
+
     Args:
         dataframe (DataFrame): Dataframe to be transformed
+
     Returns:
         df_X (DataFrame): Preprocessed dataframe of feature variables
         df_y (DataFrame): Preprocessed dataframe of target variable
     """
-
-    # convert timestamp to datatype "datetime"
-    if "event::time:timestamp" in dataframe.columns:
-        dataframe["event::time:timestamp"] = pd.to_datetime(dataframe["event::time:timestamp"])
 
     # don't use case attributes for prediction
     if any("case::" in cols for cols in dataframe.columns):
@@ -76,8 +76,10 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
 
 def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
     """ Fits a MinMaxScaler on the data and returns a scaler for a scaling t o [0, 1] and the scalable columns 
+
     Args: 
         X (DataFrame): Dataframe with data to scale
+
     Returns: 
         scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
@@ -96,10 +98,12 @@ def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
 
 def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str]) -> DataFrame:
     """ Performs min-max scaling to [0, 1] on data with a fitted scaler on all scalable columns and returns scaled data
+
     Args:
         X (DataFrame): Dataframe with data to scale
         scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
+
     Returns:
         X_scaled (DataFrame): Scaled data, where each feature is scaled to [0, 1]
     """
@@ -114,8 +118,10 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str
 
 def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
     """ Fits anOneHotEncoder on all categorical features in the data set
+
     Args:
         X (DataFrame): Dataframe with data to encode
+
     Returns:
         OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
         ohe_column_names (List[str]): List of column names of One Hot Encoded dataframe
@@ -129,9 +135,11 @@ def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
 def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
     """ Performs One Hot Encoding on all categorical features in the data set. This is necessary for machine learning \
     techniques that cannot handle categorical data, such as Decision Trees, SVMs and Neural Networks
+
     Args:
         X (DataFrame): Dataframe with data to encode
         OneHotEncoder (OneHotEncoder): Fitted Encoder, used to encode categorical data
+
     Returns:
         X_encoded (DataFrame): Encoded data, if dataframe does not contain categorical data, the original \
         dataframe is returned
