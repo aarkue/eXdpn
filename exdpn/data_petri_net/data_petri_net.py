@@ -29,7 +29,7 @@ class Data_Petri_Net():
                     ML_Technique.LR,
                     ML_Technique.SVM,
                     ML_Technique.NN],
-                 hyperparameter: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1, 
                                                                                           'min_samples_leaf': 0.1, 
                                                                                           'ccp_alpha': 0.2},
@@ -50,7 +50,7 @@ class Data_Petri_Net():
             activityName_key (str): Event level attribute name corresponding to the name of an event. Defaults to "concept:name"
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
             implemented techniques
-            hyperparameter (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
+            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
             is smaller than the threshold the guard is not added. Default is 0.6 
@@ -78,7 +78,7 @@ class Data_Petri_Net():
         # initialize all gms
         self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place], 
                                                              ml_list = ml_list,
-                                                             hyperparameter = hyperparameter) 
+                                                             hyperparameters = hyperparameters) 
                                         for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers

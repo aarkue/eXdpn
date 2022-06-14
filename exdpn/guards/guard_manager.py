@@ -16,18 +16,8 @@ from sklearn.metrics import f1_score
 class Guard_Manager():
     def __init__(self, 
                  dataframe: DataFrame, 
-                 ml_list: List[ML_Technique] = [
-                    ML_Technique.DT,
-                    ML_Technique.LR,
-                    ML_Technique.SVM,
-                    ML_Technique.NN],
-                 hyperparameter: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
-                                                                        ML_Technique.DT: {'min_samples_split': 0.1, 
-                                                                                          'min_samples_leaf': 0.1, 
-                                                                                          'ccp_alpha': 0.2},
-                                                                        ML_Technique.LR: {"C": 0.5},
-                                                                        ML_Technique.SVM: {"C": 0.5}}
-    ) -> None:
+                 ml_list: List[ML_Technique],
+                 hyperparameters: Dict[ML_Technique, Dict[str, Any]]) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
         Args:
@@ -49,7 +39,7 @@ class Guard_Manager():
         self.y_test  = y_test
 
         # create list of all needed machine learning techniques to evaluate the guards
-        self.guards_list = {technique: model_builder(technique, hyperparameter[technique]) for technique in ml_list}
+        self.guards_list = {technique: model_builder(technique, hyperparameters[technique]) for technique in ml_list}
         
         self.guards_results = None
 
