@@ -13,7 +13,7 @@ def get_df():
     event_log = import_log(os.path.join(
         os.getcwd(), 'tests', 'guard_datasets', 'example.xes'))
 
-    net, im, fm = get_petri_net(event_log)
+    net, im, fm = get_petri_net(event_log, "IM")
     dp = find_decision_points(net)
 
     place_three = [place for place in dp.keys() if place.name == "p_3"][0]

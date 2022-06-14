@@ -14,7 +14,7 @@ from typing import Tuple
 def preprocess_data() -> Tuple[DataFrame]:
 
     event_log = import_log(os.path.join(os.getcwd(), 'tests', 'data_preprocessing', 'example.xes'))
-    net, im, fm = petri_net.get_petri_net(event_log)
+    net, im, fm = petri_net.get_petri_net(event_log, "IM")
     guard_datasets_per_place = guard_datasets.extract_all_datasets(event_log, net, im, fm, case_level_attributes=[], event_level_attributes=pm4py.get_event_attributes(event_log))
 
     # use data set of decision point p_3
