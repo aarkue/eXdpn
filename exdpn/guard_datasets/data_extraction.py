@@ -111,7 +111,16 @@ def _get_log_attributes(log: EventLog) -> Tuple[List[str], List[str]]:
                 event_attrs.update(event.keys())
     return case_attrs, event_attrs
 
-def extract_dataset_for_place(place: PetriNet.Place, target_transitions:Dict[PetriNet.Place, PetriNet.Transition], log: EventLog, replay:Union[List[Dict[str,Any]], Tuple[PetriNet, Marking, Marking]], case_level_attributes: List[str] = None, event_level_attributes: List[str] = None, tail_length: int = 3, activityName_key:str = xes.DEFAULT_NAME_KEY, padding:Any="#"):
+def extract_dataset_for_place(
+    place: PetriNet.Place,
+    target_transitions:Dict[PetriNet.Place, PetriNet.Transition],
+    log: EventLog, replay:Union[List[Dict[str,Any]], Tuple[PetriNet, Marking, Marking]],
+    case_level_attributes: List[str] = None,
+    event_level_attributes: List[str] = None,
+    tail_length: int = 3,
+    activityName_key:str = xes.DEFAULT_NAME_KEY,
+    padding:Any="#"
+) -> DataFrame:
     """Extracts the dataset for a single place using Token-Based Replay. For each instance of this decision found in the log, the following data is extracted:
     1. The specified Case-Level attributes of the case
     2. The specified Event-Level attributes of the last event of the case before this decision is made
@@ -128,6 +137,7 @@ def extract_dataset_for_place(place: PetriNet.Place, target_transitions:Dict[Pet
         event_level_attributes (List[str], optional): List of attributes to be extracted on an Event level. If none specified, all are used.
         tail_length (int, optional): Number of events to be extracted before the decision. Defaults to 3.
         activityName_key (str, optional): Key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
+        padding (Any, optional): Padding to be used when tail goes over beginning of case. Defaults to "#".
     """    
 
     # Compute replay if necessary
@@ -147,6 +157,9 @@ def extract_dataset_for_place(place: PetriNet.Place, target_transitions:Dict[Pet
     # Extract the data for the place
     instances = []
     for idx, trace_replay in enumerate(replay):
+        if not trace_replay["trace_is_fit"]:
+            # Skip non-fitting traces
+            continue
         # Track index of current event because invisible transitions can be present
         event_index = -1
         for transition in trace_replay["activated_transitions"]:
