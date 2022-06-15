@@ -1,3 +1,5 @@
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 
@@ -96,3 +98,21 @@ class Guard_Manager():
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
         
         return best_guard_name, self.guards_list[best_guard_name]
+
+    def get_comparison_plot(self) -> Figure:        
+        """ Constructs a comparison bar plot of the F1 scores for all trained techniques for a place
+
+        Returns:
+            Figure: The bar plot figure
+        """
+        guard_results = {(str(technique)): result for technique,result in self.guards_results.items()}
+        fig = plt.figure(figsize=(6,3))
+        plt.xticks(rotation=45,ha='right')
+        plt.ylim(0,1)
+        axis = plt.gca()
+        axis.spines['top'].set_visible(False)
+        axis.spines['right'].set_visible(False)
+        plt.ylabel('F1 score')
+        plt.title('Comparison of Techniques')
+        plt.bar(guard_results.keys(),guard_results.values(),color=['#478736', '#e26f8f', '#e1ad01', '#263488'])
+        return fig
