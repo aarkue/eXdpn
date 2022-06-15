@@ -42,6 +42,9 @@
                         <li>
                                 <a class="function" href="#Guard_Manager.get_best">get_best</a>
                         </li>
+                        <li>
+                                <a class="function" href="#Guard_Manager.get_comparison_plot">get_comparison_plot</a>
+                        </li>
                 </ul>
 
             </li>
@@ -65,6 +68,7 @@
                         <input id="guard_manager-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="guard_manager-view-source"><span>View Source</span></label>
+
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">exdpn.data_preprocessing.data_preprocessing</span> <span class="kn">import</span> <span class="n">basic_data_preprocessing</span>
@@ -179,6 +183,7 @@
 
     </div>
     <a class="headerlink" href="#Guard_Manager"></a>
+
             <div class="pdoc-code codehilite"><pre><span></span><span id="Guard_Manager-17"><a href="#Guard_Manager-17"><span class="linenos">17</span></a><span class="k">class</span> <span class="nc">Guard_Manager</span><span class="p">():</span>
 </span><span id="Guard_Manager-18"><a href="#Guard_Manager-18"><span class="linenos">18</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Guard_Manager-19"><a href="#Guard_Manager-19"><span class="linenos">19</span></a>                 <span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> 
@@ -277,6 +282,7 @@
 
     </div>
     <a class="headerlink" href="#Guard_Manager.__init__"></a>
+
             <div class="pdoc-code codehilite"><pre><span></span><span id="Guard_Manager.__init__-18"><a href="#Guard_Manager.__init__-18"><span class="linenos">18</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Guard_Manager.__init__-19"><a href="#Guard_Manager.__init__-19"><span class="linenos">19</span></a>                 <span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> 
 </span><span id="Guard_Manager.__init__-20"><a href="#Guard_Manager.__init__-20"><span class="linenos">20</span></a>                 <span class="n">ml_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ML_Technique</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ML_Technique</span><span class="o">.</span><span class="n">DT</span><span class="p">,</span>
@@ -343,6 +349,7 @@ returns a dictionary with the list of all guards for each machine learning techn
 
     </div>
     <a class="headerlink" href="#Guard_Manager.train_test"></a>
+
             <div class="pdoc-code codehilite"><pre><span></span><span id="Guard_Manager.train_test-58"><a href="#Guard_Manager.train_test-58"><span class="linenos">58</span></a>    <span class="k">def</span> <span class="nf">train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 </span><span id="Guard_Manager.train_test-59"><a href="#Guard_Manager.train_test-59"><span class="linenos">59</span></a>        <span class="sd">&quot;&quot;&quot; Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \</span>
 </span><span id="Guard_Manager.train_test-60"><a href="#Guard_Manager.train_test-60"><span class="linenos">60</span></a><span class="sd">        using the specified machine learning techniques.</span>
@@ -396,6 +403,7 @@ returns a dictionary with the list of all guards for each machine learning techn
 
     </div>
     <a class="headerlink" href="#Guard_Manager.get_best"></a>
+
             <div class="pdoc-code codehilite"><pre><span></span><span id="Guard_Manager.get_best-88"><a href="#Guard_Manager.get_best-88"><span class="linenos">88</span></a>    <span class="k">def</span> <span class="nf">get_best</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Guard</span><span class="p">]]:</span>
 </span><span id="Guard_Manager.get_best-89"><a href="#Guard_Manager.get_best-89"><span class="linenos">89</span></a>        <span class="sd">&quot;&quot;&quot; Returns &quot;best&quot; guard for a decision point.</span>
 </span><span id="Guard_Manager.get_best-90"><a href="#Guard_Manager.get_best-90"><span class="linenos">90</span></a><span class="sd">        Returns:</span>
@@ -417,6 +425,48 @@ returns a dictionary with the list of all guards for each machine learning techn
 
 <blockquote>
   <p>best_guard (Tuple[str, List[Guard, Guard]]): Returns "best" guard for a decision point with respect to the             chosen metric (F1 score), the returned tuple contains the machine learning technique and a list with the             corresponding "training" guard (position 0) and final guard (position 1)</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="Guard_Manager.get_comparison_plot" class="classattr">
+                                        <input id="Guard_Manager.get_comparison_plot-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_comparison_plot</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">matplotlib</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span>:</span></span>
+
+                <label class="view-source-button" for="Guard_Manager.get_comparison_plot-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Guard_Manager.get_comparison_plot"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard_Manager.get_comparison_plot-103"><a href="#Guard_Manager.get_comparison_plot-103"><span class="linenos">103</span></a>    <span class="k">def</span> <span class="nf">get_comparison_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>        
+</span><span id="Guard_Manager.get_comparison_plot-104"><a href="#Guard_Manager.get_comparison_plot-104"><span class="linenos">104</span></a>        <span class="sd">&quot;&quot;&quot; Constructs a comparison bar plot of the F1 scores for all trained techniques for a place</span>
+</span><span id="Guard_Manager.get_comparison_plot-105"><a href="#Guard_Manager.get_comparison_plot-105"><span class="linenos">105</span></a>
+</span><span id="Guard_Manager.get_comparison_plot-106"><a href="#Guard_Manager.get_comparison_plot-106"><span class="linenos">106</span></a><span class="sd">        Returns:</span>
+</span><span id="Guard_Manager.get_comparison_plot-107"><a href="#Guard_Manager.get_comparison_plot-107"><span class="linenos">107</span></a><span class="sd">            Figure: The bar plot figure</span>
+</span><span id="Guard_Manager.get_comparison_plot-108"><a href="#Guard_Manager.get_comparison_plot-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard_Manager.get_comparison_plot-109"><a href="#Guard_Manager.get_comparison_plot-109"><span class="linenos">109</span></a>        <span class="n">guard_results</span> <span class="o">=</span> <span class="p">{(</span><span class="nb">str</span><span class="p">(</span><span class="n">technique</span><span class="p">)):</span> <span class="n">result</span> <span class="k">for</span> <span class="n">technique</span><span class="p">,</span><span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">guards_results</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="Guard_Manager.get_comparison_plot-110"><a href="#Guard_Manager.get_comparison_plot-110"><span class="linenos">110</span></a>        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+</span><span id="Guard_Manager.get_comparison_plot-111"><a href="#Guard_Manager.get_comparison_plot-111"><span class="linenos">111</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span><span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+</span><span id="Guard_Manager.get_comparison_plot-112"><a href="#Guard_Manager.get_comparison_plot-112"><span class="linenos">112</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="Guard_Manager.get_comparison_plot-113"><a href="#Guard_Manager.get_comparison_plot-113"><span class="linenos">113</span></a>        <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+</span><span id="Guard_Manager.get_comparison_plot-114"><a href="#Guard_Manager.get_comparison_plot-114"><span class="linenos">114</span></a>        <span class="n">axis</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="Guard_Manager.get_comparison_plot-115"><a href="#Guard_Manager.get_comparison_plot-115"><span class="linenos">115</span></a>        <span class="n">axis</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="Guard_Manager.get_comparison_plot-116"><a href="#Guard_Manager.get_comparison_plot-116"><span class="linenos">116</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;F1 score&#39;</span><span class="p">)</span>
+</span><span id="Guard_Manager.get_comparison_plot-117"><a href="#Guard_Manager.get_comparison_plot-117"><span class="linenos">117</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Comparison of Techniques&#39;</span><span class="p">)</span>
+</span><span id="Guard_Manager.get_comparison_plot-118"><a href="#Guard_Manager.get_comparison_plot-118"><span class="linenos">118</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">guard_results</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span><span class="n">guard_results</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span><span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;#478736&#39;</span><span class="p">,</span> <span class="s1">&#39;#e26f8f&#39;</span><span class="p">,</span> <span class="s1">&#39;#e1ad01&#39;</span><span class="p">,</span> <span class="s1">&#39;#263488&#39;</span><span class="p">])</span>
+</span><span id="Guard_Manager.get_comparison_plot-119"><a href="#Guard_Manager.get_comparison_plot-119"><span class="linenos">119</span></a>        <span class="k">return</span> <span class="n">fig</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Constructs a comparison bar plot of the F1 scores for all trained techniques for a place</p>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Figure: The bar plot figure</p>
 </blockquote>
 </div>
 

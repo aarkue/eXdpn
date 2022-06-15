@@ -97,6 +97,7 @@
                             document.getElementById('selected_guard_name').textContent = guardDataPerPlace[placeId]['name']
                             document.getElementById('selected_guard_performance').textContent = Math.round(parseFloat(guardDataPerPlace[placeId]['performance'])*100)/100;
                             document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
+                            document.getElementById('selected_guard_comparison_svg').setAttribute('src',guardDataPerPlace[placeId]['comparison_svg_url'])
                              const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
                             bsel.show();
                             console.log(title.textContent)
@@ -134,8 +135,8 @@
 
         let selectedAttributes = getSelectedAttributes()
         fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then(async (res) => {
-          console.log({res})
           const json = await res.json();
+          console.log({json},'mine-decision result json')
           decisionMined = true;
           loadDecisionButton.removeAttribute('disabled'); // do we want to do that?
           loadDecisionButtonLoadingSpan.style.display = 'none';
@@ -144,6 +145,11 @@
             const blob = new Blob([json[placeId]['svg_representation']],{type: 'image/svg+xml'})
             const url = URL.createObjectURL(blob);
             guardDataPerPlace[placeId]['svg_url'] = url;
+
+
+            const resultsComparisonBlob = new Blob([json[placeId]['guard_result_svg']],{type: 'image/svg+xml'})
+            const resultsComparisonUrl = URL.createObjectURL(resultsComparisonBlob);
+            guardDataPerPlace[placeId]['comparison_svg_url'] = resultsComparisonUrl;
           }
         }).catch((err) => {
           console.error({err})
@@ -176,6 +182,9 @@
       }
       .decisionPlace.selectedPlace:hover {
         fill: rgba(0, 128, 0, 0.761);
+      }
+      img {
+        width: 100%;
       }
     </style>
 
@@ -312,7 +321,10 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
+            <!-- <div>
+            </div> -->
             <div id="explainable_representation" class="d-flex justify-content-center h-100" >
+              <img id="selected_guard_comparison_svg"/>
               <img id="selected_guard_svg"/>
             </div>
           </div>
