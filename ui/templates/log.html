@@ -122,6 +122,9 @@
 
           selectedAttributes[attributeType] = attributeNames;
         }
+          const synEl = document.getElementById('synthetic_attributes');
+          const synthAttributes = [...synEl.querySelectorAll('input:checked')].map((e) => e.dataset.synthName)
+        selectedAttributes['synthetic_attributes'] = synthAttributes;
         return selectedAttributes;
       }
 
@@ -165,7 +168,7 @@
         height: 100%;
       }
       .offcanvas {
-        --bs-offcanvas-height: 40vh !important;
+        --bs-offcanvas-height: max(40vh,400px) !important;
       }
       #discoveredPetriNet svg {
         border: 2px dashed rgba(49, 47, 47, 0.685);
@@ -184,6 +187,7 @@
         fill: rgba(0, 128, 0, 0.761);
       }
       img {
+        height: 100%;
         width: 100%;
       }
     </style>
@@ -304,6 +308,24 @@
                 </span>
               </div>
             </div>
+
+            <div class="col">
+              <h3 class="text-center">Synthetic attributes</h3>
+              <div class="list-group" id="synthetic_attributes">
+                  <label class="list-group-item">
+                    <input type="checkbox" data-synth-name="total_elapsed_time"  class="form-check-input me-2">
+                    <samp>Elapsed time in case
+                      <span class="text-muted">(per Event)</span>
+                    </samp>
+                  </label>
+                  <label class="list-group-item">
+                    <input type="checkbox" data-synth-name="time_since_last" class="form-check-input me-2">
+                    <samp>Time since last event
+                      <span class="text-muted">(per Event)</span>
+                    </samp>
+                  </label>
+              </div>
+            </div>
         </div>
         <div class="text-center my-2">
           <button id="mine-decisions-btn" class="btn btn-primary btn-lg" onclick="mineDecisions()" type="button">
@@ -315,17 +337,22 @@
         <div class="offcanvas offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
           <div class="offcanvas-header align-items-start">
             <div>
-              <h4 class="text-muted">Technique: <span id="selected_guard_name" class="text-success">No name</span></h4>
-              <p class="text-muted fs-4">F1 Score: <span id="selected_guard_performance" class="text-success"></span></p>
+              <h4 class="text-muted">Best Technique: <span id="selected_guard_name" class="text-success">No name</span></h4>
+              <p class="text-muted fs-5">F1 Score: <span id="selected_guard_performance" class="text-success"></span></p>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
             <!-- <div>
             </div> -->
-            <div id="explainable_representation" class="d-flex justify-content-center h-100" >
-              <img id="selected_guard_comparison_svg"/>
-              <img id="selected_guard_svg"/>
+            <div id="explainable_representation" class="d-flex justify-content-around h-100" >
+              <div class="h-100">
+                <img id="selected_guard_comparison_svg"/>
+              </div>
+              <div class="h-100">
+                <h5 class="text-center">Explainable Representation</h5>
+                <img id="selected_guard_svg"/>
+              </div>
             </div>
           </div>
         </div>

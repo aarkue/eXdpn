@@ -14,7 +14,7 @@ from pm4py.objects.log.obj import EventLog
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 
 import uuid
-from exdpn.util import import_log
+from exdpn.util import import_log, extend_event_log_with_preceding_event_delay, extend_event_log_with_total_elapsed_time
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guards import ML_Technique
 from exdpn.data_petri_net import Data_Petri_Net
@@ -159,13 +159,26 @@ def mine_decisions(logid: str):
     else:
         body = request.get_json()
 
+        event_log = loaded_event_logs[logid][1]
+        event_level_attributes = body['event_attributes']
+        case_level_attributes = body['case_attributes']
+
+        synth_attrs = body["synthetic_attributes"]
+        print(synth_attrs)
+        if "time_since_last" in synth_attrs:
+            extend_event_log_with_preceding_event_delay(event_log,"eXdpn::time_since_last_event")
+            event_level_attributes.append("eXdpn::time_since_last_event")
+        if "total_elapsed_time" in synth_attrs:
+            extend_event_log_with_total_elapsed_time(event_log, "eXdpn::elapsed_case_time")
+            event_level_attributes.append("eXdpn::elapsed_case_time")
+        
         dpn = Data_Petri_Net(
-            event_log = loaded_event_logs[logid][1],
+            event_log = event_log,
             petri_net = discovered_models[logid][0],
             initial_marking = discovered_models[logid][1],
             final_marking = discovered_models[logid][2],
-            case_level_attributes = body['case_attributes'],
-            event_level_attributes = body['event_attributes'],
+            case_level_attributes = case_level_attributes,
+            event_level_attributes = event_level_attributes,
             guard_threshold = 0
         )
         return_info = dict()
