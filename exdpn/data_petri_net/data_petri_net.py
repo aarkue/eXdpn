@@ -183,6 +183,12 @@ class Data_Petri_Net():
         all_trace_ids = list(get_trace_attribute_values(test_event_log, xes.DEFAULT_TRACEID_KEY).keys())
         prediction_result = {i: 1 for i in all_trace_ids}
 
+        # seen trace ids might be different from all trace ids
+        # since unfit traces are ignored and do not produce instances in the datasets.
+        # the mean guard conformance metric must respect the potentially reduced number of traces
+        # for which the guard conformance can be checked.
+        seen_trace_ids = set()
+
         for decision_point, dp_dataset in guard_datasets.items():
             if len(dp_dataset) == 0:
                 continue
@@ -194,6 +200,7 @@ class Data_Petri_Net():
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
             trace_ids = dp_dataset[f'case::{xes.DEFAULT_TRACEID_KEY}']
+            seen_trace_ids.update(trace_ids) # keep track of seen traces
             X_raw, y_raw = basic_data_preprocessing(dp_dataset)
             X = X_raw[cols_to_keep]
             y = list(y_raw)
@@ -203,5 +210,5 @@ class Data_Petri_Net():
             for j in range(len(y)):
                 if y[j] != prediction[j]:
                     prediction_result[trace_ids[j]] = 0
-        
-        return sum(list(prediction_result.values())) / len(test_event_log)
+
+        return sum([prediction_result[trace_id] for trace_id in seen_trace_ids]) / len(seen_trace_ids)
