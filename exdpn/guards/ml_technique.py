@@ -7,3 +7,15 @@ class ML_Technique(enum.Enum):
     DT  = Decision_Tree_Guard
     LR  = Logistic_Regression_Guard
     SVM = SVM_Guard 
+
+    def __str__(self) -> str:
+        if self == ML_Technique.DT:
+            return "Decision Tree"
+        elif self == ML_Technique.SVM:
+            return "Support Vector Machine"
+        elif self == ML_Technique.LR:
+            return "Logistic Regression"
+        elif self == ML_Technique.NN:
+            return "Neural Network"
+        else:
+            return "Unknown"
