@@ -35,7 +35,7 @@ class Data_Petri_Net():
                                                                                           'ccp_alpha': 0.2},
                                                                         ML_Technique.LR: {"C": 0.5},
                                                                         ML_Technique.SVM: {"C": 0.5}},
-                 guard_threshold: float = 0.6,
+                 guard_threshold: float = 0.0,
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
         Args:
@@ -53,7 +53,7 @@ class Data_Petri_Net():
             hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
-            is smaller than the threshold the guard is not added. Default is 0.6 
+            is smaller than the threshold the guard is not added. Default is 0 (no threshold) 
             verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:

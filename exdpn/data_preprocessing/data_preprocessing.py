@@ -54,9 +54,9 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
     """
 
     # don't use case attributes for prediction
-    if any("case::" in cols for cols in dataframe.columns):
-        idx = [index for index in dataframe.columns if "case::" in index]
-        dataframe = dataframe.drop(idx, axis = 1)
+    #if any("case::" in cols for cols in dataframe.columns):
+    #    idx = [index for index in dataframe.columns if "case::" in index]
+    #    dataframe = dataframe.drop(idx, axis = 1)
 
     # get target and feature names
     target_var = "target"
