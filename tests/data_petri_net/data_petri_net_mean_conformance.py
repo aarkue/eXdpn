@@ -13,13 +13,12 @@ def get_p2p_event_log():
 
 class Test_Data_Petri_Net_Mean_Conformance(unittest.TestCase):
     def test_simple(self):
-        # This test takes time..
         event_log = get_p2p_event_log()
         dpn = Data_Petri_Net(event_log, case_level_attributes=['concept:name'], event_level_attributes=[
-                             "total_price", "item_id", "item_amount", "supplier", "item_category"], ml_list=[ML_Technique.DT, ML_Technique.LR], verbose=True)
+                             "total_price", "item_id", "item_amount", "supplier", "item_category"], ml_list=[ML_Technique.DT, ML_Technique.LR], verbose=False)
 
         dpn_bad = Data_Petri_Net(event_log, case_level_attributes=['concept:name'], event_level_attributes=[
-                             "item_amount", "supplier"], ml_list=[ML_Technique.DT, ML_Technique.LR], verbose=True)
+                             "item_amount", "supplier"], ml_list=[ML_Technique.DT, ML_Technique.LR], verbose=False)
 
         self.assertLessEqual(dpn_bad.get_mean_guard_conformance(event_log), dpn.get_mean_guard_conformance(event_log))
 

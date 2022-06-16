@@ -2,6 +2,7 @@ from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
 import pm4py.util.xes_constants as xes
+from pm4py.statistics.attributes.log.get import get_trace_attribute_values
 
 from typing import Dict, List, Any
 
@@ -38,6 +39,7 @@ class Data_Petri_Net():
                  guard_threshold: float = 0.0,
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
+
         Args:
             event_log (EventLog): Event log to be used as a basis for the data Petri net
             petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
@@ -101,10 +103,10 @@ class Data_Petri_Net():
             print(string, end=end)
 
     def get_best(self) -> Dict[PetriNet.Place, Guard]:
-        """ Returns "best" guard for each decision point in the data Petri net.
+        """Returns the best guard for each decision point in the data Petri net.
+
         Returns:
-            best_guards (Dict[PetriNet.Place, Guard]): Best performing guard for each decision point with respect to the \
-                chosen metric (F1 score)
+            Dict[PetriNet.Place, Guard]: The best performing guard for each decision point with respect to the F1-score
         """
         
         if self.guard_per_place != None:
@@ -129,11 +131,13 @@ class Data_Petri_Net():
 
 
     def get_guard_at_place(self, place: PetriNet.Place) -> Guard:
-        """ Returns "best" guard for given decision point.
+        """Returns the best guard for given decision point.
+
         Args:
-            place (PetriNet.Place): Decision point to be evaluated 
+            place (PetriNet.Place): The decision point to looked up
+
         Returns:
-            guard (Guard): "Best" guard for given decision point
+            Guard: The best guard for given decision point
         """
         
         if self.guard_per_place == None:
@@ -143,38 +147,47 @@ class Data_Petri_Net():
 
 
     def get_mean_guard_conformance(self, test_event_log: EventLog) -> float:
-        """Returns the mean conformance (percentage of traces where ALL guards were respected) from the given event log.
+        """Returns the mean conformance (percentage of traces where all guards were respected) for the given event log. \
+            Note that the XES defined standard case identifier attribute must be present in the event log.
+
         Args:
             test_event_log (EventLog): The event log used to test the performance of the data Perti net
+
         Returns:
-            mean conformace (float): Fraction of traces that respected ALL decision points passed during token based replay. \
+            float: Fraction of traces that respected all decision points passed during token based replay. \
                 Respecting a decision point means moving to the transition predicted by the guard at the corresponding place
         """
         
         if self.guard_per_place == None:
             self.get_best()
 
-        # remember which entry in a guard dataset belongs to which trace
-        TRACE_NUMBER_ATTR_NAME = '__trace_number__'
-        assert TRACE_NUMBER_ATTR_NAME not in self.case_level_attributes, \
-            f"Error: case level attribute name '{TRACE_NUMBER_ATTR_NAME}' is reserved for internal purposes"
+        # pm4py.statistics.attributes.log.get.get_all_trace_attributes_from_log can't be used since it removes xes.DEFAULT_TRACEID_KEY ...
+        assert xes.DEFAULT_TRACEID_KEY in test_event_log[0].attributes.keys(), \
+            f"Error: case identifier missing. Expected case level attribute with name '{xes.DEFAULT_TRACEID_KEY}' to be present"
 
-        for i in range(len(test_event_log)):
-            test_event_log[i].attributes[TRACE_NUMBER_ATTR_NAME] = i
+        case_level_attribute_set = set(self.case_level_attributes)
+        case_level_attribute_set.add(xes.DEFAULT_TRACEID_KEY)
 
         self.print_if_verbose("-> Computing guard datasets for replay")
         guard_datasets = extract_all_datasets(
                             test_event_log,
                             self.petri_net, self.im, self.fm,
-                            self.case_level_attributes +
-                            [TRACE_NUMBER_ATTR_NAME],
+                            list(case_level_attribute_set),
                             self.event_level_attributes,
                             self.tail_length,
                             self.activityName_key
                         )
         
         # initialize dict for results, assume all guards were respected for each trace
-        prediction_result = {i: 1 for i in range(len(test_event_log))}
+        all_trace_ids = list(get_trace_attribute_values(test_event_log, xes.DEFAULT_TRACEID_KEY).keys())
+        prediction_result = {i: 1 for i in all_trace_ids}
+
+        # seen trace ids might be different from all trace ids
+        # since unfit traces are ignored and do not produce instances in the datasets.
+        # the mean guard conformance metric must respect the potentially reduced number of traces
+        # for which the guard conformance can be checked.
+        seen_trace_ids = set()
+
         for decision_point, dp_dataset in guard_datasets.items():
             if len(dp_dataset) == 0:
                 continue
@@ -185,7 +198,8 @@ class Data_Petri_Net():
             # extract data for prediction 
             cols_to_keep = [col for col in dp_dataset.columns
                             if any(feature.startswith(col) for feature in self.guard_per_place[decision_point].feature_names)]
-            trace_nums = dp_dataset[f'case::{TRACE_NUMBER_ATTR_NAME}']
+            trace_ids = dp_dataset[f'case::{xes.DEFAULT_TRACEID_KEY}']
+            seen_trace_ids.update(trace_ids) # keep track of seen traces
             X_raw, y_raw = basic_data_preprocessing(dp_dataset)
             X = X_raw[cols_to_keep]
             y = list(y_raw)
@@ -194,6 +208,6 @@ class Data_Petri_Net():
             prediction = self.guard_per_place[decision_point].predict(X)
             for j in range(len(y)):
                 if y[j] != prediction[j]:
-                    prediction_result[trace_nums[j]] = 0
-        
-        return sum(list(prediction_result.values())) / len(test_event_log)
+                    prediction_result[trace_ids[j]] = 0
+
+        return sum([prediction_result[trace_id] for trace_id in seen_trace_ids]) / len(seen_trace_ids)
