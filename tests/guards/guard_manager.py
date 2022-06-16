@@ -13,7 +13,7 @@ def get_df():
     event_log = import_log(os.path.join(
         os.getcwd(), 'tests', 'guard_datasets', 'example.xes'))
 
-    net, im, fm = get_petri_net(event_log)
+    net, im, fm = get_petri_net(event_log, "IM")
     dp = find_decision_points(net)
 
     place_three = [place for place in dp.keys() if place.name == "p_3"][0]
@@ -32,7 +32,7 @@ class Test_Guard_Manager(unittest.TestCase):
         gm = Guard_Manager(df_place, [ML_Technique.DT])
         _ = gm.train_test()
         technique, guard = gm.get_best()
-        _ = guard[1].get_explainable_representation()
+        _ = guard.get_explainable_representation()
         self.assertEqual(technique, ML_Technique.DT,
                          "ML technique should be equal to DT")
 

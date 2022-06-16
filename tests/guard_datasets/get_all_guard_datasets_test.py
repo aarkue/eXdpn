@@ -19,7 +19,7 @@ def get_net_and_log() -> Tuple[PetriNet, PetriNet.Place, PetriNet.Place, EventLo
         os.getcwd(), 'tests', 'guard_datasets', 'example.xes'))
 
     # get petri net and find decision points 
-    net, im, fm = get_petri_net(event_log)
+    net, im, fm = get_petri_net(event_log, "IM")
     dp = find_decision_points(net)
 
     # this is ugly, we know

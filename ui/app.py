@@ -140,7 +140,7 @@ def discover_model(logid: str, algo_name:str):
     else:
         log = loaded_event_logs[logid][1]
         if algo_name == "inductive_miner":
-            net, im, fm = get_petri_net(log)
+            net, im, fm = get_petri_net(log, "IM")
         elif algo_name == "alpha_miner":
             net, im, fm = pm4py.discover_petri_net_alpha(log)
         else:
@@ -159,22 +159,24 @@ def mine_decisions(logid: str):
     else:
         body = request.get_json()
 
-        
-        dpn = Data_Petri_Net(loaded_event_logs[logid][1], discovered_models[logid][0], discovered_models[logid][1],discovered_models[logid][2],body['case_attributes'],body['event_attributes'])
+        dpn = Data_Petri_Net(
+            event_log = loaded_event_logs[logid][1],
+            petri_net = discovered_models[logid][0],
+            initial_marking = discovered_models[logid][1],
+            final_marking = discovered_models[logid][2],
+            case_level_attributes = body['case_attributes'],
+            event_level_attributes = body['event_attributes'],
+            guard_threshold = 0
+        )
         return_info = dict()
-        def convert_ML_enum_to_name(ml_technique):
-            if ml_technique == ML_Technique.DT:
-                return "Decision Tree"
-            elif ml_technique == ML_Technique.SVM:
-                return "Support Vector Machine"
-            elif ml_technique == ML_Technique.LR:
-                return "Logistic Regression"
-            elif ml_technique == ML_Technique.NN:
-                return "Neural Network"
-            else:
-                return "Unknown"
-        for p in dpn.get_best():
-            best_guard = dpn.get_guard_at_place(p)
+
+        for p, best_guard in dpn.get_best().items():
+            guard_result_svg = ""
+            fig = dpn.guard_manager_per_place[p].get_comparison_plot()
+            imgdata = io.StringIO()
+            fig.savefig(imgdata, format='svg', bbox_inches="tight")
+            imgdata.seek(0)  # rewind the data
+            guard_result_svg = imgdata.getvalue()
             if best_guard.is_explainable():
                 # Find Explainable Representation
                 explainable_representation:plt.Figure = best_guard.get_explainable_representation()
@@ -186,8 +188,12 @@ def mine_decisions(logid: str):
                 svg_representation = ""
             return_info[id(p)] = {
                 'performance': dpn.performance_per_place[p],
-                'name': convert_ML_enum_to_name(dpn.ml_technique_per_place[p]),
-                'svg_representation': svg_representation
+                'name': str(dpn.ml_technique_per_place[p]),
+                'svg_representation': svg_representation,
+                'guard_result_svg': guard_result_svg
             }
         
         return return_info, 200;
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')

@@ -1,3 +1,5 @@
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 from pandas import DataFrame
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 
@@ -16,13 +18,23 @@ from sklearn.metrics import f1_score
 class Guard_Manager():
     def __init__(self, 
                  dataframe: DataFrame, 
-                 ml_list: List[ML_Technique],
-                 hyperparameters: Dict[ML_Technique, Dict[str, Any]]) -> None:
+                 ml_list: List[ML_Technique] = [ML_Technique.DT,
+                                                ML_Technique.LR,
+                                                ML_Technique.SVM,
+                                                ML_Technique.NN],
+                 hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
+                                                                        ML_Technique.DT: {'min_samples_split': 0.1, 
+                                                                                          'min_samples_leaf': 0.1, 
+                                                                                          'ccp_alpha': 0.2},
+                                                                        ML_Technique.LR: {"C": 0.5},
+                                                                        ML_Technique.SVM: {"C": 0.5}}) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
         Args:
-            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated
-            dataframe (DataFrame): Dataset used to evaluate the guard        
+            dataframe (DataFrame): Dataset used to evaluate the guard  
+            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all implemented 
+            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
+            if not specified default parameters are used    
         """
         
         # TODO: refactor data_preprocessing so that it does not do more than one thing
@@ -86,3 +98,21 @@ class Guard_Manager():
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
         
         return best_guard_name, self.guards_list[best_guard_name]
+
+    def get_comparison_plot(self) -> Figure:        
+        """ Constructs a comparison bar plot of the F1 scores for all trained techniques for a place
+
+        Returns:
+            Figure: The bar plot figure
+        """
+        guard_results = {(str(technique)): result for technique,result in self.guards_results.items()}
+        fig = plt.figure(figsize=(6,3))
+        plt.xticks(rotation=45,ha='right')
+        plt.ylim(0,1)
+        axis = plt.gca()
+        axis.spines['top'].set_visible(False)
+        axis.spines['right'].set_visible(False)
+        plt.ylabel('F1 score')
+        plt.title('Comparison of Techniques')
+        plt.bar(guard_results.keys(),guard_results.values(),color=['#478736', '#e26f8f', '#e1ad01', '#263488'])
+        return fig

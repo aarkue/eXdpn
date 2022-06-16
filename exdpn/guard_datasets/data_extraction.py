@@ -11,14 +11,14 @@ from pm4py.util import xes_constants as xes
 
 
 def extract_all_datasets(
-    log:EventLog,
-    net:PetriNet,
-    initial_marking:Marking,
-    final_marking:Marking,
+    log: EventLog,
+    net: PetriNet,
+    initial_marking: Marking = None,
+    final_marking: Marking = None,
     case_level_attributes: List[str] = [],
     event_level_attributes: List[str] = [],
     tail_length: int = 3,
-    activityName_key:str = xes.DEFAULT_NAME_KEY,
+    activityName_key: str = xes.DEFAULT_NAME_KEY,
     places: List[PetriNet.Place] = None,
     padding: Any = "#"
 ) -> Dict[PetriNet.Place, DataFrame]:
@@ -30,9 +30,10 @@ def extract_all_datasets(
 
     Args:
         log (EventLog): The event Log to extract the data from
-        net (PetriNet): The petri net on which the Replay will be performed (and on which the decision points are identified)
-        initial_marking (Marking): Initial Marking of the Petri Net
-        final_marking (Marking): Final Marking of the Petri Net
+        net (PetriNet, optional): The petri net on which the Replay will be performed (and on which the decision points are identified, \
+        not optional if places not provided)
+        initial_marking (Marking, optional): Initial Marking of the Petri Net
+        final_marking (Marking, optional): Final Marking of the Petri Net
         case_level_attributes (List[str], optional): List of attributes to be extracted on a Case level. Defaults to empty list.
         event_level_attributes (List[str], optional): List of attributes to be extracted on an Event level. Defaults to empty list.
         tail_length (int, optional): Number of events lookback to extract executed activity. Defaults to 3.
@@ -86,7 +87,8 @@ def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_m
 def extract_dataset_for_place(
     place: PetriNet.Place,
     target_transitions:Dict[PetriNet.Place, PetriNet.Transition],
-    log: EventLog, replay:Union[List[Dict[str,Any]], Tuple[PetriNet, Marking, Marking]],
+    log: EventLog, 
+    replay:Union[List[Dict[str,Any]], Tuple[PetriNet, Marking, Marking]],
     case_level_attributes: List[str] = [],
     event_level_attributes: List[str] = [],
     tail_length: int = 3,
