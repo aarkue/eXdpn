@@ -122,7 +122,10 @@ def extract_dataset_for_place(
 
     # Extract the data for the place
     instances = []
+    indices = []
     for idx, trace_replay in enumerate(replay):
+        # Track how often this decision is made in the trace, for unique Dataframe index
+        decision_repetition = 0
         if not trace_replay["trace_is_fit"]:
             # Skip non-fitting traces
             continue
@@ -155,8 +158,19 @@ def extract_dataset_for_place(
                 # This instance record  now descibes the decision situation
                 instance = case_attr_values + event_attr_values + tail_activities + [transition]
                 instances.append(instance)
+                # Give this index a unique index
+                if xes.DEFAULT_TRACEID_KEY not in case.attributes:
+                    raise Exception(f"A case in the Event Log Object has no caseid (No case attribute {xes.DEFAULT_TRACEID_KEY})")
+                else:
+                    indices.append((case.attributes[xes.DEFAULT_TRACEID_KEY],decision_repetition))
+                decision_repetition += 1
 
                 # Dont't count silent transitions
             if transition.label is not None:
                 event_index += 1
-    return DataFrame(instances, columns=["case::" + attr for attr in case_level_attributes] + ["event::"+ attr for attr in event_level_attributes] + [f"tail::prev{i}" for i in range(1,tail_length+1)] +  ["target"])
+    from pandas import MultiIndex
+    return DataFrame(
+        instances,
+        columns=["case::" + attr for attr in case_level_attributes] + ["event::"+ attr for attr in event_level_attributes] + [f"tail::prev{i}" for i in range(1,tail_length+1)] +  ["target"],
+        index=MultiIndex.from_tuples(indices, names=[xes.DEFAULT_TRACEID_KEY,"decision_repetiton"])
+    )
