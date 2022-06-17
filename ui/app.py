@@ -47,7 +47,8 @@ loaded_event_logs: Dict[
 ] = dict()
 
 discovered_models: Dict[str,Tuple[PetriNet, Marking, Marking]] = dict()
-
+data_petri_nets: Dict[str, Data_Petri_Net] = dict()
+explainable_representations: Dict[str,Dict[Tuple[int,ML_Technique],str]] = dict() # Logid -> (placeid,ML_Technique) -> explanation
 
 ATTR_IGNORE_LIST = ["concept:name", "time:timestamp"]
 
@@ -206,7 +207,64 @@ def mine_decisions(logid: str):
                 'guard_result_svg': guard_result_svg
             }
         
+        data_petri_nets[logid] = dpn
         return return_info, 200;
 
+@app.route("/log/<logid>/place/<int:placeid>/explainable-representation/<ml_technique>", methods=["GET"])
+def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
+    print(ml_technique)
+    dpn = data_petri_nets.get(logid, None)
+    if dpn is None:
+        return {"message": "No models trained yet."}, 400
+    # Find the corresponding place object
+    place = None
+    for p in dpn.petri_net.places:
+        if id(p) == placeid:
+            place = p
+            break
+    if place is None:
+        return {"message": "Place not found."}, 400
+
+    # Get the Enum representation of the selected Technique
+    if ml_technique == "logistic-regression":
+        technique_enum_value =  ML_Technique.LR
+    elif ml_technique == "svm":
+        technique_enum_value =  ML_Technique.SVM
+    elif ml_technique == "decision-tree":
+        technique_enum_value =  ML_Technique.DT
+    elif ml_technique == "neural-network":
+        technique_enum_value =  ML_Technique.NN
+    else:
+        return {"message": "Invalid ML technique"}, 400
+
+    # See if the representation exists:
+    if logid in explainable_representations and (placeid,technique_enum_value) in explainable_representations[logid]:
+        return {
+            'svg_representation': explainable_representations[logid][(placeid,technique_enum_value)]
+        }, 200
+        # return explainable_representations[logid][(placeid,technique_enum_value)], 200	
+
+    guards = dpn.guard_manager_per_place[place].guards_list
+
+
+    selected_guard = guards[technique_enum_value]
+    if selected_guard.is_explainable():
+        # Find Explainable Representation
+        explainable_representation:plt.Figure = selected_guard.get_explainable_representation()
+        imgdata = io.StringIO()
+        explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
+        imgdata.seek(0)  # rewind the data
+        svg_representation = imgdata.getvalue()
+    else:
+        svg_representation = ""
+
+    log_representations = explainable_representations.get(logid, dict())
+    log_representations[(placeid, technique_enum_value)] = svg_representation
+    explainable_representations[logid] = log_representations
+
+    return {
+        'svg_representation': svg_representation
+    }, 200
+    # return svg_representation
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
