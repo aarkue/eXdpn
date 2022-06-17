@@ -170,6 +170,8 @@
           }
         }).catch((err) => {
           console.error({err})
+          loadDecisionButton.removeAttribute('disabled');
+          loadDecisionButtonLoadingSpan.style.display = 'none';
         })
       }
 
@@ -178,15 +180,23 @@
       });
 
       function getExplainableRepresentation(technique, placeid){
-        console.log(technique)
+        const select = document.getElementById("expl-repr-selector");
+        select.setAttribute('disabled',"");
+        const selectSpinner = document.getElementById("selector-container-spinner");
+        selectSpinner.style.display = 'block';
         fetch(`/log/{{log_id}}/place/${placeid}/explainable-representation/${technique}`, {
           method: "GET"
         }).then(async (res) => {
           const json = await res.json();
           const blob = new Blob([json['svg_representation']],{type: 'image/svg+xml'})
           const blob_url = URL.createObjectURL(blob);
-          console.log(blob_url)
           document.getElementById('selected_guard_svg').setAttribute('src', blob_url);
+          select.removeAttribute('disabled');
+          selectSpinner.style.display = 'none';
+        }).catch((err) => {
+          console.log({err});
+          select.removeAttribute('disabled');
+          selectSpinner.style.display = 'none';
         });
       }
     </script>
@@ -378,9 +388,18 @@
               </div>
               <div class="h-100">
                 <h5 class="text-center">Explainable Representation</h5>
-                <div id="selector-container">
-                  <!-- Content Generated when DPN is mined and returned -->
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                  <div id="selector-container">
+                    <!-- Content Generated when DPN is mined and returned -->
+                  </div>
+                  <div id="selector-container-spinner"
+                  class="spinner-border spinner-border-sm text-secondary"
+                  role="status"
+                  style="display: none; width: 1.5rem; height: 1.5rem;"
+                  >
+                  <span class="visually-hidden">Loading...</span>
                 </div>
+              </div>
                 <img id="selected_guard_svg"/>
               </div>
             </div>

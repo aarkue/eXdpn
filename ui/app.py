@@ -165,7 +165,6 @@ def mine_decisions(logid: str):
         case_level_attributes = body['case_attributes']
 
         synth_attrs = body["synthetic_attributes"]
-        print(synth_attrs)
         if "time_since_last" in synth_attrs:
             extend_event_log_with_preceding_event_delay(event_log,"eXdpn::time_since_last_event")
             event_level_attributes.append("eXdpn::time_since_last_event")
@@ -212,7 +211,6 @@ def mine_decisions(logid: str):
 
 @app.route("/log/<logid>/place/<int:placeid>/explainable-representation/<ml_technique>", methods=["GET"])
 def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
-    print(ml_technique)
     dpn = data_petri_nets.get(logid, None)
     if dpn is None:
         return {"message": "No models trained yet."}, 400
