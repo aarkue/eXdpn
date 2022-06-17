@@ -1,3 +1,8 @@
+"""
+.. include:: ./guard_datasets.md
+
+"""
+
 from exdpn.decisionpoints import find_decision_points
 
 from pandas import DataFrame
@@ -22,27 +27,28 @@ def extract_all_datasets(
     places: List[PetriNet.Place] = None,
     padding: Any = "#"
 ) -> Dict[PetriNet.Place, DataFrame]:
-    """Extracts a dataset for each Decision Point using Token-Based Replay. For each instance of this decision found in the log, the following data is extracted:
-    1. The specified Case-Level attributes of the case
-    2. The specified Event-Level attributes of the last event of the case before this decision is made
-    3. The acitivities executed in the events contained in the ```tail_length``` events before the decision
+    """Extracts a dataset for each decision point using token-based replay. For each instance of this decision found in the log, the following data is extracted:
+    1. The specified case-level attributes of the case
+    2. The specified event-level attributes of the last event of the case before this decision is made
+    3. The acitivities executed in the events contained in the `tail_length` events before the decision
     4. The transition which is chosen (the *target* class)
 
     Args:
-        log (EventLog): The event Log to extract the data from
-        net (PetriNet, optional): The petri net on which the Replay will be performed (and on which the decision points are identified, \
-        not optional if places not provided)
-        initial_marking (Marking, optional): Initial Marking of the Petri Net
-        final_marking (Marking, optional): Final Marking of the Petri Net
-        case_level_attributes (List[str], optional): List of attributes to be extracted on a Case level. Defaults to empty list.
-        event_level_attributes (List[str], optional): List of attributes to be extracted on an Event level. Defaults to empty list.
-        tail_length (int, optional): Number of events lookback to extract executed activity. Defaults to 3.
-        activityName_key (str, optional): Key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
-        places (List[Place], optional): List of places to extract the Datasets for. If not present, all decision points are regarded.
-        padding (Any, optional): Padding to be used when tail goes over beginning of case. Defaults to "#".
+        log (EventLog): The event log to extract the data from.
+        net (PetriNet, optional): The Petri net on which the token-based replay will be performed (and on which the decision points are identified, \
+        not optional if places are not provided).
+        initial_marking (Marking, optional): The initial marking of the Petri net.
+        final_marking (Marking, optional): The final marking of the Petri net.
+        case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.
+        event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.
+        tail_length (int, optional): The number of preceding events to record. Defaults to 3.
+        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
+        places (List[Place], optional): The list of places to extract datasets for. If not present, all decision points are regarded.
+        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
 
     Returns:
-        Dict[Place, DataFrame]: Dictionary mapping each Place to its corresponding dataset.
+        Dict[Place, DataFrame]: The dictionary mapping places in the Petri net to their corresponding dataset.
+    
     """ 
 
     # Get list of places and mapping which transitions they correspond to
@@ -63,19 +69,20 @@ def extract_all_datasets(
     return datasets
 
 
-def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_marking:Marking, activityName_key:str = xes.DEFAULT_NAME_KEY, show_progress_bar:bool = False)->Dict[str, Any]:
-    """Wrapper for PM4Py's Token-Based Replay function.
+def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_marking:Marking, activityName_key:str = xes.DEFAULT_NAME_KEY, show_progress_bar:bool = False) -> Dict[str, Any]:
+    """Wrapper for PM4Py's token-based replay function.
 
     Args:
-        log (EventLog): Event Log to use for Replay.
-        net (PetriNet): Petri Net to replay on.
-        initial_marking (Marking): Initial Marking of the Petri Net.
-        final_marking (Marking): Final Marking of the Petri Net.
-        activityName_key (str, optional): Key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
+        log (EventLog): The event log to use for Replay.
+        net (PetriNet): The Petri net to replay on.
+        initial_marking (Marking): The initial Marking of the Petri net.
+        final_marking (Marking): The final Marking of the Petri net.
+        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
         show_progress_bar (bool, optional): Whether or not to show a progress bar. Defaults to False.
 
     Returns:
-        _type_: _description_
+        The token-based replay results.
+    
     """    
     variant = token_replay.Variants.TOKEN_REPLAY
     replay_params = {
@@ -95,23 +102,30 @@ def extract_dataset_for_place(
     activityName_key:str = xes.DEFAULT_NAME_KEY,
     padding:Any="#"
 ) -> DataFrame:
-    """Extracts the dataset for a single place using Token-Based Replay. For each instance of this decision found in the log, the following data is extracted:
-    1. The specified Case-Level attributes of the case
-    2. The specified Event-Level attributes of the last event of the case before this decision is made
+    """Extracts the dataset for a single place using token-based replay. For each instance of this decision found in the log, the following data is extracted:
+    1. The specified case-level attributes of the case
+    2. The specified event-level attributes of the last event of the case before this decision is made
     3. The acitivities executed in the events contained in the ```tail_length``` events before the decision
     4. The transition which is chosen (the *target* class)
 
 
     Args:
         place (PetriNet.Place): The place for which to extract the data.
-        target_transitions (Dict[PetriNet.Place, PetriNet.Transition]): The transitions which have an input arc with this place.
+        target_transitions (Dict[PetriNet.Place, PetriNet.Transition]): The transitions which have an input arc from this place.
         log (EventLog): The Event Log from which to extract the data.
         replay (List[Dict[str, Any]] | Tuple[PetriNet, Marking, Marking]): Either the token-based replay computed by PM4Py, or the net which to use to compute the replay.
-        case_level_attributes (List[str], optional): List of attributes to be extracted on a Case level. Defaults to empty list.
-        event_level_attributes (List[str], optional): List of attributes to be extracted on an Event level. Defaults to empty list.
-        tail_length (int, optional): Number of events to be extracted before the decision. Defaults to 3.
-        activityName_key (str, optional): Key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
-        padding (Any, optional): Padding to be used when tail goes over beginning of case. Defaults to "#".
+        case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.
+        event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.
+        tail_length (int, optional): The number of preceding events to record. Defaults to 3.
+        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
+        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
+    
+    Returns:
+        DataFrame: The guard-dataset extracted for the decision point at `place`.
+
+    Raises:
+        Exception: If the default case ID key defined by the XES standard ("concept:name") is not among the case-level attributes.
+    
     """    
 
     # Compute replay if necessary
