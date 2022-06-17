@@ -98,7 +98,21 @@
                             document.getElementById('selected_guard_performance').textContent = Math.round(parseFloat(guardDataPerPlace[placeId]['performance'])*100)/100;
                             document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
                             document.getElementById('selected_guard_comparison_svg').setAttribute('src',guardDataPerPlace[placeId]['comparison_svg_url'])
-                             const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
+
+                            document.getElementById("selector-container").innerHTML = `
+                            <select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="expl-repr-selector">
+                              <option value="decision-tree" ${guardDataPerPlace[placeId]['name'] == "Decision Tree" ? 'selected' : ''}>Decision Tree</option>
+                              <option value="logistic-regression" ${guardDataPerPlace[placeId]['name'] == "Logistic Regression" ? 'selected' : ''}>Logistic Regression</option>
+                              <option value="svm" ${guardDataPerPlace[placeId]['name'] == "SVM" ? 'selected' : ''}>SVM</option>
+                              <option value="neural-network" ${guardDataPerPlace[placeId]['name'] == "Neural Network" ? 'selected' : ''}>Neural Network</option>
+                            </select>
+                            `;
+                            selector = document.getElementById("expl-repr-selector")
+                            selector.addEventListener("input", (e) => {
+                              getExplainableRepresentation(selector.value, placeId)
+                            })
+
+                            const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
                             bsel.show();
                             console.log(title.textContent)
                           }
@@ -162,6 +176,19 @@
       document.addEventListener("DOMContentLoaded", (ev) => {
         loadEventLog();
       });
+
+      function getExplainableRepresentation(technique, placeid){
+        console.log(technique)
+        fetch(`/log/{{log_id}}/place/${placeid}/explainable-representation/${technique}`, {
+          method: "GET"
+        }).then(async (res) => {
+          const json = await res.json();
+          const blob = new Blob([json['svg_representation']],{type: 'image/svg+xml'})
+          const blob_url = URL.createObjectURL(blob);
+          console.log(blob_url)
+          document.getElementById('selected_guard_svg').setAttribute('src', blob_url);
+        });
+      }
     </script>
     <style>
       .explainable_representation {
@@ -351,6 +378,9 @@
               </div>
               <div class="h-100">
                 <h5 class="text-center">Explainable Representation</h5>
+                <div id="selector-container">
+                  <!-- Content Generated when DPN is mined and returned -->
+                </div>
                 <img id="selected_guard_svg"/>
               </div>
             </div>
