@@ -1,0 +1,1 @@
+This is a module providing some basic utility functions.
