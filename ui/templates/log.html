@@ -143,9 +143,13 @@
 
           selectedAttributes[attributeType] = attributeNames;
         }
-          const synEl = document.getElementById('synthetic_attributes');
-          const synthAttributes = [...synEl.querySelectorAll('input:checked')].map((e) => e.dataset.synthName)
+        const synEl = document.getElementById('synthetic_attributes');
+        const synthAttributes = [...synEl.querySelectorAll('input:checked')].map((e) => e.dataset.synthName)
         selectedAttributes['synthetic_attributes'] = synthAttributes;
+
+        const mlEl = document.getElementById('ml_techniques');
+        const selectedMLs = [...mlEl.querySelectorAll('input:checked')].map((e) => e.dataset.mlName)
+        selectedAttributes['ml_techniques'] = selectedMLs;
         return selectedAttributes;
       }
 
@@ -337,49 +341,89 @@
         <div id="discoveredPetriNet" class="text-center mt-3"></div>
         <span style="position: absolute; top: 0.5rem; right: 0.5rem; display: none;"  id="meanGuardConformance">Mean guard conformance: <span id="meanGuardConformanceValue"></span></span>
       </div>
-
       <div id="chooseAttributes" style="display: none;">
-          <h2 class="mt-4">Select attributes</h2>
-          <p>
-            Please select the case and event attributes you want to use.
-          </p>
-          <div class="row mt-2">
-            <div class="col">
-              <h3 class="text-center">Case attributes</h3>
-              <div class="list-group" id="case_attributes">
-                <span class="text-center text-muted">
-                  No case attributes present in log.
-                </span>
+          <h2 class="mt-4">Configure Decision Mining</h2>
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Machine-Learning Techniques to use
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingTwo">
+                  <div class="accordion-body">
+                    <div class="list-group" id="ml_techniques">
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Decision Tree"  class="form-check-input me-2" checked>
+                        <samp>Decision Tree</samp>
+                      </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Logistic Regression"  class="form-check-input me-2" checked>
+                        <samp>Logistic Regression</samp>
+                      </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Support Vector Machine"  class="form-check-input me-2" checked>
+                        <samp>SVM</samp>
+                      </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Neural Network"  class="form-check-input me-2" checked>
+                        <samp>Neural Network</samp>
+                      </label>
+                  </div>
+                   </div>
+                </div>
               </div>
             </div>
-
-            <div class="col">
-              <h3 class="text-center">Event attributes</h3>
-              <div class="list-group" id="event_attributes">
-                <span class="text-center text-muted">
-                  No event attributes present in log.
-                </span>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Choose Attributes to Mine
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
+                <div class="accordion-body">
+                  <div class="row mt-2">
+                    <div class="col">
+                      <h3 class="text-center">Case attributes</h3>
+                      <div class="list-group" id="case_attributes">
+                        <span class="text-center text-muted">
+                          No case attributes present in log.
+                        </span>
+                      </div>
+                    </div>
+          
+                    <div class="col">
+                      <h3 class="text-center">Event attributes</h3>
+                      <div class="list-group" id="event_attributes">
+                        <span class="text-center text-muted">
+                          No event attributes present in log.
+                        </span>
+                      </div>
+                    </div>
+          
+                    <div class="col">
+                      <h3 class="text-center">Synthetic attributes</h3>
+                      <div class="list-group" id="synthetic_attributes">
+                          <label class="list-group-item">
+                            <input type="checkbox" data-synth-name="total_elapsed_time"  class="form-check-input me-2">
+                            <samp>Elapsed time in case
+                              <span class="text-muted">(per Event)</span>
+                            </samp>
+                          </label>
+                          <label class="list-group-item">
+                            <input type="checkbox" data-synth-name="time_since_last" class="form-check-input me-2">
+                            <samp>Time since last event
+                              <span class="text-muted">(per Event)</span>
+                            </samp>
+                          </label>
+                      </div>
+                    </div>
+                </div>
+                 </div>
               </div>
             </div>
-
-            <div class="col">
-              <h3 class="text-center">Synthetic attributes</h3>
-              <div class="list-group" id="synthetic_attributes">
-                  <label class="list-group-item">
-                    <input type="checkbox" data-synth-name="total_elapsed_time"  class="form-check-input me-2">
-                    <samp>Elapsed time in case
-                      <span class="text-muted">(per Event)</span>
-                    </samp>
-                  </label>
-                  <label class="list-group-item">
-                    <input type="checkbox" data-synth-name="time_since_last" class="form-check-input me-2">
-                    <samp>Time since last event
-                      <span class="text-muted">(per Event)</span>
-                    </samp>
-                  </label>
-              </div>
-            </div>
-        </div>
+          </div>
         <div class="text-center my-2">
           <button id="mine-decisions-btn" class="btn btn-primary btn-lg" onclick="mineDecisions()" type="button">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>

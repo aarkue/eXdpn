@@ -171,7 +171,9 @@ def mine_decisions(logid: str):
         if "total_elapsed_time" in synth_attrs:
             extend_event_log_with_total_elapsed_time(event_log, "eXdpn::elapsed_case_time")
             event_level_attributes.append("eXdpn::elapsed_case_time")
-        
+
+        ml_techniques = body["ml_techniques"]
+        ml_techniques = [technique for technique in ML_Technique if str(technique) in ml_techniques]
         dpn = Data_Petri_Net(
             event_log = event_log,
             petri_net = discovered_models[logid][0],
@@ -179,7 +181,8 @@ def mine_decisions(logid: str):
             final_marking = discovered_models[logid][2],
             case_level_attributes = case_level_attributes,
             event_level_attributes = event_level_attributes,
-            guard_threshold = 0
+            guard_threshold = 0,
+            ml_list=ml_techniques
         )
         return_info = dict()
 
