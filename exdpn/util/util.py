@@ -24,8 +24,11 @@ def import_log(path: str, verbose: bool = False) -> EventLog:
 
     Examples:
         ```python
+        >>> import os
         >>> from exdpn.util import import_log
-        >>> event_log = import_log('p2p_base.xes')
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+
         ```
         
     """
@@ -48,10 +51,13 @@ def extend_event_log_with_total_elapsed_time(log: EventLog, total_elapsed_time_a
 
     Examples:
         ```python
+        >>> import os 
         >>> from exdpn.util import import_log
         >>> from exdpn.util import extend_event_log_with_total_elapsed_time
-        >>> event_log = import_log('p2p_base.xes')
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
         >>> extend_event_log_with_total_elapsed_time(event_log)
+
         ```
 
     """
@@ -78,10 +84,13 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
 
     Examples:
         ```python
+        >>> import os
         >>> from exdpn.util import import_log
         >>> from exdpn.util import extend_event_log_with_preceding_event_delay
-        >>> event_log = import_log('p2p_base.xes')
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))        
         >>> extend_event_log_with_preceding_event_delay(event_log)
+
         ```
 
     """
@@ -94,3 +103,9 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
             event[preceding_event_delay_attribute_name] = (event[timestamp_attribute_name] - preceding_timestamp).total_seconds()
             preceding_timestamp = event[timestamp_attribute_name]
 
+
+# tests implemented examples
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+# run python .\exdpn\util\util.py from eXdpn file 

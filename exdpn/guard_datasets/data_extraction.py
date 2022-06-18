@@ -51,14 +51,17 @@ def extract_all_datasets(
 
     Examples:
         ```python
+        >>> import os 
         >>> from exdpn.util import import_log
         >>> from exdpn.util import extend_event_log_with_preceding_event_delay
         >>> from exdpn.petri_net import get_petri_net
         >>> from exdpn.guard_datasets import extract_all_datasets
-        >>> event_log = import_log('p2p_base.xes')
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
         >>> extend_event_log_with_preceding_event_delay(event_log, 'delay')
         >>> pn, im, fm = get_petri_net(event_log)
         >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, event_level_attributes=['delay'])
+        
         ```
     
     """ 
@@ -200,3 +203,9 @@ def extract_dataset_for_place(
         columns=["case::" + attr for attr in case_level_attributes] + ["event::"+ attr for attr in event_level_attributes] + [f"tail::prev{i}" for i in range(1,tail_length+1)] +  ["target"],
         index=MultiIndex.from_tuples(indices, names=[xes.DEFAULT_TRACEID_KEY,"decision_repetiton"])
     )
+
+# tests implemented examples
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+# run python .\exdpn\guard_datasets\data_extraction.py from eXdpn file 
