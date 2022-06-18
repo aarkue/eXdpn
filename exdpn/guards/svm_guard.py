@@ -1,3 +1,8 @@
+"""
+.. include:: ./guard.md
+
+"""
+
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import fit_ohe
@@ -15,8 +20,19 @@ import numpy as np
 class SVM_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, Any] = {"C": 0.5}) -> None:
         """Initializes a support vector machine based guard with the provided hyperparameters.
+        
         Args:
             hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier
+        
+        Raises:
+            TypeError: If supplied hyperparameters are invalid
+
+        Examples:
+            ```python
+            >>> from exdpn.guards import SVM_Guard
+            >>> guard = SVM_Guard()
+            
+            ```
         """
         
         super().__init__(hyperparameters)
@@ -38,9 +54,35 @@ class SVM_Guard(Guard):
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the support vector machine guard using the dataframe and the specified hyperparameters.
+        
         Args:
             X (DataFrame): Feature variables of the provided dataset, used to train the classifier behind the guard 
             y (DataFrame): Target variable of the provided dataset, is to be predicted using X
+
+        Examples:
+            ```python
+            >>> import os 
+            >>> from exdpn.util import import_log
+            >>> from exdpn.petri_net import get_petri_net
+            >>> from exdpn.guard_datasets import extract_all_datasets
+            >>> from exdpn import guards
+            >>> from exdpn.guards import SVM_Guard
+            >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> pn, im, fm = get_petri_net(event_log)
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+            ...                                       case_level_attributes =["concept:name"], 
+            ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+            ...                                       activityName_key = "concept:name")
+            >>> # select a certrain decision point and the corresponding data set 
+            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
+            >>> guard = SVM_Guard()
+            >>> guard.train(X_train, y_train)
+
+            ```
         """
         
         # scale numerical attributes
@@ -72,10 +114,38 @@ class SVM_Guard(Guard):
 
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Predicts the next transition based on the input instances.
+        
         Args:
             input_instances (DataFrame): Input instances used to predict the next transition
+        
         Returns:
             predicted_transitions (List[PetriNet.Transition]): Predicted transitions
+
+        Examples:
+            ```python
+            >>> import os 
+            >>> from exdpn.util import import_log
+            >>> from exdpn.petri_net import get_petri_net
+            >>> from exdpn.guard_datasets import extract_all_datasets
+            >>> from exdpn import guards
+            >>> from exdpn.guards import SVM_Guard
+            >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> pn, im, fm = get_petri_net(event_log)
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+            ...                                       case_level_attributes =["concept:name"], 
+            ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+            ...                                       activityName_key = "concept:name")
+            >>> # select a certrain decision point and the corresponding data set 
+            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
+            >>> guard = SVM_Guard()
+            >>> guard.train(X_train, y_train)
+            >>> y_prediction = guard.predict(X_test)
+
+            ```
         """
         
         # scale numerical attributes
@@ -96,8 +166,18 @@ class SVM_Guard(Guard):
 
     def is_explainable(self) -> bool:
         """Returns whether or not this guard is explainable.
+        
         Returns:
             explainable (bool): Wheter or not the guard is explainable
+        
+        Examples:
+            ```python
+            >>> from exdpn.guards import SVM_Guard
+            >>> guard = SVM_Guard()
+            >>> guard.is_explainable()
+            True
+            
+            ```
         """
         
         return True
@@ -105,8 +185,40 @@ class SVM_Guard(Guard):
 
     def get_explainable_representation(self) -> Figure:
         """Get an explainable representation of the support vector machine guard, a Matplotlib plot using SHAP.
+        
         Returns:
             explainable_representation (Figure): Matplotlib Figure of the trained SVM model
+
+        Raises:
+            Exception: If guard has no explainable representation
+
+        Examples:
+            ```python
+            >>> import os 
+            >>> from exdpn.util import import_log
+            >>> from exdpn.petri_net import get_petri_net
+            >>> from exdpn.guard_datasets import extract_all_datasets
+            >>> from exdpn import guards
+            >>> from exdpn.guards import SVM_Guard
+            >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> pn, im, fm = get_petri_net(event_log)
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+            ...                                       case_level_attributes =["concept:name"], 
+            ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+            ...                                       activityName_key = "concept:name")
+            >>> # select a certrain decision point and the corresponding data set 
+            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
+            >>> guard = SVM_Guard()
+            >>> guard.train(X_train, y_train)
+            >>> y_prediction = guard.predict(X_test)
+            >>> guard.get_explainable_representation()
+            >>> # todo: figure out how to include a plot 
+
+            ```
         """
         
         if self.is_explainable() == False:
@@ -143,3 +255,9 @@ class SVM_Guard(Guard):
                 plt.legend(handles = [blue_patch], loc = "lower right", frameon = False)
 
         return fig 
+
+# tests implemented examples
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+# run python .\exdpn\guards\svm_guard.py from eXdpn file 

@@ -128,6 +128,7 @@ class Guard_Manager():
 
             self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
             
+            # TODO: remove this
             # retrain model on all available data
             df_X, df_y = basic_data_preprocessing(self.dataframe)
             guard_models_temp = guard_models
@@ -202,7 +203,7 @@ class Guard_Manager():
             >>> # create a guard manager for that decision point
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
             >>> guard_manager_results = guard_manager.train_test()
-            >>> plot = guard_manager.get_comparison_plot()
+            >>> guard_manager.get_comparison_plot()
             >>> # add plot here 
 
             ```
