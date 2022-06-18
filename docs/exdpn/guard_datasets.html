@@ -26,6 +26,11 @@
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
 
+        <h2>Contents</h2>
+        <ul>
+  <li><a href="#guard-datasets">Guard-Datasets</a></li>
+</ul>
+
 
         <h2>Submodules</h2>
         <ul>
@@ -46,12 +51,27 @@
                     <h1 class="modulename">
 <a href="./../exdpn.html">exdpn</a><wbr>.guard_datasets    </h1>
 
-                
+                        <div class="docstring"><p>This module provides the function to extract a dataset for each decision point in a Petri net given an event log and attributes to record.</p>
+
+<hr />
+
+<h2 id="guard-datasets">Guard-Datasets</h2>
+
+<p>Each row/instance in a guard-dataset corresponds to a trace visiting the corresponding decision point (see module <code><a href="decisionpoints.html">exdpn.decisionpoints</a></code>) during token-based replay. This could potentially happen several times. For each such visit, the algorithm records the specified case-level attributes, event-level attributes (for the previous event in the case), and a tail of preceding events. These records make up the columns of the guard-dataset. In order to eventually do perdictions with the data, the following event (i.e., transition) is recorded in the "target" column.</p>
+
+<hr />
+</div>
+
                         <input id="guard_datasets-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="guard_datasets-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="kn">from</span> <span class="nn">exdpn.guard_datasets.data_extraction</span> <span class="kn">import</span> <span class="n">extract_all_datasets</span><span class="p">,</span> <span class="n">extract_dataset_for_place</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ./guard_datasets.md</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a><span class="kn">from</span> <span class="nn">exdpn.guard_datasets.data_extraction</span> <span class="kn">import</span> <span class="n">extract_all_datasets</span><span class="p">,</span> <span class="n">extract_dataset_for_place</span>
 </span></pre></div>
 
 

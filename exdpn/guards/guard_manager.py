@@ -1,3 +1,8 @@
+"""
+.. include:: ./guard_manager.md
+
+"""
+
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from pandas import DataFrame
@@ -11,9 +16,6 @@ from exdpn.data_preprocessing import data_preprocessing_evaluation
 from exdpn.guards.model_builder import model_builder
 from sklearn.metrics import f1_score
 
-
-# idea: call Guard_Manager for each decision point to get the best possible guard model for either the default\
-# machine learning techniques (all implemented) or the selected machine learning techniques
 
 class Guard_Manager():
     def __init__(self, 
@@ -30,11 +32,34 @@ class Guard_Manager():
                                                                         ML_Technique.SVM: {"C": 0.5}}) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
+        
         Args:
             dataframe (DataFrame): Dataset used to evaluate the guard  
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all implemented 
             hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
-            if not specified default parameters are used    
+            if not specified default parameters are used
+        
+        Examples:
+            ```python
+            >>> import os 
+            >>> from exdpn.util import import_log
+            >>> from exdpn.petri_net import get_petri_net
+            >>> from exdpn.guard_datasets import extract_all_datasets
+            >>> from exdpn import guards
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> pn, im, fm = get_petri_net(event_log)
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+            ...                                       case_level_attributes =["concept:name"], 
+            ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+            ...                                       activityName_key = "concept:name")
+            >>> # select a certrain decision point and the corresponding data set 
+            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> # create a guard manager for that decision point
+            >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
+
+            ```
         """
         
         # TODO: refactor data_preprocessing so that it does not do more than one thing
@@ -59,9 +84,34 @@ class Guard_Manager():
     def train_test(self) -> Dict[str, Any]:
         """ Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
         using the specified machine learning techniques.
+        
         Returns:
             guards_results (Dict[str, Any]): Returns a mapping of all selected machine learning techniques \
             to the achieved F1-score and two trained guard models: the "training" guard (position 0) and final guard (position 1)
+        
+        Examples:
+            ```python
+            >>> import os 
+            >>> from exdpn.util import import_log
+            >>> from exdpn.petri_net import get_petri_net
+            >>> from exdpn.guard_datasets import extract_all_datasets
+            >>> from exdpn import guards
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> pn, im, fm = get_petri_net(event_log)
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+            ...                                       case_level_attributes =["concept:name"], 
+            ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+            ...                                       activityName_key = "concept:name")
+            >>> # select a certrain decision point and the corresponding data set 
+            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> # create a guard manager for that decision point
+            >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
+            >>> guard_manager_results = guard_manager.train_test()
+            
+            ```
+        
         """
         
         self.guards_results = {}
@@ -83,10 +133,37 @@ class Guard_Manager():
 
     def get_best(self) -> Tuple[str, List[Guard]]:
         """ Returns "best" guard for a decision point.
+        
         Returns:
-            best_guard (Tuple[str, List[Guard, Guard]]): Returns "best" guard for a decision point with respect to the \
-            chosen metric (F1 score), the returned tuple contains the machine learning technique and a list with the \
-            corresponding "training" guard (position 0) and final guard (position 1)
+            best_guard (Tuple[str, Guard]): Returns "best" guard for a decision point with respect to the \
+            chosen metric (F1 score), the returned tuple contains the machine learning technique and the corresponding guard
+        
+        Examples:
+            ```python
+            >>> import os 
+            >>> from exdpn.util import import_log
+            >>> from exdpn.petri_net import get_petri_net
+            >>> from exdpn.guard_datasets import extract_all_datasets
+            >>> from exdpn import guards
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> pn, im, fm = get_petri_net(event_log)
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+            ...                                       case_level_attributes =["concept:name"], 
+            ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+            ...                                       activityName_key = "concept:name")
+            >>> # select a certrain decision point and the corresponding data set 
+            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> # create a guard manager for that decision point
+            >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
+            >>> guard_manager_results = guard_manager.train_test()
+            >>> best_guard = guard_manager.get_best()
+            >>> print("Name of best guard:", best_guard[0])
+            Name of best guard: Decision Tree
+
+            ```
+
         """
         
         assert self.guards_results != None, "Guards must be evaluated first"
@@ -95,10 +172,36 @@ class Guard_Manager():
         return best_guard_name, self.guards_list[best_guard_name]
 
     def get_comparison_plot(self) -> Figure:        
-        """ Constructs a comparison bar plot of the F1 scores for all trained techniques for a place
+        """ Constructs a comparison bar plot of the F1 scores for all trained techniques for a place.
 
         Returns:
             Figure: The bar plot figure
+
+        Examples:
+            ```python
+            >>> import os 
+            >>> from exdpn.util import import_log
+            >>> from exdpn.petri_net import get_petri_net
+            >>> from exdpn.guard_datasets import extract_all_datasets
+            >>> from exdpn import guards
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> pn, im, fm = get_petri_net(event_log)
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+            ...                                       case_level_attributes =["concept:name"], 
+            ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+            ...                                       activityName_key = "concept:name")
+            >>> # select a certrain decision point and the corresponding data set 
+            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> # create a guard manager for that decision point
+            >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
+            >>> guard_manager_results = guard_manager.train_test()
+            >>> guard_manager.get_comparison_plot()
+            >>> # add plot here 
+
+            ```
+
         """
         guard_results = {(str(technique)): result for technique,result in self.guards_results.items()}
         fig = plt.figure(figsize=(6,3))
@@ -121,3 +224,9 @@ class Guard_Manager():
         colors = [colors[technique] for technique in keys]
         plt.bar(keys,values,color=colors)
         return fig
+
+# tests implemented examples
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+# run python .\exdpn\guards\guard_manager.py from eXdpn file 

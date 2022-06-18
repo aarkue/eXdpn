@@ -1,3 +1,8 @@
+"""
+.. include:: ./data_preprocessing.md
+
+"""
+
 from pandas import DataFrame, concat, Series
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
@@ -19,6 +24,7 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
 
     Returns:
         X_train, X_test, y_train, y_test (DataFrame): Preprocessed and splitted data
+
     """
 
     # perform basic preprocessing
@@ -74,10 +80,10 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame]:
 def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
     """ Fits a MinMaxScaler on the data and returns a scaler for a scaling t o [0, 1] and the scalable columns 
 
-    Args: 
+    Args:
         X (DataFrame): Dataframe with data to scale
 
-    Returns: 
+    Returns:
         scaler (MinMaxScaler): MinMaxScaler fitted on data set, scales to [0, 1]
         scalable_columns (pandas.core.indexes.base.Index): List of columns names of all columns that can be scaled
     """

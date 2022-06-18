@@ -1,3 +1,8 @@
+"""
+.. include:: ./util.md
+
+"""
+
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.objects.log.obj import EventLog
 import pm4py.util.xes_constants as xes
@@ -5,14 +10,27 @@ from pm4py.statistics.attributes.log.get import get_all_event_attributes_from_lo
 
 
 def import_log(path: str, verbose: bool = False) -> EventLog:
-    """Imports an event log from a given path
+    """Imports an XES event log from a given path.
 
     Args:
-        path (str): The path to the event log
+        path (str): The path to the XES event log file.
         verbose (bool, optional): If verbose, a progress bar is shown in the console. Defaults to False.
 
     Returns:
-        EventLog: The event log object from importing the log
+        EventLog: The event log object.
+
+    Note:
+        Please make sure that the event log follows the XES standard.
+
+    Examples:
+        ```python
+        >>> import os
+        >>> from exdpn.util import import_log
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+
+        ```
+        
     """
     variant = xes_importer.Variants.ITERPARSE
     parameters = {variant.value.Parameters.SHOW_PROGRESS_BAR: verbose}
@@ -24,12 +42,27 @@ def extend_event_log_with_total_elapsed_time(log: EventLog, total_elapsed_time_a
         of the corresponding case.
     
     Args:
-        log (EventLog): The event log to be extended
-        total_elapsed_time_attribute_name (str, optional): Event level attribute name to be used. Default is "eXdpn::total_elapsed_time"
-        timestamp_attribute_name (str, optional): Timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY ("time:timestamp")
+        log (EventLog): The event log to be extended.
+        total_elapsed_time_attribute_name (str, optional): The event level attribute name to be used. Default is "eXdpn::total_elapsed_time".
+        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("time:timestamp").
+    
+    Raises:
+        KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.
+
+    Examples:
+        ```python
+        >>> import os 
+        >>> from exdpn.util import import_log
+        >>> from exdpn.util import extend_event_log_with_total_elapsed_time
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+        >>> extend_event_log_with_total_elapsed_time(event_log)
+
+        ```
+
     """
-    assert timestamp_attribute_name in get_all_event_attributes_from_log(log), \
-        f"Error: attribute '{timestamp_attribute_name}' needs to be present in the event log"
+    if timestamp_attribute_name not in get_all_event_attributes_from_log(log):
+        raise KeyError(f"Attribute with name '{timestamp_attribute_name}' is not present in the event log.")
 
     for case in log:
         start_timestamp = case[0][timestamp_attribute_name]
@@ -42,12 +75,27 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
         of the corresponding case. Initial events of each case have a delay of 0 seconds.
     
     Args:
-        log (EventLog): The event log to be extended
-        preceding_event_delay_attribute_name (str, optional): Event level attribute name to be used. Default is "eXdpn::preceding_event_delay"
-        timestamp_attribute_name (str, optional): Timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY ("time:timestamp")
+        log (EventLog): The event log to be extended.
+        preceding_event_delay_attribute_name (str, optional): The event level attribute name to be used. Default is "eXdpn::preceding_event_delay".
+        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("time:timestamp").
+    
+    Raises:
+        KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.
+
+    Examples:
+        ```python
+        >>> import os
+        >>> from exdpn.util import import_log
+        >>> from exdpn.util import extend_event_log_with_preceding_event_delay
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))        
+        >>> extend_event_log_with_preceding_event_delay(event_log)
+
+        ```
+
     """
-    assert timestamp_attribute_name in get_all_event_attributes_from_log(log), \
-        f"Error: attribute '{timestamp_attribute_name}' needs to be present in the event log"
+    if timestamp_attribute_name not in get_all_event_attributes_from_log(log):
+        raise KeyError(f"Attribute with name '{timestamp_attribute_name}' is not present in the event log.")
 
     for case in log:
         preceding_timestamp = case[0][timestamp_attribute_name]
@@ -55,3 +103,9 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
             event[preceding_event_delay_attribute_name] = (event[timestamp_attribute_name] - preceding_timestamp).total_seconds()
             preceding_timestamp = event[timestamp_attribute_name]
 
+
+# tests implemented examples
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+# run python .\exdpn\util\util.py from eXdpn file 
