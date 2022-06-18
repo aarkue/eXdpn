@@ -42,7 +42,6 @@
     </ul>
 
 
-            <footer>exdpn - version 0.0.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -109,7 +108,7 @@
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    Args:</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">        log (EventLog): The event log to be extended.</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        total_elapsed_time_attribute_name (str, optional): The event level attribute name to be used. Default is &quot;eXdpn::total_elapsed_time&quot;.</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY (&quot;time:timestamp&quot;).</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;time:timestamp&quot;).</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    </span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    Raises:</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.</span>
@@ -142,7 +141,7 @@
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    Args:</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        log (EventLog): The event log to be extended.</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        preceding_event_delay_attribute_name (str, optional): The event level attribute name to be used. Default is &quot;eXdpn::preceding_event_delay&quot;.</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY (&quot;time:timestamp&quot;).</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;time:timestamp&quot;).</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    </span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    Raises:</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.</span>
@@ -271,7 +270,7 @@
 </span><span id="extend_event_log_with_total_elapsed_time-45"><a href="#extend_event_log_with_total_elapsed_time-45"><span class="linenos">45</span></a><span class="sd">    Args:</span>
 </span><span id="extend_event_log_with_total_elapsed_time-46"><a href="#extend_event_log_with_total_elapsed_time-46"><span class="linenos">46</span></a><span class="sd">        log (EventLog): The event log to be extended.</span>
 </span><span id="extend_event_log_with_total_elapsed_time-47"><a href="#extend_event_log_with_total_elapsed_time-47"><span class="linenos">47</span></a><span class="sd">        total_elapsed_time_attribute_name (str, optional): The event level attribute name to be used. Default is &quot;eXdpn::total_elapsed_time&quot;.</span>
-</span><span id="extend_event_log_with_total_elapsed_time-48"><a href="#extend_event_log_with_total_elapsed_time-48"><span class="linenos">48</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY (&quot;time:timestamp&quot;).</span>
+</span><span id="extend_event_log_with_total_elapsed_time-48"><a href="#extend_event_log_with_total_elapsed_time-48"><span class="linenos">48</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;time:timestamp&quot;).</span>
 </span><span id="extend_event_log_with_total_elapsed_time-49"><a href="#extend_event_log_with_total_elapsed_time-49"><span class="linenos">49</span></a><span class="sd">    </span>
 </span><span id="extend_event_log_with_total_elapsed_time-50"><a href="#extend_event_log_with_total_elapsed_time-50"><span class="linenos">50</span></a><span class="sd">    Raises:</span>
 </span><span id="extend_event_log_with_total_elapsed_time-51"><a href="#extend_event_log_with_total_elapsed_time-51"><span class="linenos">51</span></a><span class="sd">        KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.</span>
@@ -347,7 +346,7 @@
 </span><span id="extend_event_log_with_preceding_event_delay-78"><a href="#extend_event_log_with_preceding_event_delay-78"><span class="linenos"> 78</span></a><span class="sd">    Args:</span>
 </span><span id="extend_event_log_with_preceding_event_delay-79"><a href="#extend_event_log_with_preceding_event_delay-79"><span class="linenos"> 79</span></a><span class="sd">        log (EventLog): The event log to be extended.</span>
 </span><span id="extend_event_log_with_preceding_event_delay-80"><a href="#extend_event_log_with_preceding_event_delay-80"><span class="linenos"> 80</span></a><span class="sd">        preceding_event_delay_attribute_name (str, optional): The event level attribute name to be used. Default is &quot;eXdpn::preceding_event_delay&quot;.</span>
-</span><span id="extend_event_log_with_preceding_event_delay-81"><a href="#extend_event_log_with_preceding_event_delay-81"><span class="linenos"> 81</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY (&quot;time:timestamp&quot;).</span>
+</span><span id="extend_event_log_with_preceding_event_delay-81"><a href="#extend_event_log_with_preceding_event_delay-81"><span class="linenos"> 81</span></a><span class="sd">        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;time:timestamp&quot;).</span>
 </span><span id="extend_event_log_with_preceding_event_delay-82"><a href="#extend_event_log_with_preceding_event_delay-82"><span class="linenos"> 82</span></a><span class="sd">    </span>
 </span><span id="extend_event_log_with_preceding_event_delay-83"><a href="#extend_event_log_with_preceding_event_delay-83"><span class="linenos"> 83</span></a><span class="sd">    Raises:</span>
 </span><span id="extend_event_log_with_preceding_event_delay-84"><a href="#extend_event_log_with_preceding_event_delay-84"><span class="linenos"> 84</span></a><span class="sd">        KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.</span>
