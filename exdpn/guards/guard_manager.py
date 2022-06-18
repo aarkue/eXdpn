@@ -77,11 +77,6 @@ class Guard_Manager():
             y_test_transformed = [transition_int_map[transition] for transition in self.y_test.tolist()]
 
             self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
-            
-            # retrain model on all available data
-            df_X, df_y = basic_data_preprocessing(self.dataframe)
-            guard_models_temp = guard_models
-            guard_models_temp.train(df_X, df_y)
         
         return self.guards_results
 
