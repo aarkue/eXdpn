@@ -1,0 +1,1 @@
+This module contains the functionality to mine a petri net from the given event log.
