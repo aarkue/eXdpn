@@ -14,6 +14,16 @@ def find_decision_points(net: PetriNet) -> Dict[PetriNet.Place, Set[PetriNet.Tra
     
     Returns:
         Dict[PetriNet.Place, Set[PetriNet.Transition]]: A dictionary mapping places to the possible outgoing transitions.
+
+    Examples:
+        ```python
+        >>> from exdpn.util import import_log
+        >>> from exdpn.petri_net import get_petri_net
+        >>> from exdpn.decisionpoints import find_decision_points
+        >>> event_log = import_log('p2p_base.xes')
+        >>> pn, im, fm = get_petri_net(event_log)
+        >>> dp_dict = find_decision_points(pn)
+        ```
     
     """
     
