@@ -310,7 +310,9 @@ class Data_Petri_Net():
 
         return sum([prediction_result[trace_id] for trace_id in seen_trace_ids]) / len(seen_trace_ids)
 
+
 # tests implemented examples
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+# run python .\exdpn\data_petri_net\data_petri_net.py from eXdpn file 
