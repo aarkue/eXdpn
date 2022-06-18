@@ -84,19 +84,19 @@
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="k">def</span> <span class="nf">get_petri_net</span> <span class="p">(</span><span class="n">log</span><span class="p">:</span> <span class="n">EventLog</span><span class="p">,</span> <span class="n">miner_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AM&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PetriNet</span><span class="p">,</span> <span class="n">PetriNet</span><span class="o">.</span><span class="n">Place</span><span class="p">,</span> <span class="n">PetriNet</span><span class="o">.</span><span class="n">Place</span><span class="p">]:</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="sd">&quot;&quot;&quot; Mines Petri Net based on given event log and returns found Petri Net.</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    Args: </span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    Args:</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">        log (EventLog): Given event log, as EventLog</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">        miner_type (str): Spezifies type of mining algorithm, either inductive miner (&quot;IM&quot;) or alpha miner (&quot;AM&quot;, default)</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    </span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    Returns: </span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    Returns:</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">        net (PetriNet): Petri Net based on input data, later used to find decision find decision points </span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        initial_marking (PetriNet.Place): Initial Marking</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        final_marking (PetriNet.Place): Final Marking </span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    Raises: </span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    Raises:</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        TypeError: If an miner_type is any other than &quot;AM&quot; or &quot;IM&quot;.</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    Examples: </span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    Examples:</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        ```python</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        &gt;&gt;&gt; import os </span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import import_log</span>
@@ -143,19 +143,19 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_petri_net-14"><a href="#get_petri_net-14"><span class="linenos">14</span></a><span class="k">def</span> <span class="nf">get_petri_net</span> <span class="p">(</span><span class="n">log</span><span class="p">:</span> <span class="n">EventLog</span><span class="p">,</span> <span class="n">miner_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AM&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PetriNet</span><span class="p">,</span> <span class="n">PetriNet</span><span class="o">.</span><span class="n">Place</span><span class="p">,</span> <span class="n">PetriNet</span><span class="o">.</span><span class="n">Place</span><span class="p">]:</span>
 </span><span id="get_petri_net-15"><a href="#get_petri_net-15"><span class="linenos">15</span></a>    <span class="sd">&quot;&quot;&quot; Mines Petri Net based on given event log and returns found Petri Net.</span>
 </span><span id="get_petri_net-16"><a href="#get_petri_net-16"><span class="linenos">16</span></a>
-</span><span id="get_petri_net-17"><a href="#get_petri_net-17"><span class="linenos">17</span></a><span class="sd">    Args: </span>
+</span><span id="get_petri_net-17"><a href="#get_petri_net-17"><span class="linenos">17</span></a><span class="sd">    Args:</span>
 </span><span id="get_petri_net-18"><a href="#get_petri_net-18"><span class="linenos">18</span></a><span class="sd">        log (EventLog): Given event log, as EventLog</span>
 </span><span id="get_petri_net-19"><a href="#get_petri_net-19"><span class="linenos">19</span></a><span class="sd">        miner_type (str): Spezifies type of mining algorithm, either inductive miner (&quot;IM&quot;) or alpha miner (&quot;AM&quot;, default)</span>
 </span><span id="get_petri_net-20"><a href="#get_petri_net-20"><span class="linenos">20</span></a><span class="sd">    </span>
-</span><span id="get_petri_net-21"><a href="#get_petri_net-21"><span class="linenos">21</span></a><span class="sd">    Returns: </span>
+</span><span id="get_petri_net-21"><a href="#get_petri_net-21"><span class="linenos">21</span></a><span class="sd">    Returns:</span>
 </span><span id="get_petri_net-22"><a href="#get_petri_net-22"><span class="linenos">22</span></a><span class="sd">        net (PetriNet): Petri Net based on input data, later used to find decision find decision points </span>
 </span><span id="get_petri_net-23"><a href="#get_petri_net-23"><span class="linenos">23</span></a><span class="sd">        initial_marking (PetriNet.Place): Initial Marking</span>
 </span><span id="get_petri_net-24"><a href="#get_petri_net-24"><span class="linenos">24</span></a><span class="sd">        final_marking (PetriNet.Place): Final Marking </span>
 </span><span id="get_petri_net-25"><a href="#get_petri_net-25"><span class="linenos">25</span></a>
-</span><span id="get_petri_net-26"><a href="#get_petri_net-26"><span class="linenos">26</span></a><span class="sd">    Raises: </span>
+</span><span id="get_petri_net-26"><a href="#get_petri_net-26"><span class="linenos">26</span></a><span class="sd">    Raises:</span>
 </span><span id="get_petri_net-27"><a href="#get_petri_net-27"><span class="linenos">27</span></a><span class="sd">        TypeError: If an miner_type is any other than &quot;AM&quot; or &quot;IM&quot;.</span>
 </span><span id="get_petri_net-28"><a href="#get_petri_net-28"><span class="linenos">28</span></a>
-</span><span id="get_petri_net-29"><a href="#get_petri_net-29"><span class="linenos">29</span></a><span class="sd">    Examples: </span>
+</span><span id="get_petri_net-29"><a href="#get_petri_net-29"><span class="linenos">29</span></a><span class="sd">    Examples:</span>
 </span><span id="get_petri_net-30"><a href="#get_petri_net-30"><span class="linenos">30</span></a><span class="sd">        ```python</span>
 </span><span id="get_petri_net-31"><a href="#get_petri_net-31"><span class="linenos">31</span></a><span class="sd">        &gt;&gt;&gt; import os </span>
 </span><span id="get_petri_net-32"><a href="#get_petri_net-32"><span class="linenos">32</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import import_log</span>
@@ -182,38 +182,38 @@
 
             <div class="docstring"><p>Mines Petri Net based on given event log and returns found Petri Net.</p>
 
-<p>Args: 
-    log (EventLog): Given event log, as EventLog
-    miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)</p>
+<h6 id="args">Args</h6>
 
-<p>Returns: 
-    net (PetriNet): Petri Net based on input data, later used to find decision find decision points 
-    initial_marking (PetriNet.Place): Initial Marking
-    final_marking (PetriNet.Place): Final Marking </p>
+<ul>
+<li><strong>log (EventLog):</strong>  Given event log, as EventLog</li>
+<li><strong>miner_type (str):</strong>  Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)</li>
+</ul>
 
-<p>Raises: 
-    TypeError: If an miner_type is any other than "AM" or "IM".</p>
-
-<p>Examples: 
-    ```python</p>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
-  <blockquote>
-    <blockquote>
-      <p>import os 
-      from <a href="../util.html">exdpn.util</a> import import_log
-      from exdpn import petri_net
-      event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))</p>
-      
-      <h1 id="event_log-import_logp2p_basexes">event_log = import_log('p2p_base.xes')</h1>
-      
-      <p>net, im, fm = petri_net.get_petri_net(event_log)</p>
-    </blockquote>
-  </blockquote>
+  <p>net (PetriNet): Petri Net based on input data, later used to find decision find decision points 
+  initial_marking (PetriNet.Place): Initial Marking
+  final_marking (PetriNet.Place): Final Marking </p>
 </blockquote>
 
-<pre><code>```
-</code></pre>
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>TypeError:</strong>  If an miner_type is any other than "AM" or "IM".</li>
+</ul>
+
+<h6 id="examples">Examples</h6>
+
+<blockquote>
+  <div class="pdoc-code codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">os</span> 
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="../util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">import_log</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">exdpn</span> <span class="kn">import</span> <span class="n">petri_net</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">event_log</span> <span class="o">=</span> <span class="n">import_log</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;datasets&#39;</span><span class="p">,</span> <span class="s1">&#39;p2p_base.xes&#39;</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1">#event_log = import_log(&#39;p2p_base.xes&#39;)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">net</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">fm</span> <span class="o">=</span> <span class="n">petri_net</span><span class="o">.</span><span class="n">get_petri_net</span><span class="p">(</span><span class="n">event_log</span><span class="p">)</span>
+</code></pre></div>
+</blockquote>
 </div>
 
 

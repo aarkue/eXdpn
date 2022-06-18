@@ -13,19 +13,19 @@ from typing import Tuple
 def get_petri_net (log: EventLog, miner_type: str = "AM") -> Tuple[PetriNet, PetriNet.Place, PetriNet.Place]:
     """ Mines Petri Net based on given event log and returns found Petri Net.
 
-    Args: 
+    Args:
         log (EventLog): Given event log, as EventLog
         miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)
     
-    Returns: 
+    Returns:
         net (PetriNet): Petri Net based on input data, later used to find decision find decision points 
         initial_marking (PetriNet.Place): Initial Marking
         final_marking (PetriNet.Place): Final Marking 
 
-    Raises: 
+    Raises:
         TypeError: If an miner_type is any other than "AM" or "IM".
 
-    Examples: 
+    Examples:
         ```python
         >>> import os 
         >>> from exdpn.util import import_log
