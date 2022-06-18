@@ -61,7 +61,52 @@ class Data_Petri_Net():
             if not specified default parameters are used
             guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
             is smaller than the threshold the guard is not added. Default is 0 (no threshold) 
-            verbose (bool): Specifies if the execution of all methods should print status-esque messages or not"""
+            verbose (bool): Specifies if the execution of all methods should print status-esque messages or not
+            
+        Examples:
+            Use event log and mine petri net based on it
+            ```python 
+            >>> from exdpn import load_event_log
+            >>> from exdpn.data_petri_net import data_petri_net
+            >>> from exdpn.guards import ML_Technique
+            >>> event_log = load_event_log.import_xes('p2p_base.xes'))
+            >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
+                                                    case_level_attributes = ["concept:name"],
+                                                    event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+                                                    ml_list = [ML_Technique.SVM, ML_Technique.DT])
+            ```
+            Use a mined petri net (based on event log)
+            ```python
+            >>> from exdpn import load_event_log
+            >>> from exdpn.data_petri_net import data_petri_net
+            >>> from exdpn.guards import ML_Technique
+            >>> from exdpn import petri_net
+            >>> event_log = load_event_log.import_xes('p2p_base.xes'))
+            >>> net, im, fm = petri_net.get_petri_net(event_log)
+            >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
+                                                    petri_net = net,
+                                                    initial_marking = im,
+                                                    final_marking = fm,
+                                                    case_level_attributes = ["concept:name"],
+                                                    event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+                                                    ml_list = [ML_Technique.SVM, ML_Technique.DT])
+            ``` 
+            Costumize data petri net with personal hyperparameters and guard threshold
+            ```python
+            >>> from exdpn import load_event_log
+            >>> from exdpn.data_petri_net import data_petri_net
+            >>> from exdpn.guards import ML_Technique
+            >>> event_log = load_event_log.import_xes('p2p_base.xes'))
+            >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
+                                                    case_level_attributes = ["concept:name"],
+                                                    event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+                                                    ml_list = [ML_Technique.SVM, ML_Technique.DT],
+                                                    hyperparameters = {ML_Technique.DT: {'max_depth' = 2},
+                                                    guard_threshold = 0.7)
+
+            ```
+            
+        """
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:
             self.petri_net, self.im, self.fm = get_petri_net(event_log, miner_type)
@@ -112,6 +157,11 @@ class Data_Petri_Net():
 
         Returns:
             Dict[PetriNet.Place, Guard]: The best performing guard for each decision point with respect to the F1-score
+        
+        Examples:
+            ```python
+            >>> best_guards = dpn.get_best()
+            ```
         """
         
         if self.guard_per_place != None:
@@ -143,6 +193,15 @@ class Data_Petri_Net():
 
         Returns:
             Guard: The best guard for given decision point
+
+        Examples:
+            ```python
+            >>> from exdpn.decisionpoints import find_decision_points
+            >>> all_decision_points = find_decision_points(dpn.petri_net).keys()
+            >>> my_decision_point = list(all_decision_points)[0]
+            >>> my_guard = dpn.get_guard_at_place(my_decision_point)
+            >>> print(my_guard)
+            ```
         """
         
         if self.guard_per_place == None:
@@ -160,6 +219,11 @@ class Data_Petri_Net():
         Returns:
             float: Fraction of traces that respected all decision point guards passed during token based replay. \
                 Respecting a decision point guard means moving to the transition predicted by the guard at the corresponding place
+        
+        Examples:
+            ```python
+            print("Mean guard conformance:", dpn.get_mean_guard_conformance(event_log))
+            ```
         """
         
         if self.guard_per_place == None:
