@@ -58,14 +58,24 @@
                 }
               }
 
-              document
-                .querySelectorAll("#discoverModelButtons > button")
-                .forEach((button) => {
-                  button.removeAttribute("disabled");
-                });
+            }else{
+              const errorMessage = await getErrorMessageFromRes(res);
+              showErrorToast(errorMessage)
             }
+            document
+              .querySelectorAll("#discoverModelButtons > button")
+              .forEach((button) => {
+                button.removeAttribute("disabled");
+              });
           })
-          .catch((err) => {});
+          .catch((err) => {
+            showErrorToast(err)
+            document
+              .querySelectorAll("#discoverModelButtons > button")
+              .forEach((button) => {
+                button.removeAttribute("disabled");
+          })
+          });
       }
 
       function loadPetriNet(algoName) {
@@ -130,9 +140,37 @@
                   document.getElementById("chooseAttributes").style.display =
                     "block";
                 });
+            } else{
+              const errorMessage = await getErrorMessageFromRes(res);
+              showErrorToast(errorMessage)
             }
           })
-          .catch((err) => {});
+          .catch((err) => {
+            showErrorToast(err)
+          });
+      }
+
+
+      async function getErrorMessageFromRes(res){
+        try{
+          const json = await res.json();
+          if('message' in json){
+            return json['message'];
+          }else{
+            return res.statusText;
+          }
+        }catch(e){
+            return res.statusText;
+        }
+      }
+
+      function showErrorToast(message){
+            const toast_elem = document.getElementById("errorToast")
+            const toast = new bootstrap.Toast(toast_elem)
+
+            toast_elem.querySelector(".toast-body").innerText = message
+
+            toast.show()
       }
 
       function getSelectedAttributes(){
@@ -155,21 +193,28 @@
 
 
 
-      function mineDecisions(){
+      function mineDecisions(){ 
+        let selectedAttributes = getSelectedAttributes()
+        
+        if (selectedAttributes["ml_techniques"].length === 0) {
+          showErrorToast("No ML Techniques Selected")
+          return
+        }
+        
         let loadDecisionButton = document.getElementById('mine-decisions-btn');
         let loadDecisionButtonLoadingSpan = document.querySelector('#mine-decisions-btn > span.spinner-border');
         loadDecisionButton.setAttribute('disabled',"");
         loadDecisionButtonLoadingSpan.style.display = 'inline-block';
 
-        let selectedAttributes = getSelectedAttributes()
         fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then(async (res) => {
-          const json = await res.json();
-          console.log({json},'mine-decision result json')
-          decisionMined = true;
+          if(res.ok){
+            const json = await res.json();
+            console.log({json},'mine-decision result json')
+            decisionMined = true;
           loadDecisionButton.removeAttribute('disabled'); // do we want to do that?
           loadDecisionButtonLoadingSpan.style.display = 'none';
           document.getElementById('meanGuardConformanceValue').innerText = Math.round(json['mean_guard_conformance'] * 100)/100;
-        
+          
           document.getElementById('meanGuardConformance').style.display = 'block';
           guardDataPerPlace = json['place_info'];
           for(const placeId in guardDataPerPlace){
@@ -177,15 +222,22 @@
             const url = URL.createObjectURL(blob);
             guardDataPerPlace[placeId]['svg_url'] = url;
 
-
+            
             const resultsComparisonBlob = new Blob([guardDataPerPlace[placeId]['guard_result_svg']],{type: 'image/svg+xml'})
             const resultsComparisonUrl = URL.createObjectURL(resultsComparisonBlob);
             guardDataPerPlace[placeId]['comparison_svg_url'] = resultsComparisonUrl;
           }
+        }else{
+          loadDecisionButton.removeAttribute('disabled');
+          loadDecisionButtonLoadingSpan.style.display = 'none';
+          const errorMessage = await getErrorMessageFromRes(res);
+          showErrorToast(errorMessage)
+        }
         }).catch((err) => {
           console.error({err})
           loadDecisionButton.removeAttribute('disabled');
           loadDecisionButtonLoadingSpan.style.display = 'none';
+            showErrorToast(err)
         })
       }
 
@@ -201,11 +253,17 @@
         fetch(`/log/{{log_id}}/place/${placeid}/explainable-representation/${technique}`, {
           method: "GET"
         }).then(async (res) => {
-          const json = await res.json();
-          if(selectedPlace == placeid){
-            const blob = new Blob([json['svg_representation']],{type: 'image/svg+xml'})
-            const blob_url = URL.createObjectURL(blob);
-            document.getElementById('selected_guard_svg').setAttribute('src', blob_url);
+          if(res.ok){
+
+            const json = await res.json();
+            if(selectedPlace == placeid){
+              const blob = new Blob([json['svg_representation']],{type: 'image/svg+xml'})
+              const blob_url = URL.createObjectURL(blob);
+              document.getElementById('selected_guard_svg').setAttribute('src', blob_url);
+            }
+          }else{
+            const errorMessage = await getErrorMessageFromRes(res);
+            showErrorToast(errorMessage)
           }
           select.removeAttribute('disabled');
           selectSpinner.style.display = 'none';
@@ -213,6 +271,7 @@
           console.log({err});
           select.removeAttribute('disabled');
           selectSpinner.style.display = 'none';
+          showErrorToast(err)
         });
       }
     </script>
@@ -348,7 +407,7 @@
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTwo">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                    Machine-Learning Techniques to use
+                    Machine Learning Techniques
                   </button>
                 </h2>
                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingTwo">
@@ -378,7 +437,7 @@
             <div class="accordion-item">
               <h2 class="accordion-header" id="headingTwo">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                  Choose Attributes to Mine
+                  Considered Attributes
                 </button>
               </h2>
               <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
@@ -476,5 +535,20 @@
       integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
       crossorigin="anonymous"
     ></script>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3 text-body">
+      <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-danger bg-opacity-50 text-body">
+          <!-- <img src="..." class="rounded me-2" alt="..."> -->
+          <strong class="me-auto">Error</strong>
+          <!-- <small>11 mins ago</small> -->
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body bg-danger bg-opacity-10 text-body">
+          An error occured. Please try again.
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

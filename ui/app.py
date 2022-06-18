@@ -137,7 +137,7 @@ def load_log(logid: str):
 @app.route("/log/<logid>/discover/<algo_name>", methods=["GET"])
 def discover_model(logid: str, algo_name:str):
     if logid not in loaded_event_logs:
-        return {"message": "Log not loaded"}, 400
+        return {"message": "Log not loaded. Please make sure the event log exists."}, 400
     else:
         log = loaded_event_logs[logid][1]
         if algo_name == "inductive_miner":
@@ -155,7 +155,7 @@ def discover_model(logid: str, algo_name:str):
 
 @app.route("/log/<logid>/mine-decisions", methods=["POST"])
 def mine_decisions(logid: str):
-    if logid not in loaded_event_logs and logid in discovered_models:
+    if logid not in loaded_event_logs or logid not in discovered_models:
         return {"message": "Log or model not loaded"}, 400
     else:
         body = request.get_json()
