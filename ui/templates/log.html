@@ -70,6 +70,7 @@
 
       function loadPetriNet(algoName) {
         decisionMined = false;
+        document.getElementById('meanGuardConformance').style.display = 'none';
         console.log("Loading Petri net for {{log_id}}...");
         fetch("/log/{{log_id}}/discover/" + algoName, {
           method: "GET",
@@ -163,14 +164,17 @@
           decisionMined = true;
           loadDecisionButton.removeAttribute('disabled'); // do we want to do that?
           loadDecisionButtonLoadingSpan.style.display = 'none';
-          guardDataPerPlace = json;
-          for(const placeId in json){
-            const blob = new Blob([json[placeId]['svg_representation']],{type: 'image/svg+xml'})
+          document.getElementById('meanGuardConformanceValue').innerText = Math.round(json['mean_guard_conformance'] * 100)/100;
+        
+          document.getElementById('meanGuardConformance').style.display = 'block';
+          guardDataPerPlace = json['place_info'];
+          for(const placeId in guardDataPerPlace){
+            const blob = new Blob([guardDataPerPlace[placeId]['svg_representation']],{type: 'image/svg+xml'})
             const url = URL.createObjectURL(blob);
             guardDataPerPlace[placeId]['svg_url'] = url;
 
 
-            const resultsComparisonBlob = new Blob([json[placeId]['guard_result_svg']],{type: 'image/svg+xml'})
+            const resultsComparisonBlob = new Blob([guardDataPerPlace[placeId]['guard_result_svg']],{type: 'image/svg+xml'})
             const resultsComparisonUrl = URL.createObjectURL(resultsComparisonBlob);
             guardDataPerPlace[placeId]['comparison_svg_url'] = resultsComparisonUrl;
           }
@@ -329,7 +333,11 @@
           </ul>
         </div>
       </div>
-      <div id="discoveredPetriNet" class="text-center mt-3"></div>
+      <div style="position: relative;">
+        <div id="discoveredPetriNet" class="text-center mt-3"></div>
+        <span style="position: absolute; top: 0.5rem; right: 0.5rem; display: none;"  id="meanGuardConformance">Mean guard conformance: <span id="meanGuardConformanceValue"></span></span>
+      </div>
+
       <div id="chooseAttributes" style="display: none;">
           <h2 class="mt-4">Select attributes</h2>
           <p>

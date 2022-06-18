@@ -199,6 +199,7 @@ def mine_decisions(logid: str):
                 svg_representation = imgdata.getvalue()
             else:
                 svg_representation = ""
+            cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representation)
             return_info[id(p)] = {
                 'performance': dpn.performance_per_place[p],
                 'name': str(dpn.ml_technique_per_place[p]),
@@ -207,7 +208,10 @@ def mine_decisions(logid: str):
             }
         
         data_petri_nets[logid] = dpn
-        return return_info, 200;
+        return {
+            'mean_guard_conformance': dpn.get_mean_guard_conformance(event_log),
+            'place_info': return_info
+        }, 200;
 
 @app.route("/log/<logid>/place/<int:placeid>/explainable-representation/<ml_technique>", methods=["GET"])
 def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
@@ -256,13 +260,17 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
     else:
         svg_representation = ""
 
-    log_representations = explainable_representations.get(logid, dict())
-    log_representations[(placeid, technique_enum_value)] = svg_representation
-    explainable_representations[logid] = log_representations
+    cache_representation(logid, placeid, technique_enum_value, svg_representation)
 
     return {
         'svg_representation': svg_representation
     }, 200
     # return svg_representation
+
+def cache_representation(logid:str, placeid:int, technique_enum_value: ML_Technique, svg_representation:str):
+    log_representations = explainable_representations.get(logid, dict())
+    log_representations[(placeid, technique_enum_value)] = svg_representation
+    explainable_representations[logid] = log_representations
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
