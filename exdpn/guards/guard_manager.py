@@ -127,12 +127,6 @@ class Guard_Manager():
             y_test_transformed = [transition_int_map[transition] for transition in self.y_test.tolist()]
 
             self.guards_results[guard_name] = f1_score(y_test_transformed, y_prediction_transformed, average="weighted")
-            
-            # TODO: remove this
-            # retrain model on all available data
-            df_X, df_y = basic_data_preprocessing(self.dataframe)
-            guard_models_temp = guard_models
-            guard_models_temp.train(df_X, df_y)
         
         return self.guards_results
 
@@ -218,7 +212,17 @@ class Guard_Manager():
         axis.spines['right'].set_visible(False)
         plt.ylabel('F1 score')
         plt.title('Comparison of Techniques')
-        plt.bar(guard_results.keys(),guard_results.values(),color=['#478736', '#e26f8f', '#e1ad01', '#263488'])
+        
+        colors = {
+            'Decision Tree': '#478736',
+            'Logistic Regression': '#e26f8f',
+            'Support Vector Machine': '#e1ad01',
+            'Neural Network': '#263488'
+        }   
+        keys = list(guard_results.keys())
+        values = [guard_results[key] for key in keys]
+        colors = [colors[technique] for technique in keys]
+        plt.bar(keys,values,color=colors)
         return fig
 
 # tests implemented examples

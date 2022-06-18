@@ -22,6 +22,8 @@
 
       let decisionMined = false;
 
+      let selectedPlace = null;
+
       let guardDataPerPlace = {};
       function loadEventLog() {
         fetch("/log/{{log_id}}/load", {
@@ -55,20 +57,30 @@
                   }
                 }
               }
-              console.log({ logAttributes });
 
-              document
-                .querySelectorAll("#discoverModelButtons > button")
-                .forEach((button) => {
-                  button.removeAttribute("disabled");
-                });
+            }else{
+              const errorMessage = await getErrorMessageFromRes(res);
+              showErrorToast(errorMessage)
             }
+            document
+              .querySelectorAll("#discoverModelButtons > button")
+              .forEach((button) => {
+                button.removeAttribute("disabled");
+              });
           })
-          .catch((err) => {});
+          .catch((err) => {
+            showErrorToast(err)
+            document
+              .querySelectorAll("#discoverModelButtons > button")
+              .forEach((button) => {
+                button.removeAttribute("disabled");
+          })
+          });
       }
 
       function loadPetriNet(algoName) {
         decisionMined = false;
+        document.getElementById('meanGuardConformance').style.display = 'none';
         console.log("Loading Petri net for {{log_id}}...");
         fetch("/log/{{log_id}}/discover/" + algoName, {
           method: "GET",
@@ -93,12 +105,31 @@
                         ellipse.addEventListener("click", (e) => {
                           if(decisionMined){
                             const placeId = title.textContent;
+                            selectedPlace = placeId;
                             // Show data for selected place & guard
                             document.getElementById('selected_guard_name').textContent = guardDataPerPlace[placeId]['name']
                             document.getElementById('selected_guard_performance').textContent = Math.round(parseFloat(guardDataPerPlace[placeId]['performance'])*100)/100;
                             document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
                             document.getElementById('selected_guard_comparison_svg').setAttribute('src',guardDataPerPlace[placeId]['comparison_svg_url'])
-                             const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
+
+                            document.getElementById("selector-container").innerHTML = `
+                            <select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="expl-repr-selector">
+                              <option value="decision-tree" ${guardDataPerPlace[placeId]['name'] == "Decision Tree" ? 'selected' : ''}>Decision Tree</option>
+                              <option value="logistic-regression" ${guardDataPerPlace[placeId]['name'] == "Logistic Regression" ? 'selected' : ''}>Logistic Regression</option>
+                              <option value="svm" ${guardDataPerPlace[placeId]['name'] == "SVM" ? 'selected' : ''}>SVM</option>
+                              <option value="neural-network" ${guardDataPerPlace[placeId]['name'] == "Neural Network" ? 'selected' : ''}>Neural Network</option>
+                            </select>
+                            `;
+                            selector = document.getElementById("expl-repr-selector")
+                            selector.removeAttribute('disabled');
+                            
+                            const selectSpinner = document.getElementById("selector-container-spinner");
+                            selectSpinner.style.display = 'none';
+                            selector.addEventListener("input", (e) => {
+                              getExplainableRepresentation(selector.value, placeId)
+                            })
+
+                            const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
                             bsel.show();
                             console.log(title.textContent)
                           }
@@ -109,9 +140,37 @@
                   document.getElementById("chooseAttributes").style.display =
                     "block";
                 });
+            } else{
+              const errorMessage = await getErrorMessageFromRes(res);
+              showErrorToast(errorMessage)
             }
           })
-          .catch((err) => {});
+          .catch((err) => {
+            showErrorToast(err)
+          });
+      }
+
+
+      async function getErrorMessageFromRes(res){
+        try{
+          const json = await res.json();
+          if('message' in json){
+            return json['message'];
+          }else{
+            return res.statusText;
+          }
+        }catch(e){
+            return res.statusText;
+        }
+      }
+
+      function showErrorToast(message){
+            const toast_elem = document.getElementById("errorToast")
+            const toast = new bootstrap.Toast(toast_elem)
+
+            toast_elem.querySelector(".toast-body").innerText = message
+
+            toast.show()
       }
 
       function getSelectedAttributes(){
@@ -122,50 +181,106 @@
 
           selectedAttributes[attributeType] = attributeNames;
         }
+        const synEl = document.getElementById('synthetic_attributes');
+        const synthAttributes = [...synEl.querySelectorAll('input:checked')].map((e) => e.dataset.synthName)
+        selectedAttributes['synthetic_attributes'] = synthAttributes;
+
+        const mlEl = document.getElementById('ml_techniques');
+        const selectedMLs = [...mlEl.querySelectorAll('input:checked')].map((e) => e.dataset.mlName)
+        selectedAttributes['ml_techniques'] = selectedMLs;
         return selectedAttributes;
       }
 
 
 
-      function mineDecisions(){
+      function mineDecisions(){ 
+        let selectedAttributes = getSelectedAttributes()
+        
+        if (selectedAttributes["ml_techniques"].length === 0) {
+          showErrorToast("No ML Techniques Selected")
+          return
+        }
+        
         let loadDecisionButton = document.getElementById('mine-decisions-btn');
         let loadDecisionButtonLoadingSpan = document.querySelector('#mine-decisions-btn > span.spinner-border');
         loadDecisionButton.setAttribute('disabled',"");
         loadDecisionButtonLoadingSpan.style.display = 'inline-block';
 
-        let selectedAttributes = getSelectedAttributes()
         fetch('/log/{{log_id}}/mine-decisions', {method: 'POST', body: JSON.stringify(selectedAttributes),headers: {'Content-Type': 'application/json'}, }).then(async (res) => {
-          const json = await res.json();
-          console.log({json},'mine-decision result json')
-          decisionMined = true;
+          if(res.ok){
+            const json = await res.json();
+            console.log({json},'mine-decision result json')
+            decisionMined = true;
           loadDecisionButton.removeAttribute('disabled'); // do we want to do that?
           loadDecisionButtonLoadingSpan.style.display = 'none';
-          guardDataPerPlace = json;
-          for(const placeId in json){
-            const blob = new Blob([json[placeId]['svg_representation']],{type: 'image/svg+xml'})
+          document.getElementById('meanGuardConformanceValue').innerText = Math.round(json['mean_guard_conformance'] * 100)/100;
+          
+          document.getElementById('meanGuardConformance').style.display = 'block';
+          guardDataPerPlace = json['place_info'];
+          for(const placeId in guardDataPerPlace){
+            const blob = new Blob([guardDataPerPlace[placeId]['svg_representation']],{type: 'image/svg+xml'})
             const url = URL.createObjectURL(blob);
             guardDataPerPlace[placeId]['svg_url'] = url;
 
-
-            const resultsComparisonBlob = new Blob([json[placeId]['guard_result_svg']],{type: 'image/svg+xml'})
+            
+            const resultsComparisonBlob = new Blob([guardDataPerPlace[placeId]['guard_result_svg']],{type: 'image/svg+xml'})
             const resultsComparisonUrl = URL.createObjectURL(resultsComparisonBlob);
             guardDataPerPlace[placeId]['comparison_svg_url'] = resultsComparisonUrl;
           }
+        }else{
+          loadDecisionButton.removeAttribute('disabled');
+          loadDecisionButtonLoadingSpan.style.display = 'none';
+          const errorMessage = await getErrorMessageFromRes(res);
+          showErrorToast(errorMessage)
+        }
         }).catch((err) => {
           console.error({err})
+          loadDecisionButton.removeAttribute('disabled');
+          loadDecisionButtonLoadingSpan.style.display = 'none';
+            showErrorToast(err)
         })
       }
 
       document.addEventListener("DOMContentLoaded", (ev) => {
         loadEventLog();
       });
+
+      function getExplainableRepresentation(technique, placeid){
+        const select = document.getElementById("expl-repr-selector");
+        select.setAttribute('disabled',"");
+        const selectSpinner = document.getElementById("selector-container-spinner");
+        selectSpinner.style.display = 'block';
+        fetch(`/log/{{log_id}}/place/${placeid}/explainable-representation/${technique}`, {
+          method: "GET"
+        }).then(async (res) => {
+          if(res.ok){
+
+            const json = await res.json();
+            if(selectedPlace == placeid){
+              const blob = new Blob([json['svg_representation']],{type: 'image/svg+xml'})
+              const blob_url = URL.createObjectURL(blob);
+              document.getElementById('selected_guard_svg').setAttribute('src', blob_url);
+            }
+          }else{
+            const errorMessage = await getErrorMessageFromRes(res);
+            showErrorToast(errorMessage)
+          }
+          select.removeAttribute('disabled');
+          selectSpinner.style.display = 'none';
+        }).catch((err) => {
+          console.log({err});
+          select.removeAttribute('disabled');
+          selectSpinner.style.display = 'none';
+          showErrorToast(err)
+        });
+      }
     </script>
     <style>
       .explainable_representation {
         height: 100%;
       }
       .offcanvas {
-        --bs-offcanvas-height: 40vh !important;
+        --bs-offcanvas-height: max(40vh,400px) !important;
       }
       #discoveredPetriNet svg {
         border: 2px dashed rgba(49, 47, 47, 0.685);
@@ -184,6 +299,7 @@
         fill: rgba(0, 128, 0, 0.761);
       }
       img {
+        height: 100%;
         width: 100%;
       }
     </style>
@@ -280,31 +396,93 @@
           </ul>
         </div>
       </div>
-      <div id="discoveredPetriNet" class="text-center mt-3"></div>
+      <div style="position: relative;">
+        <div id="discoveredPetriNet" class="text-center mt-3"></div>
+        <span style="position: absolute; top: 0.5rem; right: 0.5rem; display: none;"  id="meanGuardConformance">Mean guard conformance: <span id="meanGuardConformanceValue"></span></span>
+      </div>
       <div id="chooseAttributes" style="display: none;">
-          <h2 class="mt-4">Select attributes</h2>
-          <p>
-            Please select the case and event attributes you want to use.
-          </p>
-          <div class="row mt-2">
-            <div class="col">
-              <h3 class="text-center">Case attributes</h3>
-              <div class="list-group" id="case_attributes">
-                <span class="text-center text-muted">
-                  No case attributes present in log.
-                </span>
+          <h2 class="mt-4">Configure Decision Mining</h2>
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Machine Learning Techniques
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingTwo">
+                  <div class="accordion-body">
+                    <div class="list-group" id="ml_techniques">
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Decision Tree"  class="form-check-input me-2" checked>
+                        <samp>Decision Tree</samp>
+                      </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Logistic Regression"  class="form-check-input me-2" checked>
+                        <samp>Logistic Regression</samp>
+                      </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Support Vector Machine"  class="form-check-input me-2" checked>
+                        <samp>SVM</samp>
+                      </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Neural Network"  class="form-check-input me-2" checked>
+                        <samp>Neural Network</samp>
+                      </label>
+                  </div>
+                   </div>
+                </div>
               </div>
             </div>
-
-            <div class="col">
-              <h3 class="text-center">Event attributes</h3>
-              <div class="list-group" id="event_attributes">
-                <span class="text-center text-muted">
-                  No event attributes present in log.
-                </span>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Considered Attributes
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
+                <div class="accordion-body">
+                  <div class="row mt-2">
+                    <div class="col">
+                      <h3 class="text-center">Case attributes</h3>
+                      <div class="list-group" id="case_attributes">
+                        <span class="text-center text-muted">
+                          No case attributes present in log.
+                        </span>
+                      </div>
+                    </div>
+          
+                    <div class="col">
+                      <h3 class="text-center">Event attributes</h3>
+                      <div class="list-group" id="event_attributes">
+                        <span class="text-center text-muted">
+                          No event attributes present in log.
+                        </span>
+                      </div>
+                    </div>
+          
+                    <div class="col">
+                      <h3 class="text-center">Synthetic attributes</h3>
+                      <div class="list-group" id="synthetic_attributes">
+                          <label class="list-group-item">
+                            <input type="checkbox" data-synth-name="total_elapsed_time"  class="form-check-input me-2">
+                            <samp>Elapsed time in case
+                              <span class="text-muted">(per Event)</span>
+                            </samp>
+                          </label>
+                          <label class="list-group-item">
+                            <input type="checkbox" data-synth-name="time_since_last" class="form-check-input me-2">
+                            <samp>Time since last event
+                              <span class="text-muted">(per Event)</span>
+                            </samp>
+                          </label>
+                      </div>
+                    </div>
+                </div>
+                 </div>
               </div>
             </div>
-        </div>
+          </div>
         <div class="text-center my-2">
           <button id="mine-decisions-btn" class="btn btn-primary btn-lg" onclick="mineDecisions()" type="button">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
@@ -314,18 +492,39 @@
         </div>
         <div class="offcanvas offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
           <div class="offcanvas-header align-items-start">
-            <div>
-              <h4 class="text-muted">Technique: <span id="selected_guard_name" class="text-success">No name</span></h4>
-              <p class="text-muted fs-4">F1 Score: <span id="selected_guard_performance" class="text-success"></span></p>
+            <div  style="width: 100%;" class="d-flex justify-content-around align-items-center">
+              <div style="width: 100%;">
+                <h4 class="text-muted">Best Technique: <span id="selected_guard_name" class="text-success">No name</span></h4>
+                <p class="text-muted fs-5">F1 Score: <span id="selected_guard_performance" class="text-success"></span></p>
+              </div>
+              <div style="width: 100%;">
+              <h4 class="text-center">Explainable Representation</h4>
+              <div class="d-flex justify-content-center align-items-center gap-2">
+                <div id="selector-container">
+                  <!-- Content Generated when DPN is mined and returned -->
+                </div>
+                <div id="selector-container-spinner"
+                class="spinner-border spinner-border-sm text-secondary"
+                role="status"
+                style="display: none; width: 1.5rem; height: 1.5rem;"
+                >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            </div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
             <!-- <div>
             </div> -->
-            <div id="explainable_representation" class="d-flex justify-content-center h-100" >
-              <img id="selected_guard_comparison_svg"/>
-              <img id="selected_guard_svg"/>
+            <div id="explainable_representation" class="d-flex justify-content-around h-100" >
+              <div class="h-100">
+                <img id="selected_guard_comparison_svg"/>
+              </div>
+              <div class="h-100">
+                <img id="selected_guard_svg"/>
+              </div>
             </div>
           </div>
         </div>
@@ -336,5 +535,20 @@
       integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
       crossorigin="anonymous"
     ></script>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3 text-body">
+      <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-danger bg-opacity-50 text-body">
+          <!-- <img src="..." class="rounded me-2" alt="..."> -->
+          <strong class="me-auto">Error</strong>
+          <!-- <small>11 mins ago</small> -->
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body bg-danger bg-opacity-10 text-body">
+          An error occured. Please try again.
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
