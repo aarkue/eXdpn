@@ -66,43 +66,50 @@ class Data_Petri_Net():
         Examples:
             Use event log and mine petri net based on it
             ```python 
-            >>> from exdpn import load_event_log
+            >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import data_petri_net
             >>> from exdpn.guards import ML_Technique
-            >>> event_log = load_event_log.import_xes('p2p_base.xes'))
+            >>> event_log = import_log('p2p_base.xes')
             >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
-                                                    case_level_attributes = ["concept:name"],
-                                                    event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
-                                                    ml_list = [ML_Technique.SVM, ML_Technique.DT])
-            ```
+            ...                                     case_level_attributes = ["concept:name"],
+            ...                                     event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+            ...                                     ml_list = [ML_Technique.SVM, ML_Technique.DT],
+            ...                                     verbose = False)
+
+            ``` 
+            
             Use a mined petri net (based on event log)
             ```python
-            >>> from exdpn import load_event_log
+            >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import data_petri_net
             >>> from exdpn.guards import ML_Technique
             >>> from exdpn import petri_net
-            >>> event_log = load_event_log.import_xes('p2p_base.xes'))
+            >>> event_log = import_log('p2p_base.xes')
             >>> net, im, fm = petri_net.get_petri_net(event_log)
             >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
-                                                    petri_net = net,
-                                                    initial_marking = im,
-                                                    final_marking = fm,
-                                                    case_level_attributes = ["concept:name"],
-                                                    event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
-                                                    ml_list = [ML_Technique.SVM, ML_Technique.DT])
-            ``` 
+            ...                                     petri_net = net,
+            ...                                     initial_marking = im,
+            ...                                     final_marking = fm,
+            ...                                     case_level_attributes = ["concept:name"],
+            ...                                     event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+            ...                                     ml_list = [ML_Technique.SVM, ML_Technique.DT],
+            ...                                     verbose = False)
+
+            ```
+
             Costumize data petri net with personal hyperparameters and guard threshold
-            ```python
-            >>> from exdpn import load_event_log
+            ```python 
+            >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import data_petri_net
             >>> from exdpn.guards import ML_Technique
-            >>> event_log = load_event_log.import_xes('p2p_base.xes'))
+            >>> event_log = import_log('p2p_base.xes')
             >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
-                                                    case_level_attributes = ["concept:name"],
-                                                    event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
-                                                    ml_list = [ML_Technique.SVM, ML_Technique.DT],
-                                                    hyperparameters = {ML_Technique.DT: {'max_depth' = 2},
-                                                    guard_threshold = 0.7)
+            ...                                     case_level_attributes = ["concept:name"],
+            ...                                     event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+            ...                                     ml_list = [ML_Technique.SVM, ML_Technique.DT],
+            ...                                     hyperparameters = {ML_Technique.SVM: {"C": 0.5}, ML_Technique.DT: {'max_depth': 2}},
+            ...                                     guard_threshold = 0.7,
+            ...                                     verbose = False)
 
             ```
             
@@ -160,8 +167,18 @@ class Data_Petri_Net():
         
         Examples:
             ```python
+            >>> from exdpn.util import import_log
+            >>> from exdpn.data_petri_net import data_petri_net
+            >>> from exdpn.guards import ML_Technique
+            >>> event_log = import_log('p2p_base.xes')
+            >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
+            ...                                     case_level_attributes = ["concept:name"],
+            ...                                     event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+            ...                                     ml_list = [ML_Technique.SVM, ML_Technique.DT],
+            ...                                     verbose = False)
             >>> best_guards = dpn.get_best()
-            ```
+
+            ``` 
         """
         
         if self.guard_per_place != None:
@@ -196,11 +213,20 @@ class Data_Petri_Net():
 
         Examples:
             ```python
+            >>> from exdpn.util import import_log
+            >>> from exdpn.data_petri_net import data_petri_net
+            >>> from exdpn.guards import ML_Technique
             >>> from exdpn.decisionpoints import find_decision_points
+            >>> event_log = import_log('p2p_base.xes')
+            >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
+            ...                                     case_level_attributes = ["concept:name"], 
+            ...                                     event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+            ...                                     ml_list = [ML_Technique.SVM, ML_Technique.DT],
+            ...                                     verbose = False)
             >>> all_decision_points = find_decision_points(dpn.petri_net).keys()
             >>> my_decision_point = list(all_decision_points)[0]
             >>> my_guard = dpn.get_guard_at_place(my_decision_point)
-            >>> print(my_guard)
+
             ```
         """
         
@@ -222,7 +248,19 @@ class Data_Petri_Net():
         
         Examples:
             ```python
-            print("Mean guard conformance:", dpn.get_mean_guard_conformance(event_log))
+            >>> from exdpn.util import import_log
+            >>> from exdpn.data_petri_net import data_petri_net
+            >>> from exdpn.guards import ML_Technique
+            >>> #event_log = import_log('p2p_base.xes')
+            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))        
+            >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
+            ...                                     case_level_attributes = ["concept:name"],
+            ...                                     event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+            ...                                     ml_list = [ML_Technique.SVM, ML_Technique.DT],
+            ...                                     verbose = False)
+            >>> print("Mean guard conformance:", dpn.get_mean_guard_conformance(event_log))
+            Mean guard conformance: 0.949
+            
             ```
         """
         
@@ -271,3 +309,8 @@ class Data_Petri_Net():
 
 
         return sum([prediction_result[trace_id] for trace_id in seen_trace_ids]) / len(seen_trace_ids)
+
+# tests implemented examples
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
