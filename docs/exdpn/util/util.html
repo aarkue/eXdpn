@@ -143,7 +143,7 @@
 </span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="sd">    Examples:</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">        ```python</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import import_log</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import extend_event_log_with_total_elapsed_time</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import extend_event_log_with_preceding_event_delay</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="sd">        &gt;&gt;&gt; event_log = import_log(&#39;p2p_base.xes&#39;)</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="sd">        &gt;&gt;&gt; extend_event_log_with_preceding_event_delay(event_log)</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="sd">        ```</span>
@@ -328,7 +328,7 @@
 </span><span id="extend_event_log_with_preceding_event_delay-80"><a href="#extend_event_log_with_preceding_event_delay-80"><span class="linenos">80</span></a><span class="sd">    Examples:</span>
 </span><span id="extend_event_log_with_preceding_event_delay-81"><a href="#extend_event_log_with_preceding_event_delay-81"><span class="linenos">81</span></a><span class="sd">        ```python</span>
 </span><span id="extend_event_log_with_preceding_event_delay-82"><a href="#extend_event_log_with_preceding_event_delay-82"><span class="linenos">82</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import import_log</span>
-</span><span id="extend_event_log_with_preceding_event_delay-83"><a href="#extend_event_log_with_preceding_event_delay-83"><span class="linenos">83</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import extend_event_log_with_total_elapsed_time</span>
+</span><span id="extend_event_log_with_preceding_event_delay-83"><a href="#extend_event_log_with_preceding_event_delay-83"><span class="linenos">83</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.util import extend_event_log_with_preceding_event_delay</span>
 </span><span id="extend_event_log_with_preceding_event_delay-84"><a href="#extend_event_log_with_preceding_event_delay-84"><span class="linenos">84</span></a><span class="sd">        &gt;&gt;&gt; event_log = import_log(&#39;p2p_base.xes&#39;)</span>
 </span><span id="extend_event_log_with_preceding_event_delay-85"><a href="#extend_event_log_with_preceding_event_delay-85"><span class="linenos">85</span></a><span class="sd">        &gt;&gt;&gt; extend_event_log_with_preceding_event_delay(event_log)</span>
 </span><span id="extend_event_log_with_preceding_event_delay-86"><a href="#extend_event_log_with_preceding_event_delay-86"><span class="linenos">86</span></a><span class="sd">        ```</span>
@@ -365,7 +365,7 @@
 
 <blockquote>
   <div class="pdoc-code codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="../util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">import_log</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="../util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">extend_event_log_with_total_elapsed_time</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="../util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">extend_event_log_with_preceding_event_delay</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">event_log</span> <span class="o">=</span> <span class="n">import_log</span><span class="p">(</span><span class="s1">&#39;p2p_base.xes&#39;</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">extend_event_log_with_preceding_event_delay</span><span class="p">(</span><span class="n">event_log</span><span class="p">)</span>
 </code></pre></div>

@@ -79,7 +79,7 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
     Examples:
         ```python
         >>> from exdpn.util import import_log
-        >>> from exdpn.util import extend_event_log_with_total_elapsed_time
+        >>> from exdpn.util import extend_event_log_with_preceding_event_delay
         >>> event_log = import_log('p2p_base.xes')
         >>> extend_event_log_with_preceding_event_delay(event_log)
         ```

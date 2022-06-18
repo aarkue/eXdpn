@@ -48,6 +48,18 @@ def extract_all_datasets(
 
     Returns:
         Dict[Place, DataFrame]: The dictionary mapping places in the Petri net to their corresponding dataset.
+
+    Examples:
+        ```python
+        >>> from exdpn.util import import_log
+        >>> from exdpn.util import extend_event_log_with_preceding_event_delay
+        >>> from exdpn.petri_net import get_petri_net
+        >>> from exdpn.guard_datasets import extract_all_datasets
+        >>> event_log = import_log('p2p_base.xes')
+        >>> extend_event_log_with_preceding_event_delay(event_log, 'delay')
+        >>> pn, im, fm = get_petri_net(event_log)
+        >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, event_level_attributes=['delay'])
+        ```
     
     """ 
 
