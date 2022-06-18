@@ -23,7 +23,10 @@ def import_log(path: str, verbose: bool = False) -> EventLog:
         Please make sure that the event log follows the XES standard.
 
     Examples:
+        ```python
+        >>> from exdpn.util import import_log
         >>> event_log = import_log('p2p_base.xes')
+        ```
         
     """
     variant = xes_importer.Variants.ITERPARSE
@@ -42,6 +45,14 @@ def extend_event_log_with_total_elapsed_time(log: EventLog, total_elapsed_time_a
     
     Raises:
         KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.
+
+    Examples:
+        ```python
+        >>> from exdpn.util import import_log
+        >>> from exdpn.util import extend_event_log_with_total_elapsed_time
+        >>> event_log = import_log('p2p_base.xes')
+        >>> extend_event_log_with_total_elapsed_time(event_log)
+        ```
 
     """
     if timestamp_attribute_name not in get_all_event_attributes_from_log(log):
@@ -64,6 +75,14 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
     
     Raises:
         KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.
+
+    Examples:
+        ```python
+        >>> from exdpn.util import import_log
+        >>> from exdpn.util import extend_event_log_with_total_elapsed_time
+        >>> event_log = import_log('p2p_base.xes')
+        >>> extend_event_log_with_preceding_event_delay(event_log)
+        ```
 
     """
     if timestamp_attribute_name not in get_all_event_attributes_from_log(log):
