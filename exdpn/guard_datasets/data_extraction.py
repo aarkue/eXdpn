@@ -42,7 +42,7 @@ def extract_all_datasets(
         case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.
         event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.
         tail_length (int, optional): The number of preceding events to record. Defaults to 3.
-        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
+        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
         places (List[Place], optional): The list of places to extract datasets for. If not present, all decision points are regarded.
         padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
 
@@ -89,7 +89,7 @@ def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_m
         net (PetriNet): The Petri net to replay on.
         initial_marking (Marking): The initial Marking of the Petri net.
         final_marking (Marking): The final Marking of the Petri net.
-        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
+        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
         show_progress_bar (bool, optional): Whether or not to show a progress bar. Defaults to False.
 
     Returns:
@@ -129,7 +129,7 @@ def extract_dataset_for_place(
         case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.
         event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.
         tail_length (int, optional): The number of preceding events to record. Defaults to 3.
-        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").
+        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
         padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
     
     Returns:

@@ -31,6 +31,6 @@ The web ui will then be available on port 8080.
 2. Navigate into the ui/ directory and run `flask run`
 
 ### Generating Documentation ###
-- Run `pdoc ./exdpn -o ./docs -d google -t ./docs/_templates`
+- Run `pdoc ./exdpn -o ./docs -d google -t ./docs/_templates --footer-text "exdpn - version 0.0.1"`
 
 

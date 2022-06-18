@@ -41,7 +41,7 @@ def extend_event_log_with_total_elapsed_time(log: EventLog, total_elapsed_time_a
     Args:
         log (EventLog): The event log to be extended.
         total_elapsed_time_attribute_name (str, optional): The event level attribute name to be used. Default is "eXdpn::total_elapsed_time".
-        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY ("time:timestamp").
+        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("time:timestamp").
     
     Raises:
         KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.
@@ -71,7 +71,7 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
     Args:
         log (EventLog): The event log to be extended.
         preceding_event_delay_attribute_name (str, optional): The event level attribute name to be used. Default is "eXdpn::preceding_event_delay".
-        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is xes.DEFAULT_TIMESTAMP_KEY ("time:timestamp").
+        timestamp_attribute_name (str, optional): The timestamp attribute name present in the event log. Default is `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("time:timestamp").
     
     Raises:
         KeyError: If the attribute with name `timestamp_attribute_name` is not present in the event log.
