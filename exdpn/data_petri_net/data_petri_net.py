@@ -1,3 +1,8 @@
+"""
+.. include:: ./data_petri_net.md
+
+"""
+
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog

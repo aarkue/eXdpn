@@ -1,0 +1,1 @@
+This module provides the core functionality of the package and contains everything needed to set up the data petri net.
