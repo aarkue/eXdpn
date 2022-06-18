@@ -1,3 +1,8 @@
+"""
+.. include:: ./data_preprocessing.md
+
+"""
+
 from pandas import DataFrame, concat, Series
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
