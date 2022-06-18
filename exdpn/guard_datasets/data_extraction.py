@@ -60,7 +60,24 @@ def extract_all_datasets(
         >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
         >>> extend_event_log_with_preceding_event_delay(event_log, 'delay')
         >>> pn, im, fm = get_petri_net(event_log)
-        >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, event_level_attributes=['delay'])
+        >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, 
+        ...                                       event_level_attributes = ['delay'])
+        
+        ```
+
+        ```python
+        >>> import os 
+        >>> from exdpn.util import import_log
+        >>> from exdpn.util import extend_event_log_with_preceding_event_delay
+        >>> from exdpn.petri_net import get_petri_net
+        >>> from exdpn.guard_datasets import extract_all_datasets
+        >>> #event_log = import_log('p2p_base.xes')
+        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+        >>> pn, im, fm = get_petri_net(event_log)
+        >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
+        ...                                       case_level_attributes =["concept:name"], 
+        ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
+        ...                                       activityName_key = "concept:name")
         
         ```
     
