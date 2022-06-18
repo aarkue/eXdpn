@@ -44,6 +44,7 @@
     </ul>
 
 
+            <footer>exdpn - version 0.0.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -61,9 +62,9 @@
 
 <hr />
 
-<h1 id="guard-datasets">Guard-Datasets</h1>
+<h2 id="guard-datasets">Guard-Datasets</h2>
 
-<p>Each row/instance in a guard-dataset corresponds to a trace visiting the corresponding decision point during Token-Based replay. This could potentially happen several times. For each such visit, the algorithm records the specified case-level attributes, event-level attributes (for the previous event in the case), and a tail of preceding events. These records make up the columns of the guard-dataset. In order to eventually do perdictions with the data, the following event (i.e., transition) is recorded in the "target" column.</p>
+<p>Each row/instance in a guard-dataset corresponds to a trace visiting the corresponding decision point (see module <code><a href="../decisionpoints.html">exdpn.decisionpoints</a></code>) during token-based replay. This could potentially happen several times. For each such visit, the algorithm records the specified case-level attributes, event-level attributes (for the previous event in the case), and a tail of preceding events. These records make up the columns of the guard-dataset. In order to eventually do perdictions with the data, the following event (i.e., transition) is recorded in the "target" column.</p>
 
 <hr />
 </div>
@@ -116,7 +117,7 @@
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">        case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">        event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        tail_length (int, optional): The number of preceding events to record. Defaults to 3.</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY (&quot;concept:name&quot;).</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;concept:name&quot;).</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        places (List[Place], optional): The list of places to extract datasets for. If not present, all decision points are regarded.</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to &quot;#&quot;.</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
@@ -163,7 +164,7 @@
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        net (PetriNet): The Petri net to replay on.</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        initial_marking (Marking): The initial Marking of the Petri net.</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        final_marking (Marking): The final Marking of the Petri net.</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY (&quot;concept:name&quot;).</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;concept:name&quot;).</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        show_progress_bar (bool, optional): Whether or not to show a progress bar. Defaults to False.</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    Returns:</span>
@@ -203,7 +204,7 @@
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.</span>
 </span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">        event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.</span>
 </span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        tail_length (int, optional): The number of preceding events to record. Defaults to 3.</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY (&quot;concept:name&quot;).</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;concept:name&quot;).</span>
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to &quot;#&quot;.</span>
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">    </span>
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">    Returns:</span>
@@ -316,7 +317,7 @@
 </span><span id="extract_all_datasets-43"><a href="#extract_all_datasets-43"><span class="linenos">43</span></a><span class="sd">        case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.</span>
 </span><span id="extract_all_datasets-44"><a href="#extract_all_datasets-44"><span class="linenos">44</span></a><span class="sd">        event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.</span>
 </span><span id="extract_all_datasets-45"><a href="#extract_all_datasets-45"><span class="linenos">45</span></a><span class="sd">        tail_length (int, optional): The number of preceding events to record. Defaults to 3.</span>
-</span><span id="extract_all_datasets-46"><a href="#extract_all_datasets-46"><span class="linenos">46</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY (&quot;concept:name&quot;).</span>
+</span><span id="extract_all_datasets-46"><a href="#extract_all_datasets-46"><span class="linenos">46</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;concept:name&quot;).</span>
 </span><span id="extract_all_datasets-47"><a href="#extract_all_datasets-47"><span class="linenos">47</span></a><span class="sd">        places (List[Place], optional): The list of places to extract datasets for. If not present, all decision points are regarded.</span>
 </span><span id="extract_all_datasets-48"><a href="#extract_all_datasets-48"><span class="linenos">48</span></a><span class="sd">        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to &quot;#&quot;.</span>
 </span><span id="extract_all_datasets-49"><a href="#extract_all_datasets-49"><span class="linenos">49</span></a>
@@ -375,7 +376,7 @@
 <li><strong>case_level_attributes (List[str], optional):</strong>  The list of attributes to be extracted on a case-level. Defaults to empty list.</li>
 <li><strong>event_level_attributes (List[str], optional):</strong>  The list of attributes to be extracted on an event-level. Defaults to empty list.</li>
 <li><strong>tail_length (int, optional):</strong>  The number of preceding events to record. Defaults to 3.</li>
-<li><strong>activityName_key (str, optional):</strong>  The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").</li>
+<li><strong>activityName_key (str, optional):</strong>  The key of the activity name in the event log. Defaults to <code>pm4py.util.xes_constants.DEFAULT_NAME_KEY</code> ("concept:name").</li>
 <li><strong>places (List[Place], optional):</strong>  The list of places to extract datasets for. If not present, all decision points are regarded.</li>
 <li><strong>padding (Any, optional):</strong>  The padding to be used when the tail goes over beginning of the case. Defaults to "#".</li>
 </ul>
@@ -440,7 +441,7 @@
 </span><span id="extract_dataset_for_place-130"><a href="#extract_dataset_for_place-130"><span class="linenos">130</span></a><span class="sd">        case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.</span>
 </span><span id="extract_dataset_for_place-131"><a href="#extract_dataset_for_place-131"><span class="linenos">131</span></a><span class="sd">        event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.</span>
 </span><span id="extract_dataset_for_place-132"><a href="#extract_dataset_for_place-132"><span class="linenos">132</span></a><span class="sd">        tail_length (int, optional): The number of preceding events to record. Defaults to 3.</span>
-</span><span id="extract_dataset_for_place-133"><a href="#extract_dataset_for_place-133"><span class="linenos">133</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY (&quot;concept:name&quot;).</span>
+</span><span id="extract_dataset_for_place-133"><a href="#extract_dataset_for_place-133"><span class="linenos">133</span></a><span class="sd">        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` (&quot;concept:name&quot;).</span>
 </span><span id="extract_dataset_for_place-134"><a href="#extract_dataset_for_place-134"><span class="linenos">134</span></a><span class="sd">        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to &quot;#&quot;.</span>
 </span><span id="extract_dataset_for_place-135"><a href="#extract_dataset_for_place-135"><span class="linenos">135</span></a><span class="sd">    </span>
 </span><span id="extract_dataset_for_place-136"><a href="#extract_dataset_for_place-136"><span class="linenos">136</span></a><span class="sd">    Returns:</span>
@@ -533,7 +534,7 @@
 <li><strong>case_level_attributes (List[str], optional):</strong>  The list of attributes to be extracted on a case-level. Defaults to empty list.</li>
 <li><strong>event_level_attributes (List[str], optional):</strong>  The list of attributes to be extracted on an event-level. Defaults to empty list.</li>
 <li><strong>tail_length (int, optional):</strong>  The number of preceding events to record. Defaults to 3.</li>
-<li><strong>activityName_key (str, optional):</strong>  The key of the activity name in the event log. Defaults to pm4py.util.xes_constants.DEFAULT_NAME_KEY ("concept:name").</li>
+<li><strong>activityName_key (str, optional):</strong>  The key of the activity name in the event log. Defaults to <code>pm4py.util.xes_constants.DEFAULT_NAME_KEY</code> ("concept:name").</li>
 <li><strong>padding (Any, optional):</strong>  The padding to be used when the tail goes over beginning of the case. Defaults to "#".</li>
 </ul>
 
