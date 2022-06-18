@@ -114,5 +114,15 @@ class Guard_Manager():
         axis.spines['right'].set_visible(False)
         plt.ylabel('F1 score')
         plt.title('Comparison of Techniques')
-        plt.bar(guard_results.keys(),guard_results.values(),color=['#478736', '#e26f8f', '#e1ad01', '#263488'])
+        
+        colors = {
+            'Decision Tree': '#478736',
+            'Logistic Regression': '#e26f8f',
+            'Support Vector Machine': '#e1ad01',
+            'Neural Network': '#263488'
+        }   
+        keys = list(guard_results.keys())
+        values = [guard_results[key] for key in keys]
+        colors = [colors[technique] for technique in keys]
+        plt.bar(keys,values,color=colors)
         return fig

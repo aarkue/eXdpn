@@ -14,7 +14,7 @@ from pm4py.objects.log.obj import EventLog
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 
 import uuid
-from exdpn.util import import_log
+from exdpn.util import import_log, extend_event_log_with_preceding_event_delay, extend_event_log_with_total_elapsed_time
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guards import ML_Technique
 from exdpn.data_petri_net import Data_Petri_Net
@@ -47,7 +47,8 @@ loaded_event_logs: Dict[
 ] = dict()
 
 discovered_models: Dict[str,Tuple[PetriNet, Marking, Marking]] = dict()
-
+data_petri_nets: Dict[str, Data_Petri_Net] = dict()
+explainable_representations: Dict[str,Dict[Tuple[int,ML_Technique],str]] = dict() # Logid -> (placeid,ML_Technique) -> explanation
 
 ATTR_IGNORE_LIST = ["concept:name", "time:timestamp"]
 
@@ -136,7 +137,7 @@ def load_log(logid: str):
 @app.route("/log/<logid>/discover/<algo_name>", methods=["GET"])
 def discover_model(logid: str, algo_name:str):
     if logid not in loaded_event_logs:
-        return {"message": "Log not loaded"}, 400
+        return {"message": "Log not loaded. Please make sure the event log exists."}, 400
     else:
         log = loaded_event_logs[logid][1]
         if algo_name == "inductive_miner":
@@ -154,19 +155,34 @@ def discover_model(logid: str, algo_name:str):
 
 @app.route("/log/<logid>/mine-decisions", methods=["POST"])
 def mine_decisions(logid: str):
-    if logid not in loaded_event_logs and logid in discovered_models:
+    if logid not in loaded_event_logs or logid not in discovered_models:
         return {"message": "Log or model not loaded"}, 400
     else:
         body = request.get_json()
 
+        event_log = loaded_event_logs[logid][1]
+        event_level_attributes = body['event_attributes']
+        case_level_attributes = body['case_attributes']
+
+        synth_attrs = body["synthetic_attributes"]
+        if "time_since_last" in synth_attrs:
+            extend_event_log_with_preceding_event_delay(event_log,"eXdpn::time_since_last_event")
+            event_level_attributes.append("eXdpn::time_since_last_event")
+        if "total_elapsed_time" in synth_attrs:
+            extend_event_log_with_total_elapsed_time(event_log, "eXdpn::elapsed_case_time")
+            event_level_attributes.append("eXdpn::elapsed_case_time")
+
+        ml_techniques = body["ml_techniques"]
+        ml_techniques = [technique for technique in ML_Technique if str(technique) in ml_techniques]
         dpn = Data_Petri_Net(
-            event_log = loaded_event_logs[logid][1],
+            event_log = event_log,
             petri_net = discovered_models[logid][0],
             initial_marking = discovered_models[logid][1],
             final_marking = discovered_models[logid][2],
-            case_level_attributes = body['case_attributes'],
-            event_level_attributes = body['event_attributes'],
-            guard_threshold = 0
+            case_level_attributes = case_level_attributes,
+            event_level_attributes = event_level_attributes,
+            guard_threshold = 0,
+            ml_list=ml_techniques
         )
         return_info = dict()
 
@@ -186,6 +202,7 @@ def mine_decisions(logid: str):
                 svg_representation = imgdata.getvalue()
             else:
                 svg_representation = ""
+            cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representation)
             return_info[id(p)] = {
                 'performance': dpn.performance_per_place[p],
                 'name': str(dpn.ml_technique_per_place[p]),
@@ -193,7 +210,70 @@ def mine_decisions(logid: str):
                 'guard_result_svg': guard_result_svg
             }
         
-        return return_info, 200;
+        data_petri_nets[logid] = dpn
+        return {
+            'mean_guard_conformance': dpn.get_mean_guard_conformance(event_log),
+            'place_info': return_info
+        }, 200;
+
+@app.route("/log/<logid>/place/<int:placeid>/explainable-representation/<ml_technique>", methods=["GET"])
+def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
+    dpn = data_petri_nets.get(logid, None)
+    if dpn is None:
+        return {"message": "No models trained yet."}, 400
+    # Find the corresponding place object
+    place = None
+    for p in dpn.petri_net.places:
+        if id(p) == placeid:
+            place = p
+            break
+    if place is None:
+        return {"message": "Place not found."}, 400
+
+    # Get the Enum representation of the selected Technique
+    if ml_technique == "logistic-regression":
+        technique_enum_value =  ML_Technique.LR
+    elif ml_technique == "svm":
+        technique_enum_value =  ML_Technique.SVM
+    elif ml_technique == "decision-tree":
+        technique_enum_value =  ML_Technique.DT
+    elif ml_technique == "neural-network":
+        technique_enum_value =  ML_Technique.NN
+    else:
+        return {"message": "Invalid ML technique"}, 400
+
+    # See if the representation exists:
+    if logid in explainable_representations and (placeid,technique_enum_value) in explainable_representations[logid]:
+        return {
+            'svg_representation': explainable_representations[logid][(placeid,technique_enum_value)]
+        }, 200
+        # return explainable_representations[logid][(placeid,technique_enum_value)], 200	
+
+    guards = dpn.guard_manager_per_place[place].guards_list
+
+
+    selected_guard = guards[technique_enum_value]
+    if selected_guard.is_explainable():
+        # Find Explainable Representation
+        explainable_representation:plt.Figure = selected_guard.get_explainable_representation()
+        imgdata = io.StringIO()
+        explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
+        imgdata.seek(0)  # rewind the data
+        svg_representation = imgdata.getvalue()
+    else:
+        svg_representation = ""
+
+    cache_representation(logid, placeid, technique_enum_value, svg_representation)
+
+    return {
+        'svg_representation': svg_representation
+    }, 200
+    # return svg_representation
+
+def cache_representation(logid:str, placeid:int, technique_enum_value: ML_Technique, svg_representation:str):
+    log_representations = explainable_representations.get(logid, dict())
+    log_representations[(placeid, technique_enum_value)] = svg_representation
+    explainable_representations[logid] = log_representations
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
