@@ -1,5 +1,5 @@
 """
-.. include:: ./guard_datasets.md
+.. include:: ./../../docs/_templates/md/guard_datasets/guard_datasets.md
 
 """
 

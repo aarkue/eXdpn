@@ -1,5 +1,5 @@
 """
-.. include:: ./guard_manager.md
+.. include:: ./../../docs/_templates/md/guards/guard_manager.md
 
 """
 

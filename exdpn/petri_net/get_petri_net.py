@@ -1,5 +1,5 @@
 """
-.. include:: ./petri_net.md
+.. include:: ./../../docs/_templates/md/petri_net/petri_net.md
 
 """
 

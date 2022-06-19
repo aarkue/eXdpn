@@ -1,5 +1,5 @@
 """
-.. include:: ./decisionpoints.md
+.. include:: ./../../docs/_templates/md/decisionpoints/decisionpoints.md
 
 """
 
