@@ -65,11 +65,6 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
 
     """
 
-    # don't use case attributes for prediction
-    # if any("case::" in cols for cols in dataframe.columns):
-    #    idx = [index for index in dataframe.columns if "case::" in index]
-    #    dataframe = dataframe.drop(idx, axis = 1)
-
     # get target and feature names
     target_var = "target"
     df_X = dataframe.copy()
@@ -94,6 +89,7 @@ def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
         * scalable_columns (List[str]): The list of names of columns that can be scaled.
 
     """
+
     # exclude all columns that cannot be scaled
     scalable_columns = X.select_dtypes(include=[np.number]).columns
 
@@ -119,6 +115,7 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str
         DataFrame: The data where all `scalable_columns` were scaled using the `scaler`.
 
     """
+
     # apply scaler on data
     X_scaled = X.copy()
 
@@ -129,23 +126,21 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str
     return X_scaled
 
 
-def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
+def fit_ohe(X: DataFrame) -> OneHotEncoder:
     """Fits an one-hot-encoder on all categorical features present in the dataset.
 
     Args:
         X (DataFrame): The dataset with the data to fit.
 
     Returns:
-        * ohe (OneHotEncoder): The one-hot-encoder fitted on the dataset.
-        * ohe_column_names (List[str]): The list of names of columns that can be one-hot-encoded.
+        OneHotEncoder: The one-hot-encoder fitted on the dataset.
 
     """
+
     ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
     X_object = X.select_dtypes('object')
 
-    return ohe.fit(X_object), list(X_object.columns)
-
-# TODO: remove return of ohe_column_names above or add support for this list below
+    return ohe.fit(X_object)
 
 
 def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
@@ -159,6 +154,7 @@ def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
         DataFrame: The data where all categorical columns were encoded using the `ohe`.
 
     """
+
     X = X.reset_index(drop=True)
     X_object = X.select_dtypes('object')
 

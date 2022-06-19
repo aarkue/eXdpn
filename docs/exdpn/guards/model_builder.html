@@ -65,46 +65,44 @@
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="sd">&quot;&quot;&quot;Internal function to build a specific guard with the provided hyperparameters.</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">    </span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">    Args:</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">        model_typ (ML_Technique): Specification of machine learning technique, use &quot;NN&quot; for neural network, \</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">        &quot;SVM&quot; for support vector machine, &quot;DT&quot; for decision tree and &quot;LR&quot; for logistic regression</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">        hp (Dict[str, any]): Hyperparameters for the machine learning model</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">    </span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">    Returns:</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">        Guard: Machine learning guard of desired type with provided hyperparameters</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    Raises: </span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">        TypeError: If entered model type is not supported.</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    </span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    Examples:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        ```python</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards.model_builder import model_builder</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards import ML_Technique</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        &gt;&gt;&gt; decision_tree_guard = model_builder(ML_Technique.DT, {&#39;min_samples_split&#39;: 0.1, </span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        ...                                                       &#39;min_samples_leaf&#39;: 0.1, </span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">        ...                                                        &#39;ccp_alpha&#39;: 0.2})</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">        &gt;&gt;&gt; logistic_regression_guard = model_builder(ML_Technique.LR, {&quot;C&quot;: 0.5})</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        ```</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">SVM</span><span class="p">:</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="n">SVM_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">NN</span><span class="p">:</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="n">Neural_Network_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">LR</span><span class="p">:</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="n">Logistic_Regression_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">DT</span><span class="p">:</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="k">return</span> <span class="n">Decision_Tree_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span> <span class="p">(</span><span class="s2">&quot;Guard not implemented&quot;</span><span class="p">)</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="c1"># tests implemented examples</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="kn">import</span> <span class="nn">doctest</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="c1"># run python .\exdpn\guards\model_builder.py from eXdpn file </span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">        model_type (ML_Technique): Specification of machine learning technique (see `exdpn.guards.ml_technique.ML_Technique`).</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">        hp (Dict[str, any]): Hyperparameters for the machine learning model.</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">    </span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">    Returns:</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">        Guard: Machine learning guard of desired type with provided hyperparameters.</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    Raises:</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">        TypeError: If entered model type is not supported.</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    </span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    Examples:</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">        ```python</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards.model_builder import model_builder</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards import ML_Technique</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        &gt;&gt;&gt; decision_tree_guard = model_builder(ML_Technique.DT, {&#39;min_samples_split&#39;: 0.1, </span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        ...                                                       &#39;min_samples_leaf&#39;: 0.1, </span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        ...                                                       &#39;ccp_alpha&#39;: 0.2})</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">        &gt;&gt;&gt; logistic_regression_guard = model_builder(ML_Technique.LR, {&quot;C&quot;: 0.5})</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        ```</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">SVM</span><span class="p">:</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="k">return</span> <span class="n">SVM_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">NN</span><span class="p">:</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="n">Neural_Network_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">LR</span><span class="p">:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="n">Logistic_Regression_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">DT</span><span class="p">:</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="n">Decision_Tree_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span> <span class="p">(</span><span class="s2">&quot;Guard not implemented&quot;</span><span class="p">)</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="c1"># tests implemented examples</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="kn">import</span> <span class="nn">doctest</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="c1"># run python .\exdpn\guards\model_builder.py from eXdpn file </span>
 </span></pre></div>
 
 
@@ -124,39 +122,37 @@
 </span><span id="model_builder-9"><a href="#model_builder-9"><span class="linenos"> 9</span></a>    <span class="sd">&quot;&quot;&quot;Internal function to build a specific guard with the provided hyperparameters.</span>
 </span><span id="model_builder-10"><a href="#model_builder-10"><span class="linenos">10</span></a><span class="sd">    </span>
 </span><span id="model_builder-11"><a href="#model_builder-11"><span class="linenos">11</span></a><span class="sd">    Args:</span>
-</span><span id="model_builder-12"><a href="#model_builder-12"><span class="linenos">12</span></a><span class="sd">        model_typ (ML_Technique): Specification of machine learning technique, use &quot;NN&quot; for neural network, \</span>
-</span><span id="model_builder-13"><a href="#model_builder-13"><span class="linenos">13</span></a><span class="sd">        &quot;SVM&quot; for support vector machine, &quot;DT&quot; for decision tree and &quot;LR&quot; for logistic regression</span>
-</span><span id="model_builder-14"><a href="#model_builder-14"><span class="linenos">14</span></a><span class="sd">        hp (Dict[str, any]): Hyperparameters for the machine learning model</span>
-</span><span id="model_builder-15"><a href="#model_builder-15"><span class="linenos">15</span></a><span class="sd">    </span>
-</span><span id="model_builder-16"><a href="#model_builder-16"><span class="linenos">16</span></a><span class="sd">    Returns:</span>
-</span><span id="model_builder-17"><a href="#model_builder-17"><span class="linenos">17</span></a><span class="sd">        Guard: Machine learning guard of desired type with provided hyperparameters</span>
-</span><span id="model_builder-18"><a href="#model_builder-18"><span class="linenos">18</span></a>
-</span><span id="model_builder-19"><a href="#model_builder-19"><span class="linenos">19</span></a><span class="sd">    Raises: </span>
-</span><span id="model_builder-20"><a href="#model_builder-20"><span class="linenos">20</span></a><span class="sd">        TypeError: If entered model type is not supported.</span>
-</span><span id="model_builder-21"><a href="#model_builder-21"><span class="linenos">21</span></a><span class="sd">    </span>
-</span><span id="model_builder-22"><a href="#model_builder-22"><span class="linenos">22</span></a><span class="sd">    Examples:</span>
-</span><span id="model_builder-23"><a href="#model_builder-23"><span class="linenos">23</span></a><span class="sd">        ```python</span>
-</span><span id="model_builder-24"><a href="#model_builder-24"><span class="linenos">24</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards.model_builder import model_builder</span>
-</span><span id="model_builder-25"><a href="#model_builder-25"><span class="linenos">25</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards import ML_Technique</span>
-</span><span id="model_builder-26"><a href="#model_builder-26"><span class="linenos">26</span></a><span class="sd">        &gt;&gt;&gt; decision_tree_guard = model_builder(ML_Technique.DT, {&#39;min_samples_split&#39;: 0.1, </span>
-</span><span id="model_builder-27"><a href="#model_builder-27"><span class="linenos">27</span></a><span class="sd">        ...                                                       &#39;min_samples_leaf&#39;: 0.1, </span>
-</span><span id="model_builder-28"><a href="#model_builder-28"><span class="linenos">28</span></a><span class="sd">        ...                                                        &#39;ccp_alpha&#39;: 0.2})</span>
-</span><span id="model_builder-29"><a href="#model_builder-29"><span class="linenos">29</span></a><span class="sd">        &gt;&gt;&gt; logistic_regression_guard = model_builder(ML_Technique.LR, {&quot;C&quot;: 0.5})</span>
-</span><span id="model_builder-30"><a href="#model_builder-30"><span class="linenos">30</span></a>
-</span><span id="model_builder-31"><a href="#model_builder-31"><span class="linenos">31</span></a><span class="sd">        ```</span>
-</span><span id="model_builder-32"><a href="#model_builder-32"><span class="linenos">32</span></a>
-</span><span id="model_builder-33"><a href="#model_builder-33"><span class="linenos">33</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="model_builder-34"><a href="#model_builder-34"><span class="linenos">34</span></a>    
-</span><span id="model_builder-35"><a href="#model_builder-35"><span class="linenos">35</span></a>    <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">SVM</span><span class="p">:</span>
-</span><span id="model_builder-36"><a href="#model_builder-36"><span class="linenos">36</span></a>        <span class="k">return</span> <span class="n">SVM_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="model_builder-37"><a href="#model_builder-37"><span class="linenos">37</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">NN</span><span class="p">:</span>
-</span><span id="model_builder-38"><a href="#model_builder-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="n">Neural_Network_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="model_builder-39"><a href="#model_builder-39"><span class="linenos">39</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">LR</span><span class="p">:</span>
-</span><span id="model_builder-40"><a href="#model_builder-40"><span class="linenos">40</span></a>        <span class="k">return</span> <span class="n">Logistic_Regression_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="model_builder-41"><a href="#model_builder-41"><span class="linenos">41</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">DT</span><span class="p">:</span>
-</span><span id="model_builder-42"><a href="#model_builder-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="n">Decision_Tree_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
-</span><span id="model_builder-43"><a href="#model_builder-43"><span class="linenos">43</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="model_builder-44"><a href="#model_builder-44"><span class="linenos">44</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span> <span class="p">(</span><span class="s2">&quot;Guard not implemented&quot;</span><span class="p">)</span>
+</span><span id="model_builder-12"><a href="#model_builder-12"><span class="linenos">12</span></a><span class="sd">        model_type (ML_Technique): Specification of machine learning technique (see `exdpn.guards.ml_technique.ML_Technique`).</span>
+</span><span id="model_builder-13"><a href="#model_builder-13"><span class="linenos">13</span></a><span class="sd">        hp (Dict[str, any]): Hyperparameters for the machine learning model.</span>
+</span><span id="model_builder-14"><a href="#model_builder-14"><span class="linenos">14</span></a><span class="sd">    </span>
+</span><span id="model_builder-15"><a href="#model_builder-15"><span class="linenos">15</span></a><span class="sd">    Returns:</span>
+</span><span id="model_builder-16"><a href="#model_builder-16"><span class="linenos">16</span></a><span class="sd">        Guard: Machine learning guard of desired type with provided hyperparameters.</span>
+</span><span id="model_builder-17"><a href="#model_builder-17"><span class="linenos">17</span></a>
+</span><span id="model_builder-18"><a href="#model_builder-18"><span class="linenos">18</span></a><span class="sd">    Raises:</span>
+</span><span id="model_builder-19"><a href="#model_builder-19"><span class="linenos">19</span></a><span class="sd">        TypeError: If entered model type is not supported.</span>
+</span><span id="model_builder-20"><a href="#model_builder-20"><span class="linenos">20</span></a><span class="sd">    </span>
+</span><span id="model_builder-21"><a href="#model_builder-21"><span class="linenos">21</span></a><span class="sd">    Examples:</span>
+</span><span id="model_builder-22"><a href="#model_builder-22"><span class="linenos">22</span></a><span class="sd">        ```python</span>
+</span><span id="model_builder-23"><a href="#model_builder-23"><span class="linenos">23</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards.model_builder import model_builder</span>
+</span><span id="model_builder-24"><a href="#model_builder-24"><span class="linenos">24</span></a><span class="sd">        &gt;&gt;&gt; from exdpn.guards import ML_Technique</span>
+</span><span id="model_builder-25"><a href="#model_builder-25"><span class="linenos">25</span></a><span class="sd">        &gt;&gt;&gt; decision_tree_guard = model_builder(ML_Technique.DT, {&#39;min_samples_split&#39;: 0.1, </span>
+</span><span id="model_builder-26"><a href="#model_builder-26"><span class="linenos">26</span></a><span class="sd">        ...                                                       &#39;min_samples_leaf&#39;: 0.1, </span>
+</span><span id="model_builder-27"><a href="#model_builder-27"><span class="linenos">27</span></a><span class="sd">        ...                                                       &#39;ccp_alpha&#39;: 0.2})</span>
+</span><span id="model_builder-28"><a href="#model_builder-28"><span class="linenos">28</span></a><span class="sd">        &gt;&gt;&gt; logistic_regression_guard = model_builder(ML_Technique.LR, {&quot;C&quot;: 0.5})</span>
+</span><span id="model_builder-29"><a href="#model_builder-29"><span class="linenos">29</span></a>
+</span><span id="model_builder-30"><a href="#model_builder-30"><span class="linenos">30</span></a><span class="sd">        ```</span>
+</span><span id="model_builder-31"><a href="#model_builder-31"><span class="linenos">31</span></a>
+</span><span id="model_builder-32"><a href="#model_builder-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="model_builder-33"><a href="#model_builder-33"><span class="linenos">33</span></a>    <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">SVM</span><span class="p">:</span>
+</span><span id="model_builder-34"><a href="#model_builder-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="n">SVM_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="model_builder-35"><a href="#model_builder-35"><span class="linenos">35</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">NN</span><span class="p">:</span>
+</span><span id="model_builder-36"><a href="#model_builder-36"><span class="linenos">36</span></a>        <span class="k">return</span> <span class="n">Neural_Network_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="model_builder-37"><a href="#model_builder-37"><span class="linenos">37</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">LR</span><span class="p">:</span>
+</span><span id="model_builder-38"><a href="#model_builder-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="n">Logistic_Regression_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="model_builder-39"><a href="#model_builder-39"><span class="linenos">39</span></a>    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">DT</span><span class="p">:</span>
+</span><span id="model_builder-40"><a href="#model_builder-40"><span class="linenos">40</span></a>        <span class="k">return</span> <span class="n">Decision_Tree_Guard</span><span class="p">(</span><span class="n">hp</span><span class="p">)</span>
+</span><span id="model_builder-41"><a href="#model_builder-41"><span class="linenos">41</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="model_builder-42"><a href="#model_builder-42"><span class="linenos">42</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span> <span class="p">(</span><span class="s2">&quot;Guard not implemented&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -165,18 +161,21 @@
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>model_typ (ML_Technique):</strong>  Specification of machine learning technique, use "NN" for neural network,         "SVM" for support vector machine, "DT" for decision tree and "LR" for logistic regression</li>
-<li><strong>hp (Dict[str, any]):</strong>  Hyperparameters for the machine learning model</li>
+<li><strong>model_type (ML_Technique):</strong>  Specification of machine learning technique (see <code><a href="ml_technique.html#ML_Technique">exdpn.guards.ml_technique.ML_Technique</a></code>).</li>
+<li><strong>hp (Dict[str, any]):</strong>  Hyperparameters for the machine learning model.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>Guard: Machine learning guard of desired type with provided hyperparameters</p>
+  <p>Guard: Machine learning guard of desired type with provided hyperparameters.</p>
 </blockquote>
 
-<p>Raises: 
-    TypeError: If entered model type is not supported.</p>
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>TypeError:</strong>  If entered model type is not supported.</li>
+</ul>
 
 <h6 id="examples">Examples</h6>
 
@@ -185,7 +184,7 @@
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="../guards.html">exdpn.guards</a></span> <span class="kn">import</span> <span class="n">ML_Technique</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">decision_tree_guard</span> <span class="o">=</span> <span class="n">model_builder</span><span class="p">(</span><span class="n">ML_Technique</span><span class="o">.</span><span class="n">DT</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;min_samples_split&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> 
 <span class="o">...</span>                                                       <span class="s1">&#39;min_samples_leaf&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> 
-<span class="o">...</span>                                                        <span class="s1">&#39;ccp_alpha&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>
+<span class="o">...</span>                                                       <span class="s1">&#39;ccp_alpha&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">logistic_regression_guard</span> <span class="o">=</span> <span class="n">model_builder</span><span class="p">(</span><span class="n">ML_Technique</span><span class="o">.</span><span class="n">LR</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
 </code></pre></div>
 </blockquote>
