@@ -247,12 +247,9 @@ class Logistic_Regression_Guard(Guard):
                               class_inds = range(len(classes)))
             plt.title("Feature Impact on Model Prediction", fontsize = 14)
             plt.ylabel("Feature Attributes", fontsize = 14)
-            if len(classes) < 3:
-                # add label for binary manually
-                blue_patch = mpatches.Patch(color = 'dodgerblue', label = str(classes[1]))
-                plt.legend(handles = [blue_patch], loc = "lower right", frameon = False)
 
         return fig 
+
 
 # tests implemented examples
 if __name__ == "__main__":

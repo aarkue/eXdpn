@@ -237,7 +237,7 @@ class Neural_Network_Guard(Guard):
         # shap.decision_plot(explainer.expected_value, shap_values,self.feature_names, show=False)
 
         plt.title("Feature Impact on Model Prediction", fontsize = 14)
-        plt.ylabel("Features", fontsize = 14)
+        plt.ylabel("Feature Attributes", fontsize = 14)
         return fig
 
 
