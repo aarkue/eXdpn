@@ -26,7 +26,6 @@ def import_log(path: str, verbose: bool = False) -> EventLog:
         ```python
         >>> import os
         >>> from exdpn.util import import_log
-        >>> #event_log = import_log('p2p_base.xes')
         >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
 
         ```
@@ -54,10 +53,13 @@ def extend_event_log_with_total_elapsed_time(log: EventLog, total_elapsed_time_a
         >>> import os 
         >>> from exdpn.util import import_log
         >>> from exdpn.util import extend_event_log_with_total_elapsed_time
-        >>> #event_log = import_log('p2p_base.xes')
+        >>> from exdpn.data_petri_net import Data_Petri_Net
         >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
-        >>> extend_event_log_with_total_elapsed_time(event_log)
-
+        >>> extend_event_log_with_total_elapsed_time(event_log, 'elapsed_time')
+        >>> dpn = Data_Petri_Net(event_log = event_log,
+        ...                      event_level_attributes = ['elapsed_time'],
+        ...                      verbose = False)
+        
         ```
 
     """
@@ -87,9 +89,12 @@ def extend_event_log_with_preceding_event_delay(log: EventLog, preceding_event_d
         >>> import os
         >>> from exdpn.util import import_log
         >>> from exdpn.util import extend_event_log_with_preceding_event_delay
-        >>> #event_log = import_log('p2p_base.xes')
+        >>> from exdpn.data_petri_net import Data_Petri_Net
         >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))        
-        >>> extend_event_log_with_preceding_event_delay(event_log)
+        >>> extend_event_log_with_preceding_event_delay(event_log, 'delay')
+        >>> dpn = Data_Petri_Net(event_log = event_log,
+        ...                      event_level_attributes = ['delay'],
+        ...                      verbose = False)
 
         ```
 
