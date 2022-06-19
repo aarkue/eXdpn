@@ -129,23 +129,20 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str
     return X_scaled
 
 
-def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
+def fit_ohe(X: DataFrame) -> OneHotEncoder:
     """Fits an one-hot-encoder on all categorical features present in the dataset.
 
     Args:
         X (DataFrame): The dataset with the data to fit.
 
     Returns:
-        * ohe (OneHotEncoder): The one-hot-encoder fitted on the dataset.
-        * ohe_column_names (List[str]): The list of names of columns that can be one-hot-encoded.
+        OneHotEncoder: The one-hot-encoder fitted on the dataset.
 
     """
     ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
     X_object = X.select_dtypes('object')
 
-    return ohe.fit(X_object), list(X_object.columns)
-
-# TODO: remove return of ohe_column_names above or add support for this list below
+    return ohe.fit(X_object)
 
 
 def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:

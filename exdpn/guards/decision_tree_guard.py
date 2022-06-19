@@ -46,7 +46,6 @@ class Decision_Tree_Guard(Guard):
         self.transition_int_map = None
         self.feature_names = None
         self.ohe = None
-        self.ohe_columns = None
 
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
@@ -82,7 +81,7 @@ class Decision_Tree_Guard(Guard):
         """
         
         # one hot encoding for categorical data
-        self.ohe, self.ohe_columns = fit_ohe(X)
+        self.ohe = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
 
         # store feature names for the explainable representation

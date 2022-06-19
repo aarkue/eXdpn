@@ -48,7 +48,6 @@ class Neural_Network_Guard(Guard):
         self.transition_int_map = None
         self.feature_names      = None
         self.ohe                = None
-        self.ohe_columns        = None
         self.scaler             = None
         self.scaler_columns     = None
         self.training_data      = None
@@ -92,7 +91,7 @@ class Neural_Network_Guard(Guard):
         X = apply_scaling(X, self.scaler, self.scaler_columns)
 
         # One-Hot Encoding for categorical data 
-        self.ohe, self.ohe_columns = fit_ohe(X)
+        self.ohe = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
 
         self.training_data = X

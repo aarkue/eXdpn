@@ -48,7 +48,6 @@ class Logistic_Regression_Guard(Guard):
         self.transition_int_map = None
         self.feature_names      = None
         self.ohe                = None
-        self.ohe_columns        = None
         self.scaler             = None
         self.scaler_columns     = None
 
@@ -88,7 +87,7 @@ class Logistic_Regression_Guard(Guard):
         self.scaler, self.scaler_columns = fit_scaling(X)
         X = apply_scaling(X, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data 
-        self.ohe, self.ohe_columns = fit_ohe(X)
+        self.ohe = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
         self.X_train = X 
 
