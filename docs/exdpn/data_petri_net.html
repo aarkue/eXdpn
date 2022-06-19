@@ -28,7 +28,7 @@
 
         <h2>Contents</h2>
         <ul>
-  <li><a href="#data-petri-net">Data Petri Net</a></li>
+  <li><a href="#data-petri-nets">Data Petri Nets</a></li>
 </ul>
 
 
@@ -52,13 +52,13 @@
                     <h1 class="modulename">
 <a href="./../exdpn.html">exdpn</a><wbr>.data_petri_net    </h1>
 
-                        <div class="docstring"><p>This module provides the core functionality of the package and contains everything needed to set up the data petri net.</p>
+                        <div class="docstring"><p>This module provides the core functionality of the package and contains everything needed to set up the data Petri net.</p>
 
 <hr />
 
-<h1 id="data-petri-net">Data Petri Net</h1>
+<h1 id="data-petri-nets">Data Petri Nets</h1>
 
-<p>A data petri net is a petri net with additional information added to the contained decision points. A decision points describes a place followed by more than one transition. To get some insight in which transition a token chooses guards are used to model the behavior. This guards can be understood as classification models based on the data contained in the event log and they predict which transition is most likely to follow given a certain trace and the corresponding data.</p>
+<p>A data Petri net is a Petri net with additional information added to the contained decision points (see <code><a href="decisionpoints.html">exdpn.decisionpoints</a></code>). Guards are used to model the behavior to get some insight into which transition a token chooses (see <code><a href="guards.html">exdpn.guards</a></code>). These guards can be understood as classification models based on the data contained in the event log. They predict which transition is most likely to follow given a certain trace and the corresponding event data.</p>
 
 <hr />
 </div>
