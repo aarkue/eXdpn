@@ -13,12 +13,12 @@ from typing import Tuple, List
 
 
 def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
-    """Preprocessing of dataframes before they are used for the machine learning training and testing. This function does some \
+    """Preprocessing of datasets before they are used for the machine learning training and testing. This function does some \
     basic preprocessing, such as converting all columns to the correct data type, droping columns with missing values and \
-    defining feature attributes and the target attribute. Furthermore, the data is split into train and test dataframes.
+    defining feature attributes and the target attribute. Furthermore, the data is split into train and test datasets.
 
     Args:
-        dataframe (DataFrame): The dataframe to be transformed for evaluation of the best model.
+        dataframe (DataFrame): The dataset to be transformed for evaluation of the best model.
 
     Returns:
         * X_train (DataFrame): The training data without the target attribute.
@@ -53,15 +53,15 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
 
 
 def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
-    """Basic preprocessing before dataframes, i.e., dropping of columns \
+    """Basic preprocessing before datasets, i.e., dropping of columns \
     with only missing values and defining feature attributes and the target attribute.
 
     Args:
-        dataframe (DataFrame): The dataframe to be transformed.
+        dataframe (DataFrame): The dataset to be transformed.
 
     Returns:
-        * df_X (DataFrame): The preprocessed dataframe of feature attributes.
-        * df_y (Series): The preprocessed dataframe of the target attribute.
+        * df_X (DataFrame): The preprocessed dataset of feature attributes.
+        * df_y (Series): The preprocessed dataset of the target attribute.
 
     """
 
@@ -84,10 +84,10 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
 
 
 def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
-    """Fits a min-max-scaler on the dataframe and returns a scaler for a scaling to [0, 1] as well as the scalable columns.
+    """Fits a min-max-scaler on the dataset and returns a scaler for a scaling to [0, 1] as well as the scalable columns.
 
     Args:
-        X (DataFrame): The dataframe with the data to fit.
+        X (DataFrame): The dataset with the data to fit.
 
     Returns:
         * scaler (MinMaxScaler): The min-max-scaler fitted on dataset. Scales to [0, 1].
@@ -111,7 +111,7 @@ def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str
     """Performs min-max scaling on data with a fitted scaler object on all scalable columns.
 
     Args:
-        X (DataFrame): The dataframe with the data to scale.
+        X (DataFrame): The dataset with the data to scale.
         scaler (MinMaxScaler): The fitted min-max-scaler.
         scalable_columns (List[str]): The list of names of columns that will be scaled.
 
@@ -133,7 +133,7 @@ def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
     """Fits an one-hot-encoder on all categorical features present in the dataset.
 
     Args:
-        X (DataFrame): The dataframe with the data to fit.
+        X (DataFrame): The dataset with the data to fit.
 
     Returns:
         * ohe (OneHotEncoder): The one-hot-encoder fitted on the dataset.
@@ -149,10 +149,10 @@ def fit_ohe(X: DataFrame) -> Tuple[OneHotEncoder, List[str]]:
 
 
 def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
-    """Performs one-hot-encoding on all categorical features in the data set.
+    """Performs one-hot-encoding on all categorical features in the dataset.
 
     Args:
-        X (DataFrame): The dataframe with the data to encode.
+        X (DataFrame): The dataset with the data to encode.
         ohe (OneHotEncoder): The fitted one-hot-encoder.
 
     Returns:
