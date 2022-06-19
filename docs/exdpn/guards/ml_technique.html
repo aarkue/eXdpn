@@ -77,7 +77,7 @@
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">exdpn.guards</span> <span class="kn">import</span> <span class="n">SVM_Guard</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span> <span class="nn">exdpn.guards</span> <span class="kn">import</span> <span class="n">Neural_Network_Guard</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="c1"># Enum to provide all implemeted machine learning guard classes </span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">ML_Technique</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="sd">&quot;&quot;&quot;This enum acts as a selector for guard classes which correspond to different machine learning classifiers.</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
@@ -99,13 +99,13 @@
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">        ```</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">NN</span>  <span class="o">=</span> <span class="n">Neural_Network_Guard</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">NN</span> <span class="o">=</span> <span class="n">Neural_Network_Guard</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a neural network classifier.&quot;&quot;&quot;</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">DT</span>  <span class="o">=</span> <span class="n">Decision_Tree_Guard</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">DT</span> <span class="o">=</span> <span class="n">Decision_Tree_Guard</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a decision tree classifier.&quot;&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="n">LR</span>  <span class="o">=</span> <span class="n">Logistic_Regression_Guard</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="n">LR</span> <span class="o">=</span> <span class="n">Logistic_Regression_Guard</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a logistic regression classifier.&quot;&quot;&quot;</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="n">SVM</span> <span class="o">=</span> <span class="n">SVM_Guard</span> 
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="n">SVM</span> <span class="o">=</span> <span class="n">SVM_Guard</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a support vector machine classifier.&quot;&quot;&quot;</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -125,7 +125,7 @@
 </span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="kn">import</span> <span class="nn">doctest</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="c1"># run python .\exdpn\guards\ml_technique.py from eXdpn file </span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="c1"># run python .\exdpn\guards\ml_technique.py from eXdpn file</span>
 </span></pre></div>
 
 
@@ -162,13 +162,13 @@
 </span><span id="ML_Technique-28"><a href="#ML_Technique-28"><span class="linenos">28</span></a><span class="sd">        ```</span>
 </span><span id="ML_Technique-29"><a href="#ML_Technique-29"><span class="linenos">29</span></a>
 </span><span id="ML_Technique-30"><a href="#ML_Technique-30"><span class="linenos">30</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="ML_Technique-31"><a href="#ML_Technique-31"><span class="linenos">31</span></a>    <span class="n">NN</span>  <span class="o">=</span> <span class="n">Neural_Network_Guard</span>
+</span><span id="ML_Technique-31"><a href="#ML_Technique-31"><span class="linenos">31</span></a>    <span class="n">NN</span> <span class="o">=</span> <span class="n">Neural_Network_Guard</span>
 </span><span id="ML_Technique-32"><a href="#ML_Technique-32"><span class="linenos">32</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a neural network classifier.&quot;&quot;&quot;</span>
-</span><span id="ML_Technique-33"><a href="#ML_Technique-33"><span class="linenos">33</span></a>    <span class="n">DT</span>  <span class="o">=</span> <span class="n">Decision_Tree_Guard</span>
+</span><span id="ML_Technique-33"><a href="#ML_Technique-33"><span class="linenos">33</span></a>    <span class="n">DT</span> <span class="o">=</span> <span class="n">Decision_Tree_Guard</span>
 </span><span id="ML_Technique-34"><a href="#ML_Technique-34"><span class="linenos">34</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a decision tree classifier.&quot;&quot;&quot;</span>
-</span><span id="ML_Technique-35"><a href="#ML_Technique-35"><span class="linenos">35</span></a>    <span class="n">LR</span>  <span class="o">=</span> <span class="n">Logistic_Regression_Guard</span>
+</span><span id="ML_Technique-35"><a href="#ML_Technique-35"><span class="linenos">35</span></a>    <span class="n">LR</span> <span class="o">=</span> <span class="n">Logistic_Regression_Guard</span>
 </span><span id="ML_Technique-36"><a href="#ML_Technique-36"><span class="linenos">36</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a logistic regression classifier.&quot;&quot;&quot;</span>
-</span><span id="ML_Technique-37"><a href="#ML_Technique-37"><span class="linenos">37</span></a>    <span class="n">SVM</span> <span class="o">=</span> <span class="n">SVM_Guard</span> 
+</span><span id="ML_Technique-37"><a href="#ML_Technique-37"><span class="linenos">37</span></a>    <span class="n">SVM</span> <span class="o">=</span> <span class="n">SVM_Guard</span>
 </span><span id="ML_Technique-38"><a href="#ML_Technique-38"><span class="linenos">38</span></a>    <span class="sd">&quot;&quot;&quot;Corresponds to the guard implementation using a support vector machine classifier.&quot;&quot;&quot;</span>
 </span><span id="ML_Technique-39"><a href="#ML_Technique-39"><span class="linenos">39</span></a>
 </span><span id="ML_Technique-40"><a href="#ML_Technique-40"><span class="linenos">40</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
