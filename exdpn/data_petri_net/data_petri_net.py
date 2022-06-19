@@ -46,25 +46,26 @@ class Data_Petri_Net():
         """Initializes a data Petri net based on the event log provided.
 
         Args:
-            event_log (EventLog): Event log to be used as a basis for the data Petri net
-            petri_net (PetriNet): Petri net corresponding to the event log. Does not have to be supplied
-            initial_marking (Marking): Initial marking of the Petri net corresponding to the event log. Does not have to be supplied
-            final_marking (Marking): Final marking of the Petri net corresponding to the event log. Does not have to be supplied
-            miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)
-            case_level_attributes (List[str]): Attribute list on the level of cases to be considered for each instance in the datasets
-            event_level_attributes (List[str]): Attribute list on the level of events to be considered for each instance in the datasets
-            tail_length (int): Number of events lookback to extract executed activity. Defaults to 3.
-            activityName_key (str): Event level attribute name corresponding to the name of an event. Defaults to "concept:name"
-            ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all \
-            implemented techniques
-            hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameter that should be used for the machine learning techniques, \
-            if not specified default parameters are used
-            guard_threshold (float): Threshold (between 0 and 1) that determines if guard is added to the data petri net or not, if the guard performance \
-            is smaller than the threshold the guard is not added. Default is 0 (no threshold) 
-            verbose (bool): Specifies if the execution of all methods should print status-esque messages or not
+            event_log (EventLog): The event log to be used as a basis for the data Petri net.
+            petri_net (PetriNet, optional): The Petri net corresponding to the event log. If not supplied, a Petri net is mined from `event_log`.
+            initial_marking (Marking, optional): The initial marking of the Petri net corresponding to the event log. Does not have to be supplied.
+            final_marking (Marking, optional): The final marking of the Petri net corresponding to the event log. Does not have to be supplied.
+            miner_type (str, optional): Specifies the type of Petri net mining algorithm to be used when `petri_net` is `None`. \
+                Either inductive miner ("IM") or alpha miner ("AM", default).
+            case_level_attributes (List[str], optional): The attribute list on the level of cases to be considered for each instance in the datasets.
+            event_level_attributes (List[str], optional): The attribute list on the level of events to be considered for each instance in the datasets.
+            tail_length (int, optional): The number of preceding events to record. Defaults to 3.
+            activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
+            ml_list (List[ML_Technique], optional): The list of all machine learning techniques that should be evaluated. Default includes all \
+                implemented techniques.
+            hyperparameters (Dict[ML_Technique, Dict[str, Any]], optional): The hyperparameters that should be used for the machine learning techniques. \
+                If not specified, standard/generic parameters are used.
+            guard_threshold (float, optional): The performance threshold (between 0 and 1) that determines if a guard is added to the data Petri net or not. If the guard performance \
+                is smaller than the threshold the guard is not added (see `exdpn.guards.guard_manager.Guard_Manager.train_test`). Default is 0. 
+            verbose (bool, optional): Specifies if the execution should print status-esque messages or not.
             
         Examples:
-            Use event log and mine petri net based on it
+            Use an event log to mine a Petri net based on it:
             ```python 
             >>> import os
             >>> from exdpn.util import import_log
@@ -78,7 +79,7 @@ class Data_Petri_Net():
 
             ``` 
             
-            Use a mined petri net (based on event log)
+            Providing an already mined Petri net:
             ```python
             >>> import os
             >>> from exdpn.util import import_log
@@ -96,7 +97,7 @@ class Data_Petri_Net():
 
             ```
 
-            Costumize data petri net with personal hyperparameters and guard threshold
+            Customize a data Petri net with personal hyperparameters and a guard threshold:
             ```python 
             >>> import os
             >>> from exdpn.util import import_log
@@ -163,7 +164,7 @@ class Data_Petri_Net():
         """Returns the best guard for each decision point in the data Petri net.
 
         Returns:
-            Dict[PetriNet.Place, Guard]: The best performing guard for each decision point with respect to the F1-score
+            Dict[PetriNet.Place, Guard]: The best performing guard for each decision point with respect to the F1-score.
         
         Examples:
             ```python
@@ -207,10 +208,10 @@ class Data_Petri_Net():
         """Returns the best guard for given decision point.
 
         Args:
-            place (PetriNet.Place): The decision point to looked up
+            place (PetriNet.Place): The decision point to look up.
 
         Returns:
-            Guard: The best guard for given decision point
+            Guard: The best guard at `place`.
 
         Examples:
             ```python
@@ -239,14 +240,14 @@ class Data_Petri_Net():
 
 
     def get_mean_guard_conformance(self, test_event_log: EventLog) -> float:
-        """Returns the mean conformance for the given event log, i.e., the percentage of traces (which fit on the mined model) where all guards were respected.
+        """Returns the mean conformance for the given event log, i.e., the percentage of traces (which fit on the underlying Petri net) where all guards were respected. \
+            Respecting a guard means moving from the corresponding place to the transition predicted by the guard.
 
         Args:
-            test_event_log (EventLog): The event log used to test the performance of the data Perti net
+            test_event_log (EventLog): The event log used to test the performance of the data Perti net.
 
         Returns:
-            float: Fraction of traces that respected all decision point guards passed during token based replay. \
-                Respecting a decision point guard means moving to the transition predicted by the guard at the corresponding place
+            float: Fraction of traces that respected all decision point guards passed during token based replay.
         
         Examples:
             ```python
