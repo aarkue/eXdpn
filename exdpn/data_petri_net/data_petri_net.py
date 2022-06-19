@@ -124,11 +124,11 @@ class Data_Petri_Net():
             self.fm = final_marking
 
         self.decision_points = find_decision_points(self.petri_net)
-        self.print_if_verbose("-> Mining guard datasets... ", end="")
+        self._print_if_verbose("-> Mining guard datasets... ", end="")
         self.guard_ds_per_place = extract_all_datasets(
             event_log, self.petri_net, self.im, self.fm, case_level_attributes, event_level_attributes, tail_length, activityName_key
         )
-        self.print_if_verbose("Done")
+        self._print_if_verbose("Done")
 
         self.case_level_attributes = case_level_attributes
         self.event_level_attributes = event_level_attributes
@@ -143,11 +143,11 @@ class Data_Petri_Net():
 
         # evaluate all guards for all guard managers
         for place, guard_manager in self.guard_manager_per_place.items():
-            self.print_if_verbose(
+            self._print_if_verbose(
                 f"-> Evaluating guards at decision point '{place.name}'... ", end=''
             )
             guard_manager.train_test()
-            self.print_if_verbose("Done")
+            self._print_if_verbose("Done")
 
         self.guard_per_place = None
         self.ml_technique_per_place = {}
@@ -155,7 +155,7 @@ class Data_Petri_Net():
         self.guard_threshold = guard_threshold
 
 
-    def print_if_verbose(self, string: str, end: str = '\n'):
+    def _print_if_verbose(self, string: str, end: str = '\n'):
         """Internal method used as a shortcut for printing messages only if self.verbose is set to True."""
         if self.verbose:
             print(string, end=end)
@@ -192,13 +192,13 @@ class Data_Petri_Net():
             ml_technique, guard = guard_manager.get_best()
             if max(guard_manager.guards_results.values()) < self.guard_threshold:
                 max_performance = max(guard_manager.guards_results.values())
-                self.print_if_verbose(
+                self._print_if_verbose(
                     f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
                 continue
             self.guard_per_place[place] = guard 
             self.ml_technique_per_place[place] = ml_technique
             self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
-            self.print_if_verbose(
+            self._print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
 
         return self.guard_per_place
@@ -271,7 +271,7 @@ class Data_Petri_Net():
             self.get_best()
 
 
-        self.print_if_verbose("-> Computing guard datasets for replay")
+        self._print_if_verbose("-> Computing guard datasets for replay")
         guard_datasets = extract_all_datasets(
                             test_event_log,
                             self.petri_net, self.im, self.fm,
