@@ -8,14 +8,13 @@ def model_builder(model_type: ML_Technique, hp: Dict[str, Any]) -> Guard:
     """Internal function to build a specific guard with the provided hyperparameters.
     
     Args:
-        model_typ (ML_Technique): Specification of machine learning technique, use "NN" for neural network, \
-        "SVM" for support vector machine, "DT" for decision tree and "LR" for logistic regression
-        hp (Dict[str, any]): Hyperparameters for the machine learning model
+        model_type (ML_Technique): Specification of machine learning technique (see `exdpn.guards.ml_technique.ML_Technique`).
+        hp (Dict[str, any]): Hyperparameters for the machine learning model.
     
     Returns:
-        Guard: Machine learning guard of desired type with provided hyperparameters
+        Guard: Machine learning guard of desired type with provided hyperparameters.
 
-    Raises: 
+    Raises:
         TypeError: If entered model type is not supported.
     
     Examples:
@@ -24,13 +23,12 @@ def model_builder(model_type: ML_Technique, hp: Dict[str, Any]) -> Guard:
         >>> from exdpn.guards import ML_Technique
         >>> decision_tree_guard = model_builder(ML_Technique.DT, {'min_samples_split': 0.1, 
         ...                                                       'min_samples_leaf': 0.1, 
-        ...                                                        'ccp_alpha': 0.2})
+        ...                                                       'ccp_alpha': 0.2})
         >>> logistic_regression_guard = model_builder(ML_Technique.LR, {"C": 0.5})
 
         ```
 
     """
-    
     if model_type == ML_Technique.SVM:
         return SVM_Guard(hp)
     elif model_type == ML_Technique.NN:

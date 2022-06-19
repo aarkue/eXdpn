@@ -11,11 +11,11 @@ from typing import Tuple
 
 
 def get_petri_net (log: EventLog, miner_type: str = "AM") -> Tuple[PetriNet, Marking, Marking]:
-    """ Mines Petri Net based on given event log and returns found Petri Net.
+    """Mines Petri Net based on given event log and returns found Petri Net.
 
     Args:
-        log (EventLog): Given event log, as EventLog
-        miner_type (str): Spezifies type of mining algorithm, either inductive miner ("IM") or alpha miner ("AM", default)
+        log (EventLog): The given event log to mine the Petri net with.
+        miner_type (str): Specifies the type of mining algorithm. Either inductive miner ("IM") or alpha miner ("AM", default).
     
     Returns:
         * net (PetriNet): Petri Net based on input data, later used to find decision find decision points 
@@ -23,7 +23,7 @@ def get_petri_net (log: EventLog, miner_type: str = "AM") -> Tuple[PetriNet, Mar
         * final_marking (Marking): Final Marking 
 
     Raises:
-        TypeError: If an miner_type is any other than "AM" or "IM".
+        TypeError: If `miner_type` neither equal to "AM" nor "IM".
 
     Examples:
         ```python
@@ -34,8 +34,8 @@ def get_petri_net (log: EventLog, miner_type: str = "AM") -> Tuple[PetriNet, Mar
         >>> net, im, fm = petri_net.get_petri_net(event_log)
 
         ```
+
     """
-    
     if miner_type == "AM":
         # use alpha miner 
         net, initial_marking, final_marking = pm4py.discover_petri_net_alpha(log)

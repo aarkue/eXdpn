@@ -52,34 +52,18 @@ def extract_all_datasets(
         ```python
         >>> import os 
         >>> from exdpn.util import import_log
-        >>> from exdpn.util import extend_event_log_with_preceding_event_delay
         >>> from exdpn.petri_net import get_petri_net
         >>> from exdpn.guard_datasets import extract_all_datasets
-        >>> #event_log = import_log('p2p_base.xes')
-        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
-        >>> extend_event_log_with_preceding_event_delay(event_log, 'delay')
-        >>> pn, im, fm = get_petri_net(event_log)
-        >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, 
-        ...                                       event_level_attributes = ['delay'])
-        
-        ```
-
-        ```python
-        >>> import os 
-        >>> from exdpn.util import import_log
-        >>> from exdpn.petri_net import get_petri_net
-        >>> from exdpn.guard_datasets import extract_all_datasets
-        >>> #event_log = import_log('p2p_base.xes')
         >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
         >>> pn, im, fm = get_petri_net(event_log)
         >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
         ...                                       case_level_attributes =["concept:name"], 
         ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
         ...                                       activityName_key = "concept:name")
-        
+
         ```
-    
-    """ 
+
+    """
 
     # Get list of places and mapping which transitions they correspond to
     if places is None:
@@ -91,15 +75,17 @@ def extract_all_datasets(
         }
 
     # Compute Token-Based Replay
-    replay = _compute_replay(log, net, initial_marking, final_marking, activityName_key, False)
+    replay = _compute_replay(log, net, initial_marking,
+                             final_marking, activityName_key, False)
     ## Extract a dataset for each place ##
     datasets = dict()
     for place in places:
-        datasets[place] = extract_dataset_for_place(place, target_transitions, log, replay, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
+        datasets[place] = extract_dataset_for_place(
+            place, target_transitions, log, replay, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
     return datasets
 
 
-def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_marking:Marking, activityName_key:str = xes.DEFAULT_NAME_KEY, show_progress_bar:bool = False) -> Dict[str, Any]:
+def _compute_replay(log: EventLog, net: PetriNet, initial_marking: Marking, final_marking: Marking, activityName_key: str = xes.DEFAULT_NAME_KEY, show_progress_bar: bool = False) -> Dict[str, Any]:
     """Wrapper for PM4Py's token-based replay function.
 
     Args:
@@ -112,8 +98,8 @@ def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_m
 
     Returns:
         The token-based replay results.
-    
-    """    
+
+    """
     variant = token_replay.Variants.TOKEN_REPLAY
     replay_params = {
         variant.value.Parameters.SHOW_PROGRESS_BAR: show_progress_bar,
@@ -121,16 +107,17 @@ def _compute_replay(log:EventLog, net:PetriNet, initial_marking:Marking, final_m
     }
     return token_replay.apply(log, net, initial_marking, final_marking, variant=variant, parameters=replay_params)
 
+
 def extract_dataset_for_place(
     place: PetriNet.Place,
-    target_transitions:Dict[PetriNet.Place, PetriNet.Transition],
-    log: EventLog, 
-    replay:Union[List[Dict[str,Any]], Tuple[PetriNet, Marking, Marking]],
+    target_transitions: Dict[PetriNet.Place, PetriNet.Transition],
+    log: EventLog,
+    replay: Union[List[Dict[str, Any]], Tuple[PetriNet, Marking, Marking]],
     case_level_attributes: List[str] = [],
     event_level_attributes: List[str] = [],
     tail_length: int = 3,
-    activityName_key:str = xes.DEFAULT_NAME_KEY,
-    padding:Any="#"
+    activityName_key: str = xes.DEFAULT_NAME_KEY,
+    padding: Any = "#"
 ) -> DataFrame:
     """Extracts the dataset for a single place using token-based replay. For each instance of this decision found in the log, the following data is extracted:
     1. The specified case-level attributes of the case
@@ -149,20 +136,19 @@ def extract_dataset_for_place(
         tail_length (int, optional): The number of preceding events to record. Defaults to 3.
         activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
         padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
-    
+
     Returns:
         DataFrame: The guard-dataset extracted for the decision point at `place`.
 
     Raises:
         Exception: If the default case ID key defined by the XES standard ("concept:name") is not among the case-level attributes.
-    
-    """    
+
+    """
 
     # Compute replay if necessary
     if type(replay) is tuple:
         net, im, fm = replay
         replay = _compute_replay(log, net, im, fm, activityName_key, False)
-
 
     # Extract the data for the place
     instances = []
@@ -180,7 +166,8 @@ def extract_dataset_for_place(
             if transition in target_transitions[place]:
                 # Extract Case-Level Attributes
                 case = log[idx]
-                case_attr_values = [case.attributes.get(attr, np.NaN) for attr in case_level_attributes]
+                case_attr_values = [case.attributes.get(
+                    attr, np.NaN) for attr in case_level_attributes]
 
                 if event_index <= 0:
                     # There is no "previous event", so we cannot collect this info
@@ -188,25 +175,29 @@ def extract_dataset_for_place(
                 else:
                     # Get the values of the event level attribute
                     last_event = case[event_index-1]
-                    event_attr_values = [last_event.get(attr, np.NaN) for attr in event_level_attributes]
-                
+                    event_attr_values = [last_event.get(
+                        attr, np.NaN) for attr in event_level_attributes]
 
                 # Finally, extract recent activities
                 tail_activities = []
-                for i in range(1,tail_length+1):
+                for i in range(1, tail_length+1):
                     if event_index-i >= 0:
-                        tail_activities.append(case[event_index-i].get(activityName_key, ""))
+                        tail_activities.append(
+                            case[event_index-i].get(activityName_key, ""))
                     else:
                         tail_activities.append(padding)
 
                 # This instance record  now descibes the decision situation
-                instance = case_attr_values + event_attr_values + tail_activities + [transition]
+                instance = case_attr_values + event_attr_values + \
+                    tail_activities + [transition]
                 instances.append(instance)
                 # Give this index a unique index
                 if xes.DEFAULT_TRACEID_KEY not in case.attributes:
-                    raise Exception(f"A case in the Event Log Object has no caseid (No case attribute {xes.DEFAULT_TRACEID_KEY})")
+                    raise Exception(
+                        f"A case in the Event Log Object has no caseid (No case attribute {xes.DEFAULT_TRACEID_KEY})")
                 else:
-                    indices.append((case.attributes[xes.DEFAULT_TRACEID_KEY],decision_repetition))
+                    indices.append(
+                        (case.attributes[xes.DEFAULT_TRACEID_KEY], decision_repetition))
                 decision_repetition += 1
 
                 # Dont't count silent transitions
@@ -215,12 +206,15 @@ def extract_dataset_for_place(
     from pandas import MultiIndex
     return DataFrame(
         instances,
-        columns=["case::" + attr for attr in case_level_attributes] + ["event::"+ attr for attr in event_level_attributes] + [f"tail::prev{i}" for i in range(1,tail_length+1)] +  ["target"],
-        index=MultiIndex.from_tuples(indices, names=[xes.DEFAULT_TRACEID_KEY,"decision_repetiton"])
+        columns=["case::" + attr for attr in case_level_attributes] + ["event::" +
+                                                                       attr for attr in event_level_attributes] + [f"tail::prev{i}" for i in range(1, tail_length+1)] + ["target"],
+        index=MultiIndex.from_tuples(
+            indices, names=[xes.DEFAULT_TRACEID_KEY, "decision_repetiton"])
     )
+
 
 # tests implemented examples
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-# run python .\exdpn\guard_datasets\data_extraction.py from eXdpn file 
+# run python .\exdpn\guard_datasets\data_extraction.py from eXdpn file

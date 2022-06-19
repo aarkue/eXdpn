@@ -52,6 +52,7 @@ class Guard(metaclass=abc.ABCMeta):
 
         Returns:
             bool: Whether or not the concrete machine learning classifier is explainable.
+            
         """
         pass
 
