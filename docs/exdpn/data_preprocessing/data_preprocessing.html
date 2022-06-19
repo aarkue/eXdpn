@@ -100,12 +100,12 @@
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="k">def</span> <span class="nf">data_preprocessing_evaluation</span><span class="p">(</span><span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span><span class="p">,</span> <span class="n">Series</span><span class="p">]:</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="sd">&quot;&quot;&quot;Preprocessing of dataframes before they are used for the machine learning training and testing. This function does some \</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="sd">&quot;&quot;&quot;Preprocessing of datasets before they are used for the machine learning training and testing. This function does some \</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    basic preprocessing, such as converting all columns to the correct data type, droping columns with missing values and \</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">    defining feature attributes and the target attribute. Furthermore, the data is split into train and test dataframes.</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">    defining feature attributes and the target attribute. Furthermore, the data is split into train and test datasets.</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    Args:</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">        dataframe (DataFrame): The dataframe to be transformed for evaluation of the best model.</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">        dataframe (DataFrame): The dataset to be transformed for evaluation of the best model.</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    Returns:</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">        * X_train (DataFrame): The training data without the target attribute.</span>
@@ -140,15 +140,15 @@
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="k">def</span> <span class="nf">basic_data_preprocessing</span><span class="p">(</span><span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span><span class="p">]:</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="sd">&quot;&quot;&quot;Basic preprocessing before dataframes, i.e., dropping of columns \</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="sd">&quot;&quot;&quot;Basic preprocessing before datasets, i.e., dropping of columns \</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    with only missing values and defining feature attributes and the target attribute.</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    Args:</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">        dataframe (DataFrame): The dataframe to be transformed.</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">        dataframe (DataFrame): The dataset to be transformed.</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    Returns:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        * df_X (DataFrame): The preprocessed dataframe of feature attributes.</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        * df_y (Series): The preprocessed dataframe of the target attribute.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        * df_X (DataFrame): The preprocessed dataset of feature attributes.</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        * df_y (Series): The preprocessed dataset of the target attribute.</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
@@ -171,10 +171,10 @@
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="k">def</span> <span class="nf">fit_scaling</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">MinMaxScaler</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="sd">&quot;&quot;&quot;Fits a min-max-scaler on the dataframe and returns a scaler for a scaling to [0, 1] as well as the scalable columns.</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="sd">&quot;&quot;&quot;Fits a min-max-scaler on the dataset and returns a scaler for a scaling to [0, 1] as well as the scalable columns.</span>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">    Args:</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        X (DataFrame): The dataframe with the data to fit.</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        X (DataFrame): The dataset with the data to fit.</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">    Returns:</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        * scaler (MinMaxScaler): The min-max-scaler fitted on dataset. Scales to [0, 1].</span>
@@ -198,7 +198,7 @@
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="sd">&quot;&quot;&quot;Performs min-max scaling on data with a fitted scaler object on all scalable columns.</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    Args:</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        X (DataFrame): The dataframe with the data to scale.</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        X (DataFrame): The dataset with the data to scale.</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">        scaler (MinMaxScaler): The fitted min-max-scaler.</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">        scalable_columns (List[str]): The list of names of columns that will be scaled.</span>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
@@ -220,7 +220,7 @@
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="sd">&quot;&quot;&quot;Fits an one-hot-encoder on all categorical features present in the dataset.</span>
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">    Args:</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">        X (DataFrame): The dataframe with the data to fit.</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">        X (DataFrame): The dataset with the data to fit.</span>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">    Returns:</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">        * ohe (OneHotEncoder): The one-hot-encoder fitted on the dataset.</span>
@@ -232,25 +232,27 @@
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="k">return</span> <span class="n">ohe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_object</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">X_object</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="k">def</span> <span class="nf">apply_ohe</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">ohe</span><span class="p">:</span> <span class="n">OneHotEncoder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="sd">&quot;&quot;&quot;Performs one-hot-encoding on all categorical features in the data set.</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">    Args:</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        X (DataFrame): The dataframe with the data to encode.</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        ohe (OneHotEncoder): The fitted one-hot-encoder.</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">    Returns:</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        DataFrame: The data where all categorical columns were encoded using the `ohe`.</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="n">X_object</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="n">X_object_enc</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_object</span><span class="p">)</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="n">feature_names</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X_object</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>    <span class="k">return</span> <span class="n">concat</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">),</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">X_object_enc</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="c1"># TODO: remove return of ohe_column_names above or add support for this list below</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="k">def</span> <span class="nf">apply_ohe</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">ohe</span><span class="p">:</span> <span class="n">OneHotEncoder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="sd">&quot;&quot;&quot;Performs one-hot-encoding on all categorical features in the dataset.</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">    Args:</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        X (DataFrame): The dataset with the data to encode.</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">        ohe (OneHotEncoder): The fitted one-hot-encoder.</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    Returns:</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">        DataFrame: The data where all categorical columns were encoded using the `ohe`.</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="n">X_object</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="n">X_object_enc</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_object</span><span class="p">)</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>    <span class="n">feature_names</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X_object</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="k">return</span> <span class="n">concat</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">),</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">X_object_enc</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -267,12 +269,12 @@
     </div>
     <a class="headerlink" href="#data_preprocessing_evaluation"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="data_preprocessing_evaluation-16"><a href="#data_preprocessing_evaluation-16"><span class="linenos">16</span></a><span class="k">def</span> <span class="nf">data_preprocessing_evaluation</span><span class="p">(</span><span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span><span class="p">,</span> <span class="n">Series</span><span class="p">]:</span>
-</span><span id="data_preprocessing_evaluation-17"><a href="#data_preprocessing_evaluation-17"><span class="linenos">17</span></a>    <span class="sd">&quot;&quot;&quot;Preprocessing of dataframes before they are used for the machine learning training and testing. This function does some \</span>
+</span><span id="data_preprocessing_evaluation-17"><a href="#data_preprocessing_evaluation-17"><span class="linenos">17</span></a>    <span class="sd">&quot;&quot;&quot;Preprocessing of datasets before they are used for the machine learning training and testing. This function does some \</span>
 </span><span id="data_preprocessing_evaluation-18"><a href="#data_preprocessing_evaluation-18"><span class="linenos">18</span></a><span class="sd">    basic preprocessing, such as converting all columns to the correct data type, droping columns with missing values and \</span>
-</span><span id="data_preprocessing_evaluation-19"><a href="#data_preprocessing_evaluation-19"><span class="linenos">19</span></a><span class="sd">    defining feature attributes and the target attribute. Furthermore, the data is split into train and test dataframes.</span>
+</span><span id="data_preprocessing_evaluation-19"><a href="#data_preprocessing_evaluation-19"><span class="linenos">19</span></a><span class="sd">    defining feature attributes and the target attribute. Furthermore, the data is split into train and test datasets.</span>
 </span><span id="data_preprocessing_evaluation-20"><a href="#data_preprocessing_evaluation-20"><span class="linenos">20</span></a>
 </span><span id="data_preprocessing_evaluation-21"><a href="#data_preprocessing_evaluation-21"><span class="linenos">21</span></a><span class="sd">    Args:</span>
-</span><span id="data_preprocessing_evaluation-22"><a href="#data_preprocessing_evaluation-22"><span class="linenos">22</span></a><span class="sd">        dataframe (DataFrame): The dataframe to be transformed for evaluation of the best model.</span>
+</span><span id="data_preprocessing_evaluation-22"><a href="#data_preprocessing_evaluation-22"><span class="linenos">22</span></a><span class="sd">        dataframe (DataFrame): The dataset to be transformed for evaluation of the best model.</span>
 </span><span id="data_preprocessing_evaluation-23"><a href="#data_preprocessing_evaluation-23"><span class="linenos">23</span></a>
 </span><span id="data_preprocessing_evaluation-24"><a href="#data_preprocessing_evaluation-24"><span class="linenos">24</span></a><span class="sd">    Returns:</span>
 </span><span id="data_preprocessing_evaluation-25"><a href="#data_preprocessing_evaluation-25"><span class="linenos">25</span></a><span class="sd">        * X_train (DataFrame): The training data without the target attribute.</span>
@@ -307,12 +309,12 @@
 </span></pre></div>
 
 
-            <div class="docstring"><p>Preprocessing of dataframes before they are used for the machine learning training and testing. This function does some     basic preprocessing, such as converting all columns to the correct data type, droping columns with missing values and     defining feature attributes and the target attribute. Furthermore, the data is split into train and test dataframes.</p>
+            <div class="docstring"><p>Preprocessing of datasets before they are used for the machine learning training and testing. This function does some     basic preprocessing, such as converting all columns to the correct data type, droping columns with missing values and     defining feature attributes and the target attribute. Furthermore, the data is split into train and test datasets.</p>
 
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>dataframe (DataFrame):</strong>  The dataframe to be transformed for evaluation of the best model.</li>
+<li><strong>dataframe (DataFrame):</strong>  The dataset to be transformed for evaluation of the best model.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -341,15 +343,15 @@
     </div>
     <a class="headerlink" href="#basic_data_preprocessing"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="basic_data_preprocessing-56"><a href="#basic_data_preprocessing-56"><span class="linenos">56</span></a><span class="k">def</span> <span class="nf">basic_data_preprocessing</span><span class="p">(</span><span class="n">dataframe</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span><span class="p">]:</span>
-</span><span id="basic_data_preprocessing-57"><a href="#basic_data_preprocessing-57"><span class="linenos">57</span></a>    <span class="sd">&quot;&quot;&quot;Basic preprocessing before dataframes, i.e., dropping of columns \</span>
+</span><span id="basic_data_preprocessing-57"><a href="#basic_data_preprocessing-57"><span class="linenos">57</span></a>    <span class="sd">&quot;&quot;&quot;Basic preprocessing before datasets, i.e., dropping of columns \</span>
 </span><span id="basic_data_preprocessing-58"><a href="#basic_data_preprocessing-58"><span class="linenos">58</span></a><span class="sd">    with only missing values and defining feature attributes and the target attribute.</span>
 </span><span id="basic_data_preprocessing-59"><a href="#basic_data_preprocessing-59"><span class="linenos">59</span></a>
 </span><span id="basic_data_preprocessing-60"><a href="#basic_data_preprocessing-60"><span class="linenos">60</span></a><span class="sd">    Args:</span>
-</span><span id="basic_data_preprocessing-61"><a href="#basic_data_preprocessing-61"><span class="linenos">61</span></a><span class="sd">        dataframe (DataFrame): The dataframe to be transformed.</span>
+</span><span id="basic_data_preprocessing-61"><a href="#basic_data_preprocessing-61"><span class="linenos">61</span></a><span class="sd">        dataframe (DataFrame): The dataset to be transformed.</span>
 </span><span id="basic_data_preprocessing-62"><a href="#basic_data_preprocessing-62"><span class="linenos">62</span></a>
 </span><span id="basic_data_preprocessing-63"><a href="#basic_data_preprocessing-63"><span class="linenos">63</span></a><span class="sd">    Returns:</span>
-</span><span id="basic_data_preprocessing-64"><a href="#basic_data_preprocessing-64"><span class="linenos">64</span></a><span class="sd">        * df_X (DataFrame): The preprocessed dataframe of feature attributes.</span>
-</span><span id="basic_data_preprocessing-65"><a href="#basic_data_preprocessing-65"><span class="linenos">65</span></a><span class="sd">        * df_y (Series): The preprocessed dataframe of the target attribute.</span>
+</span><span id="basic_data_preprocessing-64"><a href="#basic_data_preprocessing-64"><span class="linenos">64</span></a><span class="sd">        * df_X (DataFrame): The preprocessed dataset of feature attributes.</span>
+</span><span id="basic_data_preprocessing-65"><a href="#basic_data_preprocessing-65"><span class="linenos">65</span></a><span class="sd">        * df_y (Series): The preprocessed dataset of the target attribute.</span>
 </span><span id="basic_data_preprocessing-66"><a href="#basic_data_preprocessing-66"><span class="linenos">66</span></a>
 </span><span id="basic_data_preprocessing-67"><a href="#basic_data_preprocessing-67"><span class="linenos">67</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="basic_data_preprocessing-68"><a href="#basic_data_preprocessing-68"><span class="linenos">68</span></a>
@@ -372,20 +374,20 @@
 </span></pre></div>
 
 
-            <div class="docstring"><p>Basic preprocessing before dataframes, i.e., dropping of columns     with only missing values and defining feature attributes and the target attribute.</p>
+            <div class="docstring"><p>Basic preprocessing before datasets, i.e., dropping of columns     with only missing values and defining feature attributes and the target attribute.</p>
 
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>dataframe (DataFrame):</strong>  The dataframe to be transformed.</li>
+<li><strong>dataframe (DataFrame):</strong>  The dataset to be transformed.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
   <ul>
-  <li>df_X (DataFrame): The preprocessed dataframe of feature attributes.</li>
-  <li>df_y (Series): The preprocessed dataframe of the target attribute.</li>
+  <li>df_X (DataFrame): The preprocessed dataset of feature attributes.</li>
+  <li>df_y (Series): The preprocessed dataset of the target attribute.</li>
   </ul>
 </blockquote>
 </div>
@@ -404,10 +406,10 @@
     </div>
     <a class="headerlink" href="#fit_scaling"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="fit_scaling-87"><a href="#fit_scaling-87"><span class="linenos"> 87</span></a><span class="k">def</span> <span class="nf">fit_scaling</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">MinMaxScaler</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-</span><span id="fit_scaling-88"><a href="#fit_scaling-88"><span class="linenos"> 88</span></a>    <span class="sd">&quot;&quot;&quot;Fits a min-max-scaler on the dataframe and returns a scaler for a scaling to [0, 1] as well as the scalable columns.</span>
+</span><span id="fit_scaling-88"><a href="#fit_scaling-88"><span class="linenos"> 88</span></a>    <span class="sd">&quot;&quot;&quot;Fits a min-max-scaler on the dataset and returns a scaler for a scaling to [0, 1] as well as the scalable columns.</span>
 </span><span id="fit_scaling-89"><a href="#fit_scaling-89"><span class="linenos"> 89</span></a>
 </span><span id="fit_scaling-90"><a href="#fit_scaling-90"><span class="linenos"> 90</span></a><span class="sd">    Args:</span>
-</span><span id="fit_scaling-91"><a href="#fit_scaling-91"><span class="linenos"> 91</span></a><span class="sd">        X (DataFrame): The dataframe with the data to fit.</span>
+</span><span id="fit_scaling-91"><a href="#fit_scaling-91"><span class="linenos"> 91</span></a><span class="sd">        X (DataFrame): The dataset with the data to fit.</span>
 </span><span id="fit_scaling-92"><a href="#fit_scaling-92"><span class="linenos"> 92</span></a>
 </span><span id="fit_scaling-93"><a href="#fit_scaling-93"><span class="linenos"> 93</span></a><span class="sd">    Returns:</span>
 </span><span id="fit_scaling-94"><a href="#fit_scaling-94"><span class="linenos"> 94</span></a><span class="sd">        * scaler (MinMaxScaler): The min-max-scaler fitted on dataset. Scales to [0, 1].</span>
@@ -428,12 +430,12 @@
 </span></pre></div>
 
 
-            <div class="docstring"><p>Fits a min-max-scaler on the dataframe and returns a scaler for a scaling to [0, 1] as well as the scalable columns.</p>
+            <div class="docstring"><p>Fits a min-max-scaler on the dataset and returns a scaler for a scaling to [0, 1] as well as the scalable columns.</p>
 
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>X (DataFrame):</strong>  The dataframe with the data to fit.</li>
+<li><strong>X (DataFrame):</strong>  The dataset with the data to fit.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -463,7 +465,7 @@
 </span><span id="apply_scaling-112"><a href="#apply_scaling-112"><span class="linenos">112</span></a>    <span class="sd">&quot;&quot;&quot;Performs min-max scaling on data with a fitted scaler object on all scalable columns.</span>
 </span><span id="apply_scaling-113"><a href="#apply_scaling-113"><span class="linenos">113</span></a>
 </span><span id="apply_scaling-114"><a href="#apply_scaling-114"><span class="linenos">114</span></a><span class="sd">    Args:</span>
-</span><span id="apply_scaling-115"><a href="#apply_scaling-115"><span class="linenos">115</span></a><span class="sd">        X (DataFrame): The dataframe with the data to scale.</span>
+</span><span id="apply_scaling-115"><a href="#apply_scaling-115"><span class="linenos">115</span></a><span class="sd">        X (DataFrame): The dataset with the data to scale.</span>
 </span><span id="apply_scaling-116"><a href="#apply_scaling-116"><span class="linenos">116</span></a><span class="sd">        scaler (MinMaxScaler): The fitted min-max-scaler.</span>
 </span><span id="apply_scaling-117"><a href="#apply_scaling-117"><span class="linenos">117</span></a><span class="sd">        scalable_columns (List[str]): The list of names of columns that will be scaled.</span>
 </span><span id="apply_scaling-118"><a href="#apply_scaling-118"><span class="linenos">118</span></a>
@@ -487,7 +489,7 @@
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>X (DataFrame):</strong>  The dataframe with the data to scale.</li>
+<li><strong>X (DataFrame):</strong>  The dataset with the data to scale.</li>
 <li><strong>scaler (MinMaxScaler):</strong>  The fitted min-max-scaler.</li>
 <li><strong>scalable_columns (List[str]):</strong>  The list of names of columns that will be scaled.</li>
 </ul>
@@ -516,7 +518,7 @@
 </span><span id="fit_ohe-134"><a href="#fit_ohe-134"><span class="linenos">134</span></a>    <span class="sd">&quot;&quot;&quot;Fits an one-hot-encoder on all categorical features present in the dataset.</span>
 </span><span id="fit_ohe-135"><a href="#fit_ohe-135"><span class="linenos">135</span></a>
 </span><span id="fit_ohe-136"><a href="#fit_ohe-136"><span class="linenos">136</span></a><span class="sd">    Args:</span>
-</span><span id="fit_ohe-137"><a href="#fit_ohe-137"><span class="linenos">137</span></a><span class="sd">        X (DataFrame): The dataframe with the data to fit.</span>
+</span><span id="fit_ohe-137"><a href="#fit_ohe-137"><span class="linenos">137</span></a><span class="sd">        X (DataFrame): The dataset with the data to fit.</span>
 </span><span id="fit_ohe-138"><a href="#fit_ohe-138"><span class="linenos">138</span></a>
 </span><span id="fit_ohe-139"><a href="#fit_ohe-139"><span class="linenos">139</span></a><span class="sd">    Returns:</span>
 </span><span id="fit_ohe-140"><a href="#fit_ohe-140"><span class="linenos">140</span></a><span class="sd">        * ohe (OneHotEncoder): The one-hot-encoder fitted on the dataset.</span>
@@ -535,7 +537,7 @@
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>X (DataFrame):</strong>  The dataframe with the data to fit.</li>
+<li><strong>X (DataFrame):</strong>  The dataset with the data to fit.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -561,33 +563,33 @@
 
     </div>
     <a class="headerlink" href="#apply_ohe"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="apply_ohe-150"><a href="#apply_ohe-150"><span class="linenos">150</span></a><span class="k">def</span> <span class="nf">apply_ohe</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">ohe</span><span class="p">:</span> <span class="n">OneHotEncoder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="apply_ohe-151"><a href="#apply_ohe-151"><span class="linenos">151</span></a>    <span class="sd">&quot;&quot;&quot;Performs one-hot-encoding on all categorical features in the data set.</span>
-</span><span id="apply_ohe-152"><a href="#apply_ohe-152"><span class="linenos">152</span></a>
-</span><span id="apply_ohe-153"><a href="#apply_ohe-153"><span class="linenos">153</span></a><span class="sd">    Args:</span>
-</span><span id="apply_ohe-154"><a href="#apply_ohe-154"><span class="linenos">154</span></a><span class="sd">        X (DataFrame): The dataframe with the data to encode.</span>
-</span><span id="apply_ohe-155"><a href="#apply_ohe-155"><span class="linenos">155</span></a><span class="sd">        ohe (OneHotEncoder): The fitted one-hot-encoder.</span>
-</span><span id="apply_ohe-156"><a href="#apply_ohe-156"><span class="linenos">156</span></a>
-</span><span id="apply_ohe-157"><a href="#apply_ohe-157"><span class="linenos">157</span></a><span class="sd">    Returns:</span>
-</span><span id="apply_ohe-158"><a href="#apply_ohe-158"><span class="linenos">158</span></a><span class="sd">        DataFrame: The data where all categorical columns were encoded using the `ohe`.</span>
-</span><span id="apply_ohe-159"><a href="#apply_ohe-159"><span class="linenos">159</span></a>
-</span><span id="apply_ohe-160"><a href="#apply_ohe-160"><span class="linenos">160</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="apply_ohe-161"><a href="#apply_ohe-161"><span class="linenos">161</span></a>    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="apply_ohe-162"><a href="#apply_ohe-162"><span class="linenos">162</span></a>    <span class="n">X_object</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
-</span><span id="apply_ohe-163"><a href="#apply_ohe-163"><span class="linenos">163</span></a>
-</span><span id="apply_ohe-164"><a href="#apply_ohe-164"><span class="linenos">164</span></a>    <span class="n">X_object_enc</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_object</span><span class="p">)</span>
-</span><span id="apply_ohe-165"><a href="#apply_ohe-165"><span class="linenos">165</span></a>    <span class="n">feature_names</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X_object</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
-</span><span id="apply_ohe-166"><a href="#apply_ohe-166"><span class="linenos">166</span></a>
-</span><span id="apply_ohe-167"><a href="#apply_ohe-167"><span class="linenos">167</span></a>    <span class="k">return</span> <span class="n">concat</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">),</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">X_object_enc</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="apply_ohe-152"><a href="#apply_ohe-152"><span class="linenos">152</span></a><span class="k">def</span> <span class="nf">apply_ohe</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">ohe</span><span class="p">:</span> <span class="n">OneHotEncoder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="apply_ohe-153"><a href="#apply_ohe-153"><span class="linenos">153</span></a>    <span class="sd">&quot;&quot;&quot;Performs one-hot-encoding on all categorical features in the dataset.</span>
+</span><span id="apply_ohe-154"><a href="#apply_ohe-154"><span class="linenos">154</span></a>
+</span><span id="apply_ohe-155"><a href="#apply_ohe-155"><span class="linenos">155</span></a><span class="sd">    Args:</span>
+</span><span id="apply_ohe-156"><a href="#apply_ohe-156"><span class="linenos">156</span></a><span class="sd">        X (DataFrame): The dataset with the data to encode.</span>
+</span><span id="apply_ohe-157"><a href="#apply_ohe-157"><span class="linenos">157</span></a><span class="sd">        ohe (OneHotEncoder): The fitted one-hot-encoder.</span>
+</span><span id="apply_ohe-158"><a href="#apply_ohe-158"><span class="linenos">158</span></a>
+</span><span id="apply_ohe-159"><a href="#apply_ohe-159"><span class="linenos">159</span></a><span class="sd">    Returns:</span>
+</span><span id="apply_ohe-160"><a href="#apply_ohe-160"><span class="linenos">160</span></a><span class="sd">        DataFrame: The data where all categorical columns were encoded using the `ohe`.</span>
+</span><span id="apply_ohe-161"><a href="#apply_ohe-161"><span class="linenos">161</span></a>
+</span><span id="apply_ohe-162"><a href="#apply_ohe-162"><span class="linenos">162</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="apply_ohe-163"><a href="#apply_ohe-163"><span class="linenos">163</span></a>    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="apply_ohe-164"><a href="#apply_ohe-164"><span class="linenos">164</span></a>    <span class="n">X_object</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
+</span><span id="apply_ohe-165"><a href="#apply_ohe-165"><span class="linenos">165</span></a>
+</span><span id="apply_ohe-166"><a href="#apply_ohe-166"><span class="linenos">166</span></a>    <span class="n">X_object_enc</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_object</span><span class="p">)</span>
+</span><span id="apply_ohe-167"><a href="#apply_ohe-167"><span class="linenos">167</span></a>    <span class="n">feature_names</span> <span class="o">=</span> <span class="n">ohe</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X_object</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+</span><span id="apply_ohe-168"><a href="#apply_ohe-168"><span class="linenos">168</span></a>
+</span><span id="apply_ohe-169"><a href="#apply_ohe-169"><span class="linenos">169</span></a>    <span class="k">return</span> <span class="n">concat</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">),</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">X_object_enc</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Performs one-hot-encoding on all categorical features in the data set.</p>
+            <div class="docstring"><p>Performs one-hot-encoding on all categorical features in the dataset.</p>
 
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>X (DataFrame):</strong>  The dataframe with the data to encode.</li>
+<li><strong>X (DataFrame):</strong>  The dataset with the data to encode.</li>
 <li><strong>ohe (OneHotEncoder):</strong>  The fitted one-hot-encoder.</li>
 </ul>
 
