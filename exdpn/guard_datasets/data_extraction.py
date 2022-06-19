@@ -18,8 +18,8 @@ from pm4py.util import xes_constants as xes
 def extract_all_datasets(
     log: EventLog,
     net: PetriNet,
-    initial_marking: Marking = None,
-    final_marking: Marking = None,
+    initial_marking: Marking,
+    final_marking: Marking,
     case_level_attributes: List[str] = [],
     event_level_attributes: List[str] = [],
     tail_length: int = 3,
@@ -35,10 +35,9 @@ def extract_all_datasets(
 
     Args:
         log (EventLog): The event log to extract the data from.
-        net (PetriNet, optional): The Petri net on which the token-based replay will be performed (and on which the decision points are identified, \
-        not optional if places are not provided).
-        initial_marking (Marking, optional): The initial marking of the Petri net.
-        final_marking (Marking, optional): The final marking of the Petri net.
+        net (PetriNet): The Petri net on which the token-based replay will be performed and on which the decision points.
+        initial_marking (Marking): The initial marking of the Petri net.
+        final_marking (Marking): The final marking of the Petri net.
         case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.
         event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.
         tail_length (int, optional): The number of preceding events to record. Defaults to 3.
