@@ -14,8 +14,8 @@ from typing import Tuple, List
 
 def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
     """Preprocessing of datasets before they are used for the machine learning training and testing. This function does some \
-    basic preprocessing, such as converting all columns to the correct data type, droping columns with missing values and \
-    defining feature attributes and the target attribute. Furthermore, the data is split into train and test datasets.
+    basic preprocessing, such as droping columns with missing values and defining feature attributes and the target attribute. \
+    Furthermore, the data is split into train and test datasets.
 
     Args:
         dataframe (DataFrame): The dataset to be transformed for evaluation of the best model.

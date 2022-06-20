@@ -47,8 +47,15 @@ Further examples can be seen in the API documentation. The sometimes referenced 
 ## Documentation ##
 This package provides an [API documentation](https://aarkue.github.io/eXdpn) online.
 
+---
+
 ## Source Code and UI-application ##
 The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
 Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally. 
+
+---
+
+## Qualitative Analysis of eXdpn ##
+To provide some insights to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. The analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
 
 ---

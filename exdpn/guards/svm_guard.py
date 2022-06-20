@@ -211,9 +211,10 @@ class SVM_Guard(Guard):
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
             >>> guard.get_explainable_representation()
-            >>> # todo: figure out how to include a plot 
 
             ```
+        Note: 
+            For plot of explainable representation please check [Data Petri Net Example](https://aarkue.github.io/eXdpn/tree/docs/dpn_example.ipynb)
 
         """
         if self.is_explainable() == False:

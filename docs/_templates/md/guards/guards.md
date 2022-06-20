@@ -1,4 +1,4 @@
-This module contains the functionality to create different machine learning guards to model the behavior at decision points as well as an guard manager to automatically handle the guard training and selected for each decision point.
+This module contains the functionality to create different machine learning guards to model the behavior at decision points as well as an guard manager to automatically handle the guard training and selection for each decision point.
 
 ---
 # Guard Manager #
