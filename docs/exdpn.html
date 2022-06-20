@@ -23,11 +23,10 @@
 
         <h2>Contents</h2>
         <ul>
-  <li><a href="#exdpn">eXdpn</a>
-  <ul>
-    <li><a href="#docker-deployment">Docker Deployment</a></li>
-    <li><a href="#development">Development</a></li>
-  </ul></li>
+  <li><a href="#getting-started">Getting Started</a></li>
+  <li><a href="#documentation">Documentation</a></li>
+  <li><a href="#source-code-and-ui-application">Source Code and UI-application</a></li>
+  <li><a href="#qualitative-analysis-of-exdpn">Qualitative Analysis of eXdpn</a></li>
 </ul>
 
 
@@ -56,55 +55,73 @@
                     <h1 class="modulename">
 exdpn    </h1>
 
-                        <div class="docstring"><h1 id="exdpn">eXdpn</h1>
+                        <div class="docstring"><p>exdpn (e<strong>x</strong>plainable <strong>d</strong>ata <strong>P</strong>etri <strong>n</strong>ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.</p>
 
-<p>E<strong>x</strong>plainable <strong>d</strong>ata <strong>P</strong>etri <strong>n</strong>ets
-Tool to mine and evaluate explainable data Petri nets using different classification techniques. </p>
+<hr />
 
-<h2 id="docker-deployment">Docker Deployment</h2>
+<h2 id="getting-started">Getting Started</h2>
 
-<p>The project can be run with Docker.
-The easiest way to do so is with the included <code>docker-compose.yml</code> file.</p>
+<p>Installing exdpn is possible via pip:</p>
 
-<h3 id="using-docker-compose">Using Docker Compose</h3>
+<div class="pdoc-code codehilite"><pre><span></span><code>python -m pip install exdpn 
+</code></pre></div>
 
-<ol>
-<li><code>docker-compose up</code></li>
-</ol>
+<p>Now you can mine your first explainable data Petri net given an event log in XES format:</p>
 
-<p>To force re-creation of the container add the <code>--build</code> flag to the <code>docker-compose</code> command: <code>docker-compose up --build</code>.
-The web ui will then be available on port 8080.</p>
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="exdpn/util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">import_log</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="exdpn/data_petri_net.html">exdpn.data_petri_net</a></span> <span class="kn">import</span> <span class="n">Data_Petri_Net</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">event_log</span> <span class="o">=</span> <span class="n">import_log</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_event_log.xes&gt;&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dpn</span> <span class="o">=</span> <span class="n">Data_Petri_Net</span><span class="p">(</span><span class="n">event_log</span><span class="p">,</span> <span class="n">event_level_attributes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_level_attribute&#39;</span><span class="p">])</span>
+</code></pre></div>
 
-<h3 id="building-the-docker-container">Building the Docker Container</h3>
+<p>This will mine a data Petri net for your event log, considering only "event_level_attribute" as a possible attribute for classification. 
+The <code><a href="exdpn/data_petri_net/data_petri_net.html#Data_Petri_Net">exdpn.data_petri_net.data_petri_net.Data_Petri_Net</a></code> class already takes care of the workflow to create a data Petri net. In cases where fine-grained 
+control of the data Petri net creation is needed or only certain functionallity of this package is needed, one can simply call all the needed functions and methods directly. </p>
 
-<ol>
-<li><code>docker build .</code></li>
-<li><code>docker run -p 8080:5000 &lt;container id&gt;</code></li>
-</ol>
+<p>Let's say we are only interested in extracting the guard dataset at one specific decision point in the Petri net.
+We start off by importing the event log from memory and creating a standard Petri net:</p>
 
-<p>The web ui will then be available on port 8080.</p>
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="exdpn/util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">import_log</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="exdpn/petri_net.html">exdpn.petri_net</a></span> <span class="kn">import</span> <span class="n">get_petri_net</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">event_log</span> <span class="o">=</span> <span class="n">import_log</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_event_log.xes&gt;&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pn</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">fm</span> <span class="o">=</span> <span class="n">get_petri_net</span><span class="p">(</span><span class="n">event_log</span><span class="p">)</span>
+</code></pre></div>
 
-<h2 id="development">Development</h2>
+<p>We then extract all the decision points and specify our place of interest using the <code><a href="exdpn/decisionpoints.html">exdpn.decisionpoints</a></code> module:</p>
 
-<ol>
-<li>First, if not done yet, create a virtual env using <code>python3 -m venv venv</code>, activate it (see 2.) and install all required packages using <code>pip install -r requirements.txt</code>.</li>
-<li>Activate the environment using <code>source venv/bin/activate</code> (or <code>venv\Scripts\activate.bat</code> on Windows).</li>
-<li>Run <code>python setup.py bdist_wheel</code> to build the project.</li>
-<li>It can then be installed using <code>pip install dist/[wheel name].whl --force-reinstall</code>.</li>
-</ol>
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="exdpn/decisionpoints.html">exdpn.decisionpoints</a></span> <span class="kn">import</span> <span class="n">find_decision_points</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dp_dict</span> <span class="o">=</span> <span class="n">find_decision_points</span><span class="p">(</span><span class="n">pn</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">decision_point</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dp_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
 
-<h3 id="ui-flask-webserver">UI: Flask Webserver</h3>
+<p>To extract a guard dataset for the specific place <code>decision_point</code>, we call the following data extraction function from <code><a href="exdpn/guard_datasets.html">exdpn.guard_datasets</a></code>:</p>
 
-<ol>
-<li>Set the FLASK_ENV env. variable <code>export FLASK_ENV=development</code> (bash) or <code>$env:FLASK_ENV = "development"</code> (powershell)</li>
-<li>Navigate into the ui/ directory and run <code>flask run</code></li>
-</ol>
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn"><a href="exdpn/guard_datasets.html">exdpn.guard_datasets</a></span> <span class="kn">import</span> <span class="n">extract_all_datasets</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">extract_all_datasets</span><span class="p">(</span><span class="n">event_log</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span> <span class="n">event_level_attributes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_level_attribute&#39;</span><span class="p">],</span> <span class="n">places</span><span class="o">=</span><span class="p">[</span><span class="n">decision_point</span><span class="p">])</span>
+</code></pre></div>
 
-<h3 id="generating-documentation">Generating Documentation</h3>
+<p>Further examples can be seen in the API documentation. The sometimes referenced XES file <code>p2p_base.xes</code> can be found on Github.</p>
 
-<ul>
-<li>Run <code>pdoc ./exdpn -o ./docs -d google -t ./docs/_templates</code></li>
-</ul>
+<hr />
+
+<h2 id="documentation">Documentation</h2>
+
+<p>This package provides an <a href="https://aarkue.github.io/eXdpn">API documentation</a> online.</p>
+
+<hr />
+
+<h2 id="source-code-and-ui-application">Source Code and UI-application</h2>
+
+<p>The source code of this package is available on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).
+Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally. </p>
+
+<hr />
+
+<h2 id="qualitative-analysis-of-exdpn">Qualitative Analysis of eXdpn</h2>
+
+<p>To provide some insights to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. The analysis can be found on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).</p>
+
+<hr />
 </div>
 
                         <input id="exdpn-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -112,7 +129,7 @@ The web ui will then be available on port 8080.</p>
                         <label class="view-source-button" for="exdpn-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ../README.md</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ./../docs/_templates/md/exdpn.md</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span></pre></div>
 

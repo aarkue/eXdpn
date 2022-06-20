@@ -1,59 +1,68 @@
-import abc  # use abstract base classes to define interfaces
+import abc
 from pandas import DataFrame
-from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List, Any 
 from matplotlib.figure import Figure
+
+from pm4py.objects.petri_net.obj import PetriNet
 
 
 class Guard(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def __init__(self, hyperparameters: Dict[str, Any]) -> None:
-        """Initializes a guard with the provided hyperparameters.
+        """Abstract class defining the guard interface.
+
         Args:
-            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier
+            hyperparameters (Dict[str, Any]): The hyperparameters used for the concrete machine learning classifier initialization.
+
         """
-        
         pass
 
 
     @abc.abstractmethod
     def train(self, X: DataFrame, y: DataFrame) -> None:
-        """Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.
+        """Train the concrete machine learning classifier using the provided dataset.
         Args:
-            X (DataFrame): Feature variables of the provided dataset, used to train the classifier behind the guard 
-            y (DataFrame): Target variable of the provided dataset, is to be predicted using X
+            X (DataFrame): The feature variables, used to train the classifier behind the guard.
+            y (DataFrame): The target variable of the provided dataset.
+
+        Note:
+            It is assumed that `y` corresponds to a list of `pm4py.objects.petri_net.obj.PetriNet.Transition` objects.
+
         """
-        
         pass
 
 
     @abc.abstractmethod
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
-        """Shall use the classifier/model behind the guard to predict the next transition.
+        """Uses the concrete machine learning classifier to predict a transition.
+
         Args:
-            input_instances (DataFrame): Dataset of input instances used to predict the target variable, i.e., the next transition
+            input_instances (DataFrame): The dataset of input instances used to predict the target variable.
+
         Returns:
-            predicted_transitions (List[PetriNet.Transition]): Predicted transitions
+            List[PetriNet.Transition]: The predicted transitions.
+
         """
-        
         pass
 
 
     @abc.abstractmethod
     def is_explainable(self) -> bool:
-        """Shall return whether or not the internal classifier is explainable.
+        """Returns whether or not the concrete machine learning classifier is explainable.
+
         Returns:
-            explainable (bool): Whether or not the guard is explainable
+            bool: Whether or not the concrete machine learning classifier is explainable.
+            
         """
-        
         pass
 
 
     @abc.abstractmethod
     def get_explainable_representation(self) -> Figure:
-        """Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.
+        """Return an explainable representation of the concrete machine learning classifier.
+
         Returns:
-            explainable_representation (Figure): Explainable representation of the guard
+            Figure: The explainable representation of the concrete machine learning classifier.
+
         """
-        
         pass

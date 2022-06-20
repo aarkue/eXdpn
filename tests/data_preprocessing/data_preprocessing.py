@@ -41,7 +41,7 @@ def preprocess_data() -> Tuple[DataFrame]:
 
 
     # one hot encoding
-    ohe, ohe_columns = fit_ohe(df_X_train_scaled)
+    ohe = fit_ohe(df_X_train_scaled)
     df_X_train_scaled_ohe = apply_ohe(df_X_train_scaled, ohe) 
     df_X_test_scaled_ohe = apply_ohe(df_X_test_scaled, ohe) 
 

@@ -1,3 +1,8 @@
+"""
+.. include:: ./../../docs/_templates/md/guards/guards.md
+
+"""
+
 from exdpn.guards.guard import Guard
 from exdpn.guards.decision_tree_guard import Decision_Tree_Guard
 from exdpn.guards.neural_network_guard import Neural_Network_Guard

@@ -72,65 +72,74 @@
 
                         <label class="view-source-button" for="guard-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">import</span> <span class="nn">abc</span>  <span class="c1"># use abstract base classes to define interfaces</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">import</span> <span class="nn">abc</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">pm4py.objects.petri_net.obj</span> <span class="kn">import</span> <span class="n">PetriNet</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span> 
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span> 
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span> <span class="nn">pm4py.objects.petri_net.obj</span> <span class="kn">import</span> <span class="n">PetriNet</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="k">class</span> <span class="nc">Guard</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>        <span class="sd">&quot;&quot;&quot;Initializes a guard with the provided hyperparameters.</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">        Args:</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="k">pass</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="sd">&quot;&quot;&quot;Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        Args:</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">            X (DataFrame): Feature variables of the provided dataset, used to train the classifier behind the guard </span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">            y (DataFrame): Target variable of the provided dataset, is to be predicted using X</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="k">pass</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_instances</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PetriNet</span><span class="o">.</span><span class="n">Transition</span><span class="p">]:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="sd">&quot;&quot;&quot;Shall use the classifier/model behind the guard to predict the next transition.</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        Args:</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">            input_instances (DataFrame): Dataset of input instances used to predict the target variable, i.e., the next transition</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        Returns:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">            predicted_transitions (List[PetriNet.Transition]): Predicted transitions</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="k">pass</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">Guard</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>        <span class="sd">&quot;&quot;&quot;Abstract class defining the guard interface.</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        Args:</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">            hyperparameters (Dict[str, Any]): The hyperparameters used for the concrete machine learning classifier initialization.</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="k">pass</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>        <span class="sd">&quot;&quot;&quot;Train the concrete machine learning classifier using the provided dataset.</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        Args:</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">            X (DataFrame): The feature variables, used to train the classifier behind the guard.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">            y (DataFrame): The target variable of the provided dataset.</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">        Note:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">            It is assumed that `y` corresponds to a list of `pm4py.objects.petri_net.obj.PetriNet.Transition` objects.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="k">pass</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_instances</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PetriNet</span><span class="o">.</span><span class="n">Transition</span><span class="p">]:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="sd">&quot;&quot;&quot;Uses the concrete machine learning classifier to predict a transition.</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">            input_instances (DataFrame): The dataset of input instances used to predict the target variable.</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="k">def</span> <span class="nf">is_explainable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="sd">&quot;&quot;&quot;Shall return whether or not the internal classifier is explainable.</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        Returns:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">            explainable (bool): Whether or not the guard is explainable</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="k">pass</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="sd">&quot;&quot;&quot;Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        Returns:</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">            explainable_representation (Figure): Explainable representation of the guard</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="k">pass</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">        Returns:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">            List[PetriNet.Transition]: The predicted transitions.</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="k">pass</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">def</span> <span class="nf">is_explainable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="sd">&quot;&quot;&quot;Returns whether or not the concrete machine learning classifier is explainable.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">        Returns:</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">            bool: Whether or not the concrete machine learning classifier is explainable.</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">            </span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="k">pass</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="sd">&quot;&quot;&quot;Return an explainable representation of the concrete machine learning classifier.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">        Returns:</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">            Figure: The explainable representation of the concrete machine learning classifier.</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -146,58 +155,66 @@
 
     </div>
     <a class="headerlink" href="#Guard"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard-9"><a href="#Guard-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">Guard</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="Guard-10"><a href="#Guard-10"><span class="linenos">10</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard-11"><a href="#Guard-11"><span class="linenos">11</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Guard-12"><a href="#Guard-12"><span class="linenos">12</span></a>        <span class="sd">&quot;&quot;&quot;Initializes a guard with the provided hyperparameters.</span>
-</span><span id="Guard-13"><a href="#Guard-13"><span class="linenos">13</span></a><span class="sd">        Args:</span>
-</span><span id="Guard-14"><a href="#Guard-14"><span class="linenos">14</span></a><span class="sd">            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier</span>
-</span><span id="Guard-15"><a href="#Guard-15"><span class="linenos">15</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard-16"><a href="#Guard-16"><span class="linenos">16</span></a>        
-</span><span id="Guard-17"><a href="#Guard-17"><span class="linenos">17</span></a>        <span class="k">pass</span>
-</span><span id="Guard-18"><a href="#Guard-18"><span class="linenos">18</span></a>
-</span><span id="Guard-19"><a href="#Guard-19"><span class="linenos">19</span></a>
-</span><span id="Guard-20"><a href="#Guard-20"><span class="linenos">20</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard-21"><a href="#Guard-21"><span class="linenos">21</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Guard-22"><a href="#Guard-22"><span class="linenos">22</span></a>        <span class="sd">&quot;&quot;&quot;Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.</span>
-</span><span id="Guard-23"><a href="#Guard-23"><span class="linenos">23</span></a><span class="sd">        Args:</span>
-</span><span id="Guard-24"><a href="#Guard-24"><span class="linenos">24</span></a><span class="sd">            X (DataFrame): Feature variables of the provided dataset, used to train the classifier behind the guard </span>
-</span><span id="Guard-25"><a href="#Guard-25"><span class="linenos">25</span></a><span class="sd">            y (DataFrame): Target variable of the provided dataset, is to be predicted using X</span>
-</span><span id="Guard-26"><a href="#Guard-26"><span class="linenos">26</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard-27"><a href="#Guard-27"><span class="linenos">27</span></a>        
-</span><span id="Guard-28"><a href="#Guard-28"><span class="linenos">28</span></a>        <span class="k">pass</span>
-</span><span id="Guard-29"><a href="#Guard-29"><span class="linenos">29</span></a>
-</span><span id="Guard-30"><a href="#Guard-30"><span class="linenos">30</span></a>
-</span><span id="Guard-31"><a href="#Guard-31"><span class="linenos">31</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard-32"><a href="#Guard-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_instances</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PetriNet</span><span class="o">.</span><span class="n">Transition</span><span class="p">]:</span>
-</span><span id="Guard-33"><a href="#Guard-33"><span class="linenos">33</span></a>        <span class="sd">&quot;&quot;&quot;Shall use the classifier/model behind the guard to predict the next transition.</span>
-</span><span id="Guard-34"><a href="#Guard-34"><span class="linenos">34</span></a><span class="sd">        Args:</span>
-</span><span id="Guard-35"><a href="#Guard-35"><span class="linenos">35</span></a><span class="sd">            input_instances (DataFrame): Dataset of input instances used to predict the target variable, i.e., the next transition</span>
-</span><span id="Guard-36"><a href="#Guard-36"><span class="linenos">36</span></a><span class="sd">        Returns:</span>
-</span><span id="Guard-37"><a href="#Guard-37"><span class="linenos">37</span></a><span class="sd">            predicted_transitions (List[PetriNet.Transition]): Predicted transitions</span>
-</span><span id="Guard-38"><a href="#Guard-38"><span class="linenos">38</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard-39"><a href="#Guard-39"><span class="linenos">39</span></a>        
-</span><span id="Guard-40"><a href="#Guard-40"><span class="linenos">40</span></a>        <span class="k">pass</span>
-</span><span id="Guard-41"><a href="#Guard-41"><span class="linenos">41</span></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard-10"><a href="#Guard-10"><span class="linenos">10</span></a><span class="k">class</span> <span class="nc">Guard</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="Guard-11"><a href="#Guard-11"><span class="linenos">11</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard-12"><a href="#Guard-12"><span class="linenos">12</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Guard-13"><a href="#Guard-13"><span class="linenos">13</span></a>        <span class="sd">&quot;&quot;&quot;Abstract class defining the guard interface.</span>
+</span><span id="Guard-14"><a href="#Guard-14"><span class="linenos">14</span></a>
+</span><span id="Guard-15"><a href="#Guard-15"><span class="linenos">15</span></a><span class="sd">        Args:</span>
+</span><span id="Guard-16"><a href="#Guard-16"><span class="linenos">16</span></a><span class="sd">            hyperparameters (Dict[str, Any]): The hyperparameters used for the concrete machine learning classifier initialization.</span>
+</span><span id="Guard-17"><a href="#Guard-17"><span class="linenos">17</span></a>
+</span><span id="Guard-18"><a href="#Guard-18"><span class="linenos">18</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard-19"><a href="#Guard-19"><span class="linenos">19</span></a>        <span class="k">pass</span>
+</span><span id="Guard-20"><a href="#Guard-20"><span class="linenos">20</span></a>
+</span><span id="Guard-21"><a href="#Guard-21"><span class="linenos">21</span></a>
+</span><span id="Guard-22"><a href="#Guard-22"><span class="linenos">22</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard-23"><a href="#Guard-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Guard-24"><a href="#Guard-24"><span class="linenos">24</span></a>        <span class="sd">&quot;&quot;&quot;Train the concrete machine learning classifier using the provided dataset.</span>
+</span><span id="Guard-25"><a href="#Guard-25"><span class="linenos">25</span></a><span class="sd">        Args:</span>
+</span><span id="Guard-26"><a href="#Guard-26"><span class="linenos">26</span></a><span class="sd">            X (DataFrame): The feature variables, used to train the classifier behind the guard.</span>
+</span><span id="Guard-27"><a href="#Guard-27"><span class="linenos">27</span></a><span class="sd">            y (DataFrame): The target variable of the provided dataset.</span>
+</span><span id="Guard-28"><a href="#Guard-28"><span class="linenos">28</span></a>
+</span><span id="Guard-29"><a href="#Guard-29"><span class="linenos">29</span></a><span class="sd">        Note:</span>
+</span><span id="Guard-30"><a href="#Guard-30"><span class="linenos">30</span></a><span class="sd">            It is assumed that `y` corresponds to a list of `pm4py.objects.petri_net.obj.PetriNet.Transition` objects.</span>
+</span><span id="Guard-31"><a href="#Guard-31"><span class="linenos">31</span></a>
+</span><span id="Guard-32"><a href="#Guard-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard-33"><a href="#Guard-33"><span class="linenos">33</span></a>        <span class="k">pass</span>
+</span><span id="Guard-34"><a href="#Guard-34"><span class="linenos">34</span></a>
+</span><span id="Guard-35"><a href="#Guard-35"><span class="linenos">35</span></a>
+</span><span id="Guard-36"><a href="#Guard-36"><span class="linenos">36</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard-37"><a href="#Guard-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_instances</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PetriNet</span><span class="o">.</span><span class="n">Transition</span><span class="p">]:</span>
+</span><span id="Guard-38"><a href="#Guard-38"><span class="linenos">38</span></a>        <span class="sd">&quot;&quot;&quot;Uses the concrete machine learning classifier to predict a transition.</span>
+</span><span id="Guard-39"><a href="#Guard-39"><span class="linenos">39</span></a>
+</span><span id="Guard-40"><a href="#Guard-40"><span class="linenos">40</span></a><span class="sd">        Args:</span>
+</span><span id="Guard-41"><a href="#Guard-41"><span class="linenos">41</span></a><span class="sd">            input_instances (DataFrame): The dataset of input instances used to predict the target variable.</span>
 </span><span id="Guard-42"><a href="#Guard-42"><span class="linenos">42</span></a>
-</span><span id="Guard-43"><a href="#Guard-43"><span class="linenos">43</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard-44"><a href="#Guard-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="nf">is_explainable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="Guard-45"><a href="#Guard-45"><span class="linenos">45</span></a>        <span class="sd">&quot;&quot;&quot;Shall return whether or not the internal classifier is explainable.</span>
-</span><span id="Guard-46"><a href="#Guard-46"><span class="linenos">46</span></a><span class="sd">        Returns:</span>
-</span><span id="Guard-47"><a href="#Guard-47"><span class="linenos">47</span></a><span class="sd">            explainable (bool): Whether or not the guard is explainable</span>
-</span><span id="Guard-48"><a href="#Guard-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard-49"><a href="#Guard-49"><span class="linenos">49</span></a>        
-</span><span id="Guard-50"><a href="#Guard-50"><span class="linenos">50</span></a>        <span class="k">pass</span>
-</span><span id="Guard-51"><a href="#Guard-51"><span class="linenos">51</span></a>
-</span><span id="Guard-52"><a href="#Guard-52"><span class="linenos">52</span></a>
-</span><span id="Guard-53"><a href="#Guard-53"><span class="linenos">53</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard-54"><a href="#Guard-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-</span><span id="Guard-55"><a href="#Guard-55"><span class="linenos">55</span></a>        <span class="sd">&quot;&quot;&quot;Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.</span>
-</span><span id="Guard-56"><a href="#Guard-56"><span class="linenos">56</span></a><span class="sd">        Returns:</span>
-</span><span id="Guard-57"><a href="#Guard-57"><span class="linenos">57</span></a><span class="sd">            explainable_representation (Figure): Explainable representation of the guard</span>
-</span><span id="Guard-58"><a href="#Guard-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard-59"><a href="#Guard-59"><span class="linenos">59</span></a>        
-</span><span id="Guard-60"><a href="#Guard-60"><span class="linenos">60</span></a>        <span class="k">pass</span>
+</span><span id="Guard-43"><a href="#Guard-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="Guard-44"><a href="#Guard-44"><span class="linenos">44</span></a><span class="sd">            List[PetriNet.Transition]: The predicted transitions.</span>
+</span><span id="Guard-45"><a href="#Guard-45"><span class="linenos">45</span></a>
+</span><span id="Guard-46"><a href="#Guard-46"><span class="linenos">46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard-47"><a href="#Guard-47"><span class="linenos">47</span></a>        <span class="k">pass</span>
+</span><span id="Guard-48"><a href="#Guard-48"><span class="linenos">48</span></a>
+</span><span id="Guard-49"><a href="#Guard-49"><span class="linenos">49</span></a>
+</span><span id="Guard-50"><a href="#Guard-50"><span class="linenos">50</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard-51"><a href="#Guard-51"><span class="linenos">51</span></a>    <span class="k">def</span> <span class="nf">is_explainable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Guard-52"><a href="#Guard-52"><span class="linenos">52</span></a>        <span class="sd">&quot;&quot;&quot;Returns whether or not the concrete machine learning classifier is explainable.</span>
+</span><span id="Guard-53"><a href="#Guard-53"><span class="linenos">53</span></a>
+</span><span id="Guard-54"><a href="#Guard-54"><span class="linenos">54</span></a><span class="sd">        Returns:</span>
+</span><span id="Guard-55"><a href="#Guard-55"><span class="linenos">55</span></a><span class="sd">            bool: Whether or not the concrete machine learning classifier is explainable.</span>
+</span><span id="Guard-56"><a href="#Guard-56"><span class="linenos">56</span></a><span class="sd">            </span>
+</span><span id="Guard-57"><a href="#Guard-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard-58"><a href="#Guard-58"><span class="linenos">58</span></a>        <span class="k">pass</span>
+</span><span id="Guard-59"><a href="#Guard-59"><span class="linenos">59</span></a>
+</span><span id="Guard-60"><a href="#Guard-60"><span class="linenos">60</span></a>
+</span><span id="Guard-61"><a href="#Guard-61"><span class="linenos">61</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard-62"><a href="#Guard-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
+</span><span id="Guard-63"><a href="#Guard-63"><span class="linenos">63</span></a>        <span class="sd">&quot;&quot;&quot;Return an explainable representation of the concrete machine learning classifier.</span>
+</span><span id="Guard-64"><a href="#Guard-64"><span class="linenos">64</span></a>
+</span><span id="Guard-65"><a href="#Guard-65"><span class="linenos">65</span></a><span class="sd">        Returns:</span>
+</span><span id="Guard-66"><a href="#Guard-66"><span class="linenos">66</span></a><span class="sd">            Figure: The explainable representation of the concrete machine learning classifier.</span>
+</span><span id="Guard-67"><a href="#Guard-67"><span class="linenos">67</span></a>
+</span><span id="Guard-68"><a href="#Guard-68"><span class="linenos">68</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard-69"><a href="#Guard-69"><span class="linenos">69</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -214,23 +231,24 @@
 
     </div>
     <a class="headerlink" href="#Guard.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.__init__-10"><a href="#Guard.__init__-10"><span class="linenos">10</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard.__init__-11"><a href="#Guard.__init__-11"><span class="linenos">11</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Guard.__init__-12"><a href="#Guard.__init__-12"><span class="linenos">12</span></a>        <span class="sd">&quot;&quot;&quot;Initializes a guard with the provided hyperparameters.</span>
-</span><span id="Guard.__init__-13"><a href="#Guard.__init__-13"><span class="linenos">13</span></a><span class="sd">        Args:</span>
-</span><span id="Guard.__init__-14"><a href="#Guard.__init__-14"><span class="linenos">14</span></a><span class="sd">            hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier</span>
-</span><span id="Guard.__init__-15"><a href="#Guard.__init__-15"><span class="linenos">15</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard.__init__-16"><a href="#Guard.__init__-16"><span class="linenos">16</span></a>        
-</span><span id="Guard.__init__-17"><a href="#Guard.__init__-17"><span class="linenos">17</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.__init__-11"><a href="#Guard.__init__-11"><span class="linenos">11</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard.__init__-12"><a href="#Guard.__init__-12"><span class="linenos">12</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Guard.__init__-13"><a href="#Guard.__init__-13"><span class="linenos">13</span></a>        <span class="sd">&quot;&quot;&quot;Abstract class defining the guard interface.</span>
+</span><span id="Guard.__init__-14"><a href="#Guard.__init__-14"><span class="linenos">14</span></a>
+</span><span id="Guard.__init__-15"><a href="#Guard.__init__-15"><span class="linenos">15</span></a><span class="sd">        Args:</span>
+</span><span id="Guard.__init__-16"><a href="#Guard.__init__-16"><span class="linenos">16</span></a><span class="sd">            hyperparameters (Dict[str, Any]): The hyperparameters used for the concrete machine learning classifier initialization.</span>
+</span><span id="Guard.__init__-17"><a href="#Guard.__init__-17"><span class="linenos">17</span></a>
+</span><span id="Guard.__init__-18"><a href="#Guard.__init__-18"><span class="linenos">18</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard.__init__-19"><a href="#Guard.__init__-19"><span class="linenos">19</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Initializes a guard with the provided hyperparameters.</p>
+            <div class="docstring"><p>Abstract class defining the guard interface.</p>
 
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>hyperparameters (Dict[str, Any]):</strong>  Hyperparameters used for the classifier</li>
+<li><strong>hyperparameters (Dict[str, Any]):</strong>  The hyperparameters used for the concrete machine learning classifier initialization.</li>
 </ul>
 </div>
 
@@ -248,26 +266,35 @@
 
     </div>
     <a class="headerlink" href="#Guard.train"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.train-20"><a href="#Guard.train-20"><span class="linenos">20</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard.train-21"><a href="#Guard.train-21"><span class="linenos">21</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Guard.train-22"><a href="#Guard.train-22"><span class="linenos">22</span></a>        <span class="sd">&quot;&quot;&quot;Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.</span>
-</span><span id="Guard.train-23"><a href="#Guard.train-23"><span class="linenos">23</span></a><span class="sd">        Args:</span>
-</span><span id="Guard.train-24"><a href="#Guard.train-24"><span class="linenos">24</span></a><span class="sd">            X (DataFrame): Feature variables of the provided dataset, used to train the classifier behind the guard </span>
-</span><span id="Guard.train-25"><a href="#Guard.train-25"><span class="linenos">25</span></a><span class="sd">            y (DataFrame): Target variable of the provided dataset, is to be predicted using X</span>
-</span><span id="Guard.train-26"><a href="#Guard.train-26"><span class="linenos">26</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard.train-27"><a href="#Guard.train-27"><span class="linenos">27</span></a>        
-</span><span id="Guard.train-28"><a href="#Guard.train-28"><span class="linenos">28</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.train-22"><a href="#Guard.train-22"><span class="linenos">22</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard.train-23"><a href="#Guard.train-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Guard.train-24"><a href="#Guard.train-24"><span class="linenos">24</span></a>        <span class="sd">&quot;&quot;&quot;Train the concrete machine learning classifier using the provided dataset.</span>
+</span><span id="Guard.train-25"><a href="#Guard.train-25"><span class="linenos">25</span></a><span class="sd">        Args:</span>
+</span><span id="Guard.train-26"><a href="#Guard.train-26"><span class="linenos">26</span></a><span class="sd">            X (DataFrame): The feature variables, used to train the classifier behind the guard.</span>
+</span><span id="Guard.train-27"><a href="#Guard.train-27"><span class="linenos">27</span></a><span class="sd">            y (DataFrame): The target variable of the provided dataset.</span>
+</span><span id="Guard.train-28"><a href="#Guard.train-28"><span class="linenos">28</span></a>
+</span><span id="Guard.train-29"><a href="#Guard.train-29"><span class="linenos">29</span></a><span class="sd">        Note:</span>
+</span><span id="Guard.train-30"><a href="#Guard.train-30"><span class="linenos">30</span></a><span class="sd">            It is assumed that `y` corresponds to a list of `pm4py.objects.petri_net.obj.PetriNet.Transition` objects.</span>
+</span><span id="Guard.train-31"><a href="#Guard.train-31"><span class="linenos">31</span></a>
+</span><span id="Guard.train-32"><a href="#Guard.train-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard.train-33"><a href="#Guard.train-33"><span class="linenos">33</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Shall train the concrete classifier/model behind the guard using the dataframe and the specified hyperparameters.</p>
+            <div class="docstring"><p>Train the concrete machine learning classifier using the provided dataset.</p>
 
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>X (DataFrame):</strong>  Feature variables of the provided dataset, used to train the classifier behind the guard </li>
-<li><strong>y (DataFrame):</strong>  Target variable of the provided dataset, is to be predicted using X</li>
+<li><strong>X (DataFrame):</strong>  The feature variables, used to train the classifier behind the guard.</li>
+<li><strong>y (DataFrame):</strong>  The target variable of the provided dataset.</li>
 </ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>It is assumed that <code>y</code> corresponds to a list of <code>pm4py.objects.petri_net.obj.PetriNet.Transition</code> objects.</p>
+</blockquote>
 </div>
 
 
@@ -284,31 +311,33 @@
 
     </div>
     <a class="headerlink" href="#Guard.predict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.predict-31"><a href="#Guard.predict-31"><span class="linenos">31</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard.predict-32"><a href="#Guard.predict-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_instances</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PetriNet</span><span class="o">.</span><span class="n">Transition</span><span class="p">]:</span>
-</span><span id="Guard.predict-33"><a href="#Guard.predict-33"><span class="linenos">33</span></a>        <span class="sd">&quot;&quot;&quot;Shall use the classifier/model behind the guard to predict the next transition.</span>
-</span><span id="Guard.predict-34"><a href="#Guard.predict-34"><span class="linenos">34</span></a><span class="sd">        Args:</span>
-</span><span id="Guard.predict-35"><a href="#Guard.predict-35"><span class="linenos">35</span></a><span class="sd">            input_instances (DataFrame): Dataset of input instances used to predict the target variable, i.e., the next transition</span>
-</span><span id="Guard.predict-36"><a href="#Guard.predict-36"><span class="linenos">36</span></a><span class="sd">        Returns:</span>
-</span><span id="Guard.predict-37"><a href="#Guard.predict-37"><span class="linenos">37</span></a><span class="sd">            predicted_transitions (List[PetriNet.Transition]): Predicted transitions</span>
-</span><span id="Guard.predict-38"><a href="#Guard.predict-38"><span class="linenos">38</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard.predict-39"><a href="#Guard.predict-39"><span class="linenos">39</span></a>        
-</span><span id="Guard.predict-40"><a href="#Guard.predict-40"><span class="linenos">40</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.predict-36"><a href="#Guard.predict-36"><span class="linenos">36</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard.predict-37"><a href="#Guard.predict-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_instances</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PetriNet</span><span class="o">.</span><span class="n">Transition</span><span class="p">]:</span>
+</span><span id="Guard.predict-38"><a href="#Guard.predict-38"><span class="linenos">38</span></a>        <span class="sd">&quot;&quot;&quot;Uses the concrete machine learning classifier to predict a transition.</span>
+</span><span id="Guard.predict-39"><a href="#Guard.predict-39"><span class="linenos">39</span></a>
+</span><span id="Guard.predict-40"><a href="#Guard.predict-40"><span class="linenos">40</span></a><span class="sd">        Args:</span>
+</span><span id="Guard.predict-41"><a href="#Guard.predict-41"><span class="linenos">41</span></a><span class="sd">            input_instances (DataFrame): The dataset of input instances used to predict the target variable.</span>
+</span><span id="Guard.predict-42"><a href="#Guard.predict-42"><span class="linenos">42</span></a>
+</span><span id="Guard.predict-43"><a href="#Guard.predict-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="Guard.predict-44"><a href="#Guard.predict-44"><span class="linenos">44</span></a><span class="sd">            List[PetriNet.Transition]: The predicted transitions.</span>
+</span><span id="Guard.predict-45"><a href="#Guard.predict-45"><span class="linenos">45</span></a>
+</span><span id="Guard.predict-46"><a href="#Guard.predict-46"><span class="linenos">46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard.predict-47"><a href="#Guard.predict-47"><span class="linenos">47</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Shall use the classifier/model behind the guard to predict the next transition.</p>
+            <div class="docstring"><p>Uses the concrete machine learning classifier to predict a transition.</p>
 
 <h6 id="args">Args</h6>
 
 <ul>
-<li><strong>input_instances (DataFrame):</strong>  Dataset of input instances used to predict the target variable, i.e., the next transition</li>
+<li><strong>input_instances (DataFrame):</strong>  The dataset of input instances used to predict the target variable.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>predicted_transitions (List[PetriNet.Transition]): Predicted transitions</p>
+  <p>List[PetriNet.Transition]: The predicted transitions.</p>
 </blockquote>
 </div>
 
@@ -326,23 +355,24 @@
 
     </div>
     <a class="headerlink" href="#Guard.is_explainable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.is_explainable-43"><a href="#Guard.is_explainable-43"><span class="linenos">43</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard.is_explainable-44"><a href="#Guard.is_explainable-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="nf">is_explainable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="Guard.is_explainable-45"><a href="#Guard.is_explainable-45"><span class="linenos">45</span></a>        <span class="sd">&quot;&quot;&quot;Shall return whether or not the internal classifier is explainable.</span>
-</span><span id="Guard.is_explainable-46"><a href="#Guard.is_explainable-46"><span class="linenos">46</span></a><span class="sd">        Returns:</span>
-</span><span id="Guard.is_explainable-47"><a href="#Guard.is_explainable-47"><span class="linenos">47</span></a><span class="sd">            explainable (bool): Whether or not the guard is explainable</span>
-</span><span id="Guard.is_explainable-48"><a href="#Guard.is_explainable-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard.is_explainable-49"><a href="#Guard.is_explainable-49"><span class="linenos">49</span></a>        
-</span><span id="Guard.is_explainable-50"><a href="#Guard.is_explainable-50"><span class="linenos">50</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.is_explainable-50"><a href="#Guard.is_explainable-50"><span class="linenos">50</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard.is_explainable-51"><a href="#Guard.is_explainable-51"><span class="linenos">51</span></a>    <span class="k">def</span> <span class="nf">is_explainable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Guard.is_explainable-52"><a href="#Guard.is_explainable-52"><span class="linenos">52</span></a>        <span class="sd">&quot;&quot;&quot;Returns whether or not the concrete machine learning classifier is explainable.</span>
+</span><span id="Guard.is_explainable-53"><a href="#Guard.is_explainable-53"><span class="linenos">53</span></a>
+</span><span id="Guard.is_explainable-54"><a href="#Guard.is_explainable-54"><span class="linenos">54</span></a><span class="sd">        Returns:</span>
+</span><span id="Guard.is_explainable-55"><a href="#Guard.is_explainable-55"><span class="linenos">55</span></a><span class="sd">            bool: Whether or not the concrete machine learning classifier is explainable.</span>
+</span><span id="Guard.is_explainable-56"><a href="#Guard.is_explainable-56"><span class="linenos">56</span></a><span class="sd">            </span>
+</span><span id="Guard.is_explainable-57"><a href="#Guard.is_explainable-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard.is_explainable-58"><a href="#Guard.is_explainable-58"><span class="linenos">58</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Shall return whether or not the internal classifier is explainable.</p>
+            <div class="docstring"><p>Returns whether or not the concrete machine learning classifier is explainable.</p>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>explainable (bool): Whether or not the guard is explainable</p>
+  <p>bool: Whether or not the concrete machine learning classifier is explainable.</p>
 </blockquote>
 </div>
 
@@ -360,23 +390,24 @@
 
     </div>
     <a class="headerlink" href="#Guard.get_explainable_representation"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.get_explainable_representation-53"><a href="#Guard.get_explainable_representation-53"><span class="linenos">53</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="Guard.get_explainable_representation-54"><a href="#Guard.get_explainable_representation-54"><span class="linenos">54</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-</span><span id="Guard.get_explainable_representation-55"><a href="#Guard.get_explainable_representation-55"><span class="linenos">55</span></a>        <span class="sd">&quot;&quot;&quot;Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.</span>
-</span><span id="Guard.get_explainable_representation-56"><a href="#Guard.get_explainable_representation-56"><span class="linenos">56</span></a><span class="sd">        Returns:</span>
-</span><span id="Guard.get_explainable_representation-57"><a href="#Guard.get_explainable_representation-57"><span class="linenos">57</span></a><span class="sd">            explainable_representation (Figure): Explainable representation of the guard</span>
-</span><span id="Guard.get_explainable_representation-58"><a href="#Guard.get_explainable_representation-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Guard.get_explainable_representation-59"><a href="#Guard.get_explainable_representation-59"><span class="linenos">59</span></a>        
-</span><span id="Guard.get_explainable_representation-60"><a href="#Guard.get_explainable_representation-60"><span class="linenos">60</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Guard.get_explainable_representation-61"><a href="#Guard.get_explainable_representation-61"><span class="linenos">61</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="Guard.get_explainable_representation-62"><a href="#Guard.get_explainable_representation-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
+</span><span id="Guard.get_explainable_representation-63"><a href="#Guard.get_explainable_representation-63"><span class="linenos">63</span></a>        <span class="sd">&quot;&quot;&quot;Return an explainable representation of the concrete machine learning classifier.</span>
+</span><span id="Guard.get_explainable_representation-64"><a href="#Guard.get_explainable_representation-64"><span class="linenos">64</span></a>
+</span><span id="Guard.get_explainable_representation-65"><a href="#Guard.get_explainable_representation-65"><span class="linenos">65</span></a><span class="sd">        Returns:</span>
+</span><span id="Guard.get_explainable_representation-66"><a href="#Guard.get_explainable_representation-66"><span class="linenos">66</span></a><span class="sd">            Figure: The explainable representation of the concrete machine learning classifier.</span>
+</span><span id="Guard.get_explainable_representation-67"><a href="#Guard.get_explainable_representation-67"><span class="linenos">67</span></a>
+</span><span id="Guard.get_explainable_representation-68"><a href="#Guard.get_explainable_representation-68"><span class="linenos">68</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Guard.get_explainable_representation-69"><a href="#Guard.get_explainable_representation-69"><span class="linenos">69</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Shall return an explainable representation of the guard. Shall throw an exception if the guard is not explainable.</p>
+            <div class="docstring"><p>Return an explainable representation of the concrete machine learning classifier.</p>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>explainable_representation (Figure): Explainable representation of the guard</p>
+  <p>Figure: The explainable representation of the concrete machine learning classifier.</p>
 </blockquote>
 </div>
 
