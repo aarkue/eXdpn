@@ -198,7 +198,7 @@ class Guard_Manager():
             ```
 
         Note: 
-            For visualization of comparision plot please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/feat/docs/docs/dpn_example.ipynb)
+            For visualization of comparision plot please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
         """
         guard_results = {(str(technique)): result for technique,
