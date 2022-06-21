@@ -3,7 +3,6 @@
 
 """
 
-from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
 import pm4py.util.xes_constants as xes
@@ -11,6 +10,7 @@ from pm4py.statistics.attributes.log.get import get_trace_attribute_values
 
 from typing import Dict, List, Any
 
+from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import extract_all_datasets
 from exdpn.guards.guard import Guard

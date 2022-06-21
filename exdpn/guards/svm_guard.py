@@ -13,7 +13,6 @@ from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List, Any
 import shap
 from matplotlib.figure import Figure
-import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -239,6 +238,7 @@ class SVM_Guard(Guard):
 
             shap_values = explainer.shap_values(self.input_instances)
 
+            # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
             fig, ax = plt.subplots()
             shap.summary_plot(shap_values,
                               self.input_instances,

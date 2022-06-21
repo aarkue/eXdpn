@@ -44,10 +44,8 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
             df_X, df_y_transformed)
 
     # map back to transitions
-    y_train = [next(trans for trans, trans_id in transition_int_map.items(
-    ) if trans_id == y) for y in y_train_mapped]
-    y_test = [next(trans for trans, trans_id in transition_int_map.items(
-    ) if trans_id == y) for y in y_test_mapped]
+    y_train = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped]
+    y_test = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_test_mapped]
 
     return X_train, X_test, pd.Series(y_train), pd.Series(y_test)
 
