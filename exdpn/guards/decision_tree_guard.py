@@ -194,7 +194,7 @@ class Decision_Tree_Guard(Guard):
 
             ```
         Note: 
-            For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/feat/docs/docs/dpn_example.ipynb)
+            For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
         """
 
