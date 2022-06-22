@@ -49,7 +49,7 @@ def extract_all_datasets(
         Dict[Place, DataFrame]: The dictionary mapping places in the Petri net to their corresponding dataset.
 
     Examples:
-        ```python
+        
         >>> import os 
         >>> from exdpn.util import import_log
         >>> from exdpn.petri_net import get_petri_net
@@ -61,8 +61,8 @@ def extract_all_datasets(
         ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
         ...                                       activityName_key = "concept:name")
 
-        ```
-
+        
+        .. include:: ../../docs/_templates/md/example-end.md
     """
 
     # Get list of places and mapping which transitions they correspond to
@@ -122,7 +122,7 @@ def extract_dataset_for_place(
     """Extracts the dataset for a single place using token-based replay. For each instance of this decision found in the log, the following data is extracted:
     1. The specified case-level attributes of the case
     2. The specified event-level attributes of the last event of the case before this decision is made
-    3. The acitivities executed in the events contained in the ```tail_length``` events before the decision
+    3. The acitivities executed in the events contained in the `tail_length` events before the decision
     4. The transition which is chosen (the *target* class)
 
 

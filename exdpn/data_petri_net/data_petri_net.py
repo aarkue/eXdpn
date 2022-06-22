@@ -65,7 +65,6 @@ class Data_Petri_Net():
 
         Examples:
             Use an event log to mine a Petri net based on it:
-            ```python 
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -76,10 +75,7 @@ class Data_Petri_Net():
             ...                      ml_list = [ML_Technique.SVM, ML_Technique.DT],
             ...                      verbose = False)
 
-            ``` 
-
             Providing an already mined Petri net:
-            ```python
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -94,10 +90,7 @@ class Data_Petri_Net():
             ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
             ...                      verbose = False)
 
-            ```
-
             Customize a data Petri net with personal hyperparameters and a guard threshold:
-            ```python 
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -111,9 +104,8 @@ class Data_Petri_Net():
             ...                      guard_threshold = 0.7,
             ...                      verbose = False)
 
-            ```
-
-        """
+            .. include:: ../../docs/_templates/md/example-end.md
+            """
 
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:
@@ -166,8 +158,9 @@ class Data_Petri_Net():
         Returns:
             Dict[PetriNet.Place, Guard]: The best performing guard for each decision point with respect to the F1-score.
 
+      
         Examples:
-            ```python
+            
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -180,8 +173,8 @@ class Data_Petri_Net():
             ...                      verbose = False)
             >>> best_guards = dpn.get_best()
 
-            ``` 
-
+             
+            .. include:: ../../docs/_templates/md/example-end.md
         """
 
         if self.guard_per_place != None:
@@ -214,7 +207,7 @@ class Data_Petri_Net():
             Guard: The best guard at `place`.
 
         Examples:
-            ```python
+            
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -230,8 +223,7 @@ class Data_Petri_Net():
             >>> my_decision_point = all_decision_points[0]
             >>> my_guard = dpn.get_guard_at_place(my_decision_point)
 
-            ```
-
+            .. include:: ../../docs/_templates/md/example-end.md
         """
 
         if self.guard_per_place == None:
@@ -250,7 +242,7 @@ class Data_Petri_Net():
             float: Fraction of traces that respected all decision point guards passed during token based replay.
 
         Examples:
-            ```python
+           ```pyshef  
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -264,8 +256,7 @@ class Data_Petri_Net():
             >>> dpn.get_mean_guard_conformance(event_log) # value may deviate
             0.949
 
-            ```
-
+            .. include:: ../../docs/_templates/md/example-end.md
         """
 
         if self.guard_per_place == None:

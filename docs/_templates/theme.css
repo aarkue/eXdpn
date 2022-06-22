@@ -3,6 +3,10 @@
     --pdoc-background: #fff;
 }
 
+pre code .gp {
+    user-select: none;
+}
+
 .pdoc {
     --text: #212529;
     --muted: #6c757d;

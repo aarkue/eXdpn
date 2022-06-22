@@ -17,7 +17,7 @@ def find_decision_points(net: PetriNet) -> Dict[PetriNet.Place, Set[PetriNet.Tra
         Dict[PetriNet.Place, Set[PetriNet.Transition]]: A dictionary mapping places to the possible outgoing transitions.
 
     Examples:
-        ```python
+        
         >>> import os 
         >>> from exdpn.util import import_log
         >>> from exdpn.petri_net import get_petri_net
@@ -28,8 +28,7 @@ def find_decision_points(net: PetriNet) -> Dict[PetriNet.Place, Set[PetriNet.Tra
         >>> print(dp_dict.keys())
         dict_keys([({'create purchase order'}, {'request manager approval', 'request standard approval'}), ({'request standard approval'}, {'approve purchase', 'reject purchase'}), ({'request manager approval'}, {'manager approve purchase', 'manager reject purchase'})])
 
-        ```
-
+        .. include:: ../../docs/_templates/md/example-end.md
     """
 
     # Build mapping of places to their associated target transitions

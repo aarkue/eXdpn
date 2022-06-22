@@ -28,12 +28,12 @@ class Decision_Tree_Guard(Guard):
             TypeError: If supplied hyperparameters are invalid.
 
         Examples:
-            ```python
+            
             >>> from exdpn.guards import Decision_Tree_Guard
             >>> guard = Decision_Tree_Guard()
 
-            ```
-
+            
+            .. include:: ../../docs/_templates/md/example-end.md
         """
 
         super().__init__(hyperparameters)
@@ -55,7 +55,7 @@ class Decision_Tree_Guard(Guard):
             y (DataFrame): Target variable of the provided dataset, is to be predicted using `X`.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -69,15 +69,15 @@ class Decision_Tree_Guard(Guard):
             ...                                       case_level_attributes =["concept:name"], 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
-            >>> # select a certrain decision point and the corresponding data set 
+            >>> # select a c decision point and the corresponding data set 
             >>> dp = list(dp_dataset_map.keys())[1]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Decision_Tree_Guard()
             >>> guard.train(X_train, y_train)
 
-            ```
-
+            
+            .. include:: ../../docs/_templates/md/example-end.md
         """
 
         # one hot encoding for categorical data
@@ -105,7 +105,7 @@ class Decision_Tree_Guard(Guard):
             List[PetriNet.Transition]: The list of predicted transitions.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -113,14 +113,14 @@ class Decision_Tree_Guard(Guard):
             >>> from exdpn import guards
             >>> from exdpn.guards import Decision_Tree_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
-            >>> #event_log = import_log('p2p_base.xes')
+            >>> # event_log = import_log('p2p_base.xes')
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
             >>> pn, im, fm = get_petri_net(event_log)
             >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
             ...                                       case_level_attributes =["concept:name"], 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
-            >>> # select a certrain decision point and the corresponding data set 
+            >>> # select a certain decision point and the corresponding data set 
             >>> dp_key = [k for k in dp_dataset_map.keys()][1]
             >>> dp_dataset = dp_dataset_map[dp_key]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
@@ -128,7 +128,7 @@ class Decision_Tree_Guard(Guard):
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
         """
 
         # one hot encoding for categorical data
@@ -147,13 +147,14 @@ class Decision_Tree_Guard(Guard):
             bool: Whether or not the guard is explainable.
 
         Examples:
-            ```python
+            
             >>> from exdpn.guards import Decision_Tree_Guard
             >>> guard = Decision_Tree_Guard()
             >>> guard.is_explainable()
             True
 
-            ```
+            
+            .. include:: ../../docs/_templates/md/example-end.md
 
         """
 
@@ -169,7 +170,7 @@ class Decision_Tree_Guard(Guard):
             Exception: If the guard has no explainable representation.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -183,16 +184,18 @@ class Decision_Tree_Guard(Guard):
             ...                                       case_level_attributes =["concept:name"], 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
-            >>> # select a certrain decision point and the corresponding data set 
+            >>> # select a certain decision point and the corresponding data set 
             >>> dp = list(dp_dataset_map.keys())[1]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Decision_Tree_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
-            >>> guard.get_explainable_representation()
+            >>> fig = guard.get_explainable_representation()
+            >>> # Returns a Figure with the explainable representation
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
+            
         Note: 
             For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 

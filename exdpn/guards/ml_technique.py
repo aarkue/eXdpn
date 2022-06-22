@@ -12,7 +12,7 @@ class ML_Technique(enum.Enum):
     Examples:
         Creating a data Petri net (see `exdpn.data_petri_net.data_petri_net.Data_Petri_Net`) \
             with only decision tree-based guards can be done using the ml_list parameter a list containing only `DT`:
-        ```python
+        
         >>> import os
         >>> from exdpn.util import import_log
         >>> from exdpn.data_petri_net import data_petri_net
@@ -24,7 +24,7 @@ class ML_Technique(enum.Enum):
         ...                                     ml_list = [ML_Technique.DT],
         ...                                     verbose = False)
 
-        ```
+        .. include:: ../../docs/_templates/md/example-end.md
 
     """
     NN = Neural_Network_Guard

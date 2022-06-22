@@ -39,7 +39,7 @@ class Guard_Manager():
                 if not specified, standard/generic parameters are used.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -57,7 +57,7 @@ class Guard_Manager():
             >>> # create a guard manager for that decision point
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
 
         """
         X_train, X_test, y_train, y_test = data_preprocessing_evaluation(
@@ -84,7 +84,7 @@ class Guard_Manager():
                 to the achieved F1-score.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -103,8 +103,8 @@ class Guard_Manager():
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
             >>> guard_manager_results = guard_manager.train_test()
 
-            ```
-
+            
+            .. include:: ../../docs/_templates/md/example-end.md
         """
         self.guards_results = {}
         # evaluate all selected ml techniques for all guards of the given decision point
@@ -137,7 +137,7 @@ class Guard_Manager():
             AssertionError: If `train_test` has not been called yet.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -159,8 +159,8 @@ class Guard_Manager():
             >>> print("Name of best guard:", best_guard[0])
             Name of best guard: Decision Tree
 
-            ```
-
+            
+            .. include:: ../../docs/_templates/md/example-end.md
         """
         assert self.guards_results != None, "Guards must be evaluated first"
         best_guard_name = max(self.guards_results, key=self.guards_results.get)
@@ -174,7 +174,7 @@ class Guard_Manager():
             Figure: The bar plot figure.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -194,7 +194,7 @@ class Guard_Manager():
             >>> guard_manager_results = guard_manager.train_test()
             >>> guard_manager.get_comparison_plot()
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
 
         Note: 
             For visualization of comparision plot please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).

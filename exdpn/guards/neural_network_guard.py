@@ -31,11 +31,11 @@ class Neural_Network_Guard(Guard):
             TypeError: If supplied hyperparameters are invalid
 
         Examples:
-            ```python
+            
             >>> from exdpn.guards import Neural_Network_Guard
             >>> guard = Neural_Network_Guard()
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md  
 
         """
         super().__init__(hyperparameters)
@@ -61,7 +61,7 @@ class Neural_Network_Guard(Guard):
             y (DataFrame): Target variable of the provided dataset, is to be predicted using `X`.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -82,7 +82,7 @@ class Neural_Network_Guard(Guard):
             >>> guard = Neural_Network_Guard()
             >>> guard.train(X_train, y_train)
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
 
         """
         # Scale numerical attributes
@@ -120,7 +120,7 @@ class Neural_Network_Guard(Guard):
             List[PetriNet.Transition]: The list of predicted transitions.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -142,7 +142,7 @@ class Neural_Network_Guard(Guard):
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
 
         """
         # Scale numerical attributes
@@ -166,13 +166,13 @@ class Neural_Network_Guard(Guard):
             bool: Whether or not the guard is explainable.
 
         Examples:
-            ```python
+            
             >>> from exdpn.guards import Neural_Network_Guard
             >>> guard = Neural_Network_Guard()
             >>> guard.is_explainable()
             True
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
 
         """
         return True
@@ -187,7 +187,7 @@ class Neural_Network_Guard(Guard):
             Exception: If guard has no explainable representation.
 
         Examples:
-            ```python
+            
             >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
@@ -210,7 +210,8 @@ class Neural_Network_Guard(Guard):
             >>> y_prediction = guard.predict(X_test)
             >>> guard.get_explainable_representation()
 
-            ```
+            .. include:: ../../docs/_templates/md/example-end.md
+            
         Note: 
             For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
