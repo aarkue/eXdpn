@@ -1,1 +1,1 @@
-For more examples refer to the [User Guide](../../)
+For more examples refer to the [User Guide](https://aarkue.github.io/eXdpn).
