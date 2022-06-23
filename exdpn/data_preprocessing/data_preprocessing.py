@@ -52,7 +52,7 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
 
 def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
     """Basic preprocessing before datasets, i.e., dropping of columns \
-    with only missing values and defining feature attributes and the target attribute.
+    with only missing values and rows with any NaN value, defining feature attributes and the target attribute.
 
     Args:
         dataframe (DataFrame): The dataset to be transformed.
@@ -63,15 +63,17 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
 
     """
 
+    # drop columns with all NaNs
+    dataframe.dropna(how='all', axis=1, inplace=True)
+    # Drop all rows which contain at least one NaN (after NaN Columns are dropped)
+    dataframe.dropna(how='any', axis=0, inplace=True) 
+
     # get target and feature names
     target_var = "target"
     df_X = dataframe.copy()
     df_X = df_X.drop(target_var, axis=1)
     df_y = dataframe.copy()
     df_y = dataframe[target_var]
-
-    # drop columns with all NaNs
-    df_X = df_X.dropna(how='all', axis=1)
 
     return df_X, df_y
 

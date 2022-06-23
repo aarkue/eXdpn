@@ -3,6 +3,7 @@
 
 """
 
+import warnings
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from pandas import DataFrame
@@ -108,22 +109,28 @@ class Guard_Manager():
         """
         self.guards_results = {}
         # evaluate all selected ml techniques for all guards of the given decision point
+        failing_guards = list()
         for guard_name, guard_models in self.guards_list.items():
-            guard_models.train(self.X_train, self.y_train)
-            y_prediction = guard_models.predict(self.X_test)
+            try:
+                guard_models.train(self.X_train, self.y_train)
+                y_prediction = guard_models.predict(self.X_test)
 
-            # convert Transition objects to integers so that sklearn's F1 score doesn't freak out
-            # this is ugly, we know
-            transition_int_map = {transition: index for index, transition in enumerate(
-                list(set(y_prediction + self.y_test.tolist())))}
-            y_prediction_transformed = [
-                transition_int_map[transition] for transition in y_prediction]
-            y_test_transformed = [transition_int_map[transition]
-                                  for transition in self.y_test.tolist()]
+                # convert Transition objects to integers so that sklearn's F1 score doesn't freak out
+                # this is ugly, we know
+                transition_int_map = {transition: index for index, transition in enumerate(
+                    list(set(y_prediction + self.y_test.tolist())))}
+                y_prediction_transformed = [
+                    transition_int_map[transition] for transition in y_prediction]
+                y_test_transformed = [transition_int_map[transition]
+                                    for transition in self.y_test.tolist()]
 
-            self.guards_results[guard_name] = f1_score(
-                y_test_transformed, y_prediction_transformed, average="weighted")
-
+                self.guards_results[guard_name] = f1_score(
+                    y_test_transformed, y_prediction_transformed, average="weighted")
+            except Exception as e:
+                failing_guards.append(guard_name)
+                warnings.warn(f"Warning: Technique {guard_name} failed to train/test on the provided data: {e}. Removing technique from consideration.")
+        for failing_guard in failing_guards:
+            self.guards_list.pop(failing_guard)
         return self.guards_results
 
     def get_best(self) -> Tuple[str, Guard]:

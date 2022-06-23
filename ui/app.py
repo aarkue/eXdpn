@@ -204,11 +204,15 @@ def mine_decisions(logid: str):
             else:
                 svg_representation = ""
             cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representation)
+            failed_techniques = [str(key) for key in ml_techniques if key not in dpn.guard_manager_per_place[p].guards_list.keys()]
             return_info[id(p)] = {
                 'performance': dpn.performance_per_place[p],
                 'name': str(dpn.ml_technique_per_place[p]),
                 'svg_representation': svg_representation,
-                'guard_result_svg': guard_result_svg
+                'guard_result_svg': guard_result_svg,
+                'techniques': [str(key) for key in dpn.guard_manager_per_place[p].guards_list.keys()],
+                'warning_text': '' if len(failed_techniques) == 0 else 'Some techniques failed: ' +  ', '.join([str(key) for key in ml_techniques if key not in dpn.guard_manager_per_place[p].guards_list.keys()])
+
             }
         
         data_petri_nets[logid] = dpn
@@ -232,13 +236,13 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
         return {"message": "Place not found."}, 400
 
     # Get the Enum representation of the selected Technique
-    if ml_technique == "logistic-regression":
+    if ml_technique == str(ML_Technique.LR):
         technique_enum_value =  ML_Technique.LR
-    elif ml_technique == "svm":
+    elif ml_technique == str(ML_Technique.SVM):
         technique_enum_value =  ML_Technique.SVM
-    elif ml_technique == "decision-tree":
+    elif ml_technique == str(ML_Technique.DT):
         technique_enum_value =  ML_Technique.DT
-    elif ml_technique == "neural-network":
+    elif ml_technique == str(ML_Technique.NN):
         technique_enum_value =  ML_Technique.NN
     else:
         return {"message": "Invalid ML technique"}, 400

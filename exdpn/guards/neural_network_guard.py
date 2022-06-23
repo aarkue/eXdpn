@@ -108,6 +108,11 @@ class Neural_Network_Guard(Guard):
             for transition in y
         ]
 
+        if(len(np.unique(y_transformed))) == 1:
+            self.single_class = True
+        else:
+            self.single_class = False
+
         self.model = self.model.fit(X, y_transformed)
 
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
@@ -211,7 +216,9 @@ class Neural_Network_Guard(Guard):
             >>> guard = Neural_Network_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
-            >>> guard.get_explainable_representation(X_test)
+            >>> # Sample from test data, as explainable representation of NN is computationally expensive
+            >>> sampled_test_data = X_test.sample(n=min(10, len(X_test)));
+            >>> guard.get_explainable_representation(sampled_test_data)
 
             .. include:: ../../docs/_templates/md/example-end.md
             
@@ -242,7 +249,9 @@ class Neural_Network_Guard(Guard):
         # Decision Plot
         # shap.decision_plot(explainer.expected_value, shap_values,self.feature_names, show=False)
 
-        plt.title("Feature Impact on Model Prediction", fontsize=14)
+        plt.suptitle("Feature Impact on Model Prediction", fontsize=14)
+        if self.single_class:
+            plt.title("Warning: Only one target class present. Results may be misleading.",{'color':  'darkred'})
         plt.ylabel("Feature Attributes", fontsize=14)
         return fig
 

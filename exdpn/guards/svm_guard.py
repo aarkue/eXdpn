@@ -100,13 +100,7 @@ class SVM_Guard(Guard):
         y_transformed = [self.transition_int_map[transition]
                          for transition in y]
 
-        # check if more than 1 class in training set
-        if(len(np.unique(y_transformed))) == 1:
-            self.single_class = True
-            self.class_label = np.unique(y_transformed)
-        else:
-            self.single_class = False
-            self.model = self.model.fit(X, y_transformed)
+        self.model = self.model.fit(X, y_transformed)
 
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Predicts the next transition based on the input instances.
@@ -148,13 +142,8 @@ class SVM_Guard(Guard):
             input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data
         input_instances = apply_ohe(input_instances, self.ohe)
-        self.input_instances = input_instances
 
-        if self.single_class:
-            predicted_transition_ids = np.full(
-                len(self.input_instances), self.class_label)
-        else:
-            predicted_transition_ids = self.model.predict(input_instances)
+        predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         # finds the key (transition) where the value (transition integer / id) corresponds to the predicted integer / id
         # for all predicted integers
@@ -164,7 +153,7 @@ class SVM_Guard(Guard):
         """Returns whether or not this guard is explainable.
 
         Returns:
-            bool: Wheter or not the guard is explainable.
+            bool: Whether or not the guard is explainable.
 
         Examples:
             
