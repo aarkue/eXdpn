@@ -12,7 +12,7 @@ from exdpn.data_preprocessing import fit_ohe
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 
 class Decision_Tree_Guard(Guard):
@@ -160,8 +160,10 @@ class Decision_Tree_Guard(Guard):
 
         return True
 
-    def get_explainable_representation(self) -> Figure:
+    def get_explainable_representation(self, data:Optional[DataFrame] = None) -> Figure:
         """Returns an explainable representation of the decision tree guard.
+        Args:
+            data (DataFrame, optional): *Not needed for Explainable Representation of Decision Trees* 
 
         Returns:
             Figure: Matplotlib Figure of the trained decision tree classifier.

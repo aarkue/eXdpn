@@ -3,7 +3,7 @@
 
 """
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from exdpn.data_preprocessing import fit_ohe
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
@@ -177,8 +177,11 @@ class Neural_Network_Guard(Guard):
         """
         return True
 
-    def get_explainable_representation(self) -> Figure:
+    def get_explainable_representation(self, data:Optional[DataFrame]) -> Figure:
         """Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP.
+
+        Args:
+            data (DataFrame): Dataset of input instances used to construct an explainable representation.
 
         Returns:
             Figure: Explainable representation of the guard.
@@ -208,7 +211,7 @@ class Neural_Network_Guard(Guard):
             >>> guard = Neural_Network_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
-            >>> guard.get_explainable_representation()
+            >>> guard.get_explainable_representation(X_test)
 
             .. include:: ../../docs/_templates/md/example-end.md
             
@@ -216,8 +219,9 @@ class Neural_Network_Guard(Guard):
             For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
         """
-        sampled_data = self.training_data.sample(
-            n=min(100, len(self.training_data)))
+        data = apply_scaling(data, self.scaler, self.scaler_columns)
+        # One-Hot Encoding for categorical data
+        data = apply_ohe(data, self.ohe)
 
         def shap_predict(data: np.ndarray):
             data_asframe = DataFrame(data, columns=self.feature_names)
@@ -225,14 +229,14 @@ class Neural_Network_Guard(Guard):
             return ret
 
         explainer = shap.KernelExplainer(
-            shap_predict, sampled_data, output_names=self.target_names)
+            shap_predict, data, output_names=self.target_names)
 
         shap_values = explainer.shap_values(
-            sampled_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
+            data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         fig = plt.figure()
 
         # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
-        shap.summary_plot(shap_values, sampled_data, plot_type="bar",
+        shap.summary_plot(shap_values, data, plot_type="bar",
                           show=False, class_names=self.target_names, plot_size="auto")
 
         # Decision Plot

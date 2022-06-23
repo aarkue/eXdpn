@@ -185,7 +185,6 @@ def mine_decisions(logid: str):
             ml_list=ml_techniques
         )
         return_info = dict()
-
         for p, best_guard in dpn.get_best().items():
             guard_result_svg = ""
             fig = dpn.guard_manager_per_place[p].get_comparison_plot()
@@ -195,7 +194,9 @@ def mine_decisions(logid: str):
             guard_result_svg = imgdata.getvalue()
             if best_guard.is_explainable():
                 # Find Explainable Representation
-                explainable_representation:plt.Figure = best_guard.get_explainable_representation()
+                sampled_test_data = dpn.guard_manager_per_place[p].X_test.sample(
+                     n=min(100, len(dpn.guard_manager_per_place[p].X_test)));
+                explainable_representation:plt.Figure = best_guard.get_explainable_representation(sampled_test_data)
                 imgdata = io.StringIO()
                 explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
                 imgdata.seek(0)  # rewind the data
@@ -255,7 +256,9 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
     selected_guard = guards[technique_enum_value]
     if selected_guard.is_explainable():
         # Find Explainable Representation
-        explainable_representation:plt.Figure = selected_guard.get_explainable_representation()
+        sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
+                n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
+        explainable_representation:plt.Figure = selected_guard.get_explainable_representation(sampled_test_data)
         imgdata = io.StringIO()
         explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
         imgdata.seek(0)  # rewind the data
