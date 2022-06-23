@@ -12,8 +12,8 @@ from exdpn.data_preprocessing import fit_ohe
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List, Any
-
+from typing import Dict, List, Any, Optional
+import numpy as np
 
 class Decision_Tree_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, Any] = {'min_samples_split': 0.1,
@@ -93,6 +93,11 @@ class Decision_Tree_Guard(Guard):
         y_transformed = [self.transition_int_map[transition]
                          for transition in y]
 
+        if(len(np.unique(y_transformed))) == 1:
+            self.single_class = True
+        else:
+            self.single_class = False
+
         self.model = self.model.fit(X, y_transformed)
 
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
@@ -160,8 +165,10 @@ class Decision_Tree_Guard(Guard):
 
         return True
 
-    def get_explainable_representation(self) -> Figure:
+    def get_explainable_representation(self, data:Optional[DataFrame] = None) -> Figure:
         """Returns an explainable representation of the decision tree guard.
+        Args:
+            data (DataFrame, optional): *Not needed for Explainable Representation of Decision Trees* 
 
         Returns:
             Figure: Matplotlib Figure of the trained decision tree classifier.
@@ -213,6 +220,10 @@ class Decision_Tree_Guard(Guard):
                       t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()],
                   impurity=False,
                   filled=True)
+        plt.suptitle("Decision Tree", fontsize=14)
+        if self.single_class:
+            plt.title("Warning: Only one target class present. Results may be misleading.",{'color':  'darkred'})
+        plt.ylabel("Feature Attributes", fontsize=14)
         return fig
 
 

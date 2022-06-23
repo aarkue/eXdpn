@@ -1,6 +1,6 @@
 import abc
 from pandas import DataFrame
-from typing import Dict, List, Any 
+from typing import Dict, List, Any, Optional
 from matplotlib.figure import Figure
 
 from pm4py.objects.petri_net.obj import PetriNet
@@ -58,9 +58,10 @@ class Guard(metaclass=abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def get_explainable_representation(self) -> Figure:
+    def get_explainable_representation(self, data: Optional[DataFrame]) -> Figure:
         """Return an explainable representation of the concrete machine learning classifier.
-
+        Args:
+            data (DataFrame, optional): Dataset of input instances used to construct an explainable representation (not needed for some techniques (Decision Trees)).
         Returns:
             Figure: The explainable representation of the concrete machine learning classifier.
 
