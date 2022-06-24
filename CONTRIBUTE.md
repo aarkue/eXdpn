@@ -13,7 +13,7 @@
    - `source venv/bin/activate`
    - `venv/Scripts/Activate.ps1` (powershell)
    - `venv\Scripts\activate.bat` (windows)
-2. Run `python setup.py bdist_wheel` to build the project.
+2. Run `python -m build` to build the project (Install `build` via `pip install build`).
 3. Install it using `pip install dist/[wheel name].whl --force-reinstall`.
 
 ## UI: Flask Webserver ##
