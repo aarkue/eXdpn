@@ -7,6 +7,13 @@ pre code .gp {
     user-select: none;
 }
 
+img {
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .pdoc {
     --text: #212529;
     --muted: #6c757d;
@@ -45,5 +52,9 @@ pre code .gp {
         --name: #77C1FF;
         --def: #0cdd0c;
         --annotation: #00c037;
+    }
+
+    .dark-invert {
+        filter: invert(1);
     }
 }

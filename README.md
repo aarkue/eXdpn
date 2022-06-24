@@ -17,7 +17,6 @@ Now you can mine your first explainable data Petri net given an event log in XES
 >>> dpn = Data_Petri_Net(event_log, event_level_attributes=['event_level_attribute'])
 ```
 
-
 This will mine a data Petri net for your event log, considering only "event_level_attribute" as a possible attribute for classification. 
 The `exdpn.data_petri_net.data_petri_net.Data_Petri_Net` class already takes care of the workflow to create a data Petri net. In cases where fine-grained 
 control of the data Petri net creation is needed or only certain functionallity of this package is needed, one can simply call all the needed functions and methods directly. 

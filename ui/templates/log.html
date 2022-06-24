@@ -106,23 +106,22 @@
                           if(decisionMined){
                             const placeId = title.textContent;
                             selectedPlace = placeId;
+
                             // Show data for selected place & guard
                             document.getElementById('selected_guard_name').textContent = guardDataPerPlace[placeId]['name']
                             document.getElementById('selected_guard_performance').textContent = Math.round(parseFloat(guardDataPerPlace[placeId]['performance'])*100)/100;
                             document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
                             document.getElementById('selected_guard_comparison_svg').setAttribute('src',guardDataPerPlace[placeId]['comparison_svg_url'])
-
-                            document.getElementById("selector-container").innerHTML = `
-                            <select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="expl-repr-selector">
-                              <option value="decision-tree" ${guardDataPerPlace[placeId]['name'] == "Decision Tree" ? 'selected' : ''}>Decision Tree</option>
-                              <option value="logistic-regression" ${guardDataPerPlace[placeId]['name'] == "Logistic Regression" ? 'selected' : ''}>Logistic Regression</option>
-                              <option value="svm" ${guardDataPerPlace[placeId]['name'] == "SVM" ? 'selected' : ''}>SVM</option>
-                              <option value="neural-network" ${guardDataPerPlace[placeId]['name'] == "Neural Network" ? 'selected' : ''}>Neural Network</option>
-                            </select>
-                            `;
+                            
+                            let element_str = `<select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="expl-repr-selector">`;
+                            for(technique of guardDataPerPlace[placeId]['techniques']){
+                              element_str += `<option value="${technique}" ${guardDataPerPlace[placeId]['name'] === technique ? 'selected' : ''}>${technique}</option>`;
+                            }
+                            element_str += "</select>";
+                            document.getElementById("selector-container").innerHTML = element_str;
                             selector = document.getElementById("expl-repr-selector")
                             selector.removeAttribute('disabled');
-                            
+                            document.getElementById("decisionMiningWarningText").innerText = guardDataPerPlace[placeId]['warning_text'];
                             const selectSpinner = document.getElementById("selector-container-spinner");
                             selectSpinner.style.display = 'none';
                             selector.addEventListener("input", (e) => {
@@ -496,6 +495,7 @@
               <div style="width: 100%;">
                 <h4 class="text-muted">Best Technique: <span id="selected_guard_name" class="text-success">No name</span></h4>
                 <p class="text-muted fs-5">F1 Score: <span id="selected_guard_performance" class="text-success"></span></p>
+            <span id="decisionMiningWarningText" style="color: #a84040;"></span>
               </div>
               <div style="width: 100%;">
               <h4 class="text-center">Explainable Representation</h4>
@@ -516,8 +516,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
-            <!-- <div>
-            </div> -->
             <div id="explainable_representation" class="d-flex justify-content-around h-100" >
               <div class="h-100">
                 <img id="selected_guard_comparison_svg"/>
