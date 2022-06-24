@@ -1,5 +1,4 @@
-![eXdpn logo](./images/exdpn-logo.svg)
-
+<img class="dark-invert" src="./images/exdpn-logo.svg" alt="eXdpn Logo"/>
 
 exdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
 

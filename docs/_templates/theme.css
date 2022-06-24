@@ -53,4 +53,8 @@ img {
         --def: #0cdd0c;
         --annotation: #00c037;
     }
+
+    .dark-invert {
+        filter: invert(1);
+    }
 }
