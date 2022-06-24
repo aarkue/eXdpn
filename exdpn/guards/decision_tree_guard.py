@@ -200,11 +200,12 @@ class Decision_Tree_Guard(Guard):
             >>> y_prediction = guard.predict(X_test)
             >>> fig = guard.get_explainable_representation()
             >>> # Returns a Figure with the explainable representation
+            >>> # add figure
 
             .. include:: ../../docs/_templates/md/example-end.md
             
         Note: 
-            For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
+            For an example of the explainable representations of all machine learning techniques please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
         """
 

@@ -105,6 +105,10 @@ class Data_Petri_Net():
             ...                      verbose = False)
 
             .. include:: ../../docs/_templates/md/example-end.md
+
+        Note: 
+            For a full example please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
+
             """
 
         self.verbose = verbose

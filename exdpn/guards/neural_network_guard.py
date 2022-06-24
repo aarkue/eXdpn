@@ -224,9 +224,11 @@ class Neural_Network_Guard(Guard):
             >>> guard.get_explainable_representation(sampled_test_data)
 
             .. include:: ../../docs/_templates/md/example-end.md
-            
+
+        <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 300px;"/>
+
         Note: 
-            For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
+            For an example of the explainable representations of all machine learning techniques please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
         """
         data = apply_scaling(data, self.scaler, self.scaler_columns)

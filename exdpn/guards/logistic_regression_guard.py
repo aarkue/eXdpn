@@ -197,11 +197,12 @@ class Logistic_Regression_Guard(Guard):
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
             >>> guard.get_explainable_representation(X_test)
+            >>> #add figure
 
             .. include:: ../../docs/_templates/md/example-end.md
 
         Note: 
-            For plot of explainable representation please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
+            For an example of the explainable representations of all machine learning techniques please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
         """
         if self.is_explainable() == False:
