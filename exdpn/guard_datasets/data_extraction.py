@@ -5,7 +5,8 @@
 
 from exdpn.decisionpoints import find_decision_points
 
-from pandas import DataFrame
+from pandas import DataFrame, MultiIndex
+
 from typing import Dict, List, Tuple, Union, Any
 import numpy as np
 
@@ -203,11 +204,12 @@ def extract_dataset_for_place(
                 # Dont't count silent transitions
             if transition.label is not None:
                 event_index += 1
-    from pandas import MultiIndex
     return DataFrame(
         instances,
-        columns=["case::" + attr for attr in case_level_attributes] + ["event::" +
-                                                                       attr for attr in event_level_attributes] + [f"tail::prev{i}" for i in range(1, tail_length+1)] + ["target"],
+        columns=["case::" + attr for attr in case_level_attributes] + 
+                ["event::"+ attr for attr in event_level_attributes] + 
+                [f"tail::prev{i}" for i in range(1, tail_length+1)] + 
+                ["target"],
         index=MultiIndex.from_tuples(
             indices, names=[xes.DEFAULT_TRACEID_KEY, "decision_repetiton"])
     )

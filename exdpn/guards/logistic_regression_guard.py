@@ -10,7 +10,7 @@ from exdpn.data_preprocessing import fit_ohe
 from sklearn.linear_model import LogisticRegression
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import shap
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
@@ -96,13 +96,7 @@ class Logistic_Regression_Guard(Guard):
         y_transformed = [self.transition_int_map[transition]
                          for transition in y]
 
-        # check if more than 1 class in training set
-        if(len(np.unique(y_transformed))) == 1:
-            self.single_class = True
-            self.class_label = np.unique(y_transformed)
-        else:
-            self.single_class = False
-            self.model = self.model.fit(X, y_transformed)
+        self.model = self.model.fit(X, y_transformed)
 
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Predicts the next transition based on the input instances.
@@ -144,13 +138,8 @@ class Logistic_Regression_Guard(Guard):
             input_instances, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data
         input_instances = apply_ohe(input_instances, self.ohe)
-        self.input_instances = input_instances
 
-        if self.single_class:
-            predicted_transition_ids = np.full(
-                len(self.input_instances), self.class_label)
-        else:
-            predicted_transition_ids = self.model.predict(input_instances)
+        predicted_transition_ids = self.model.predict(input_instances)
         # ty stackoverflow
         # finds the key (transition) where the value (transition integer / id) corresponds to the predicted integer / id
         # for all predicted integers
@@ -174,8 +163,10 @@ class Logistic_Regression_Guard(Guard):
         """
         return True
 
-    def get_explainable_representation(self) -> Figure:
+    def get_explainable_representation(self, data:Optional[DataFrame]) -> Figure:
         """Returns an explainable representation of the logistic regression guard, a Matplotlib plot using SHAP.
+        Args:
+            data (DataFrame): Dataset of input instances used to construct an explainable representation.
 
         Returns:
             Figure: Matplotlib Figure of the trained logistic regression model.
@@ -205,7 +196,7 @@ class Logistic_Regression_Guard(Guard):
             >>> guard = Logistic_Regression_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
-            >>> guard.get_explainable_representation()
+            >>> guard.get_explainable_representation(X_test)
 
             .. include:: ../../docs/_templates/md/example-end.md
 
@@ -220,31 +211,24 @@ class Logistic_Regression_Guard(Guard):
         classes = [t.label if t.label !=
                    None else f"None ({t.name})" for t in self.transition_int_map.keys()]
 
-        if self.single_class:
-            fig = plt.figure()
-            ax = fig.add_subplot()
-            fig.subplots_adjust(top=0.85)
-            plt.figure(figsize=(9, 8))
-            ax.text(0, 0.7,
-                    "Since only one class was represented in the training data, \nall samples are predicted as:\n" +
-                    str(classes[0]),
-                    fontsize=14)
-            ax.axis('off')
-        else:
-            explainer = shap.LinearExplainer(self.model, self.X_train)
+        data = apply_scaling(data, self.scaler, self.scaler_columns)
+        # one hot encoding for categorical data
+        data = apply_ohe(data, self.ohe)
+        
+        explainer = shap.LinearExplainer(self.model, self.X_train)
 
-            shap_values = explainer.shap_values(self.input_instances)
+        shap_values = explainer.shap_values(data)
 
-            # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
-            fig, ax = plt.subplots()
-            shap.summary_plot(shap_values,
-                              self.input_instances,
-                              plot_type="bar",
-                              show=False,
-                              class_names=classes,
-                              class_inds=range(len(classes)))
-            plt.title("Feature Impact on Model Prediction", fontsize=14)
-            plt.ylabel("Feature Attributes", fontsize=14)
+        # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
+        fig, ax = plt.subplots()
+        shap.summary_plot(shap_values,
+                            data,
+                            plot_type="bar",
+                            show=False,
+                            class_names=classes,
+                            class_inds=range(len(classes)))
+        plt.title("Feature Impact on Model Prediction", fontsize=14)
+        plt.ylabel("Feature Attributes", fontsize=14)
 
         return fig
 
