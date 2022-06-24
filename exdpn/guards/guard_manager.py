@@ -200,11 +200,9 @@ class Guard_Manager():
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
             >>> guard_manager_results = guard_manager.train_test()
             >>> guard_manager.get_comparison_plot()
+            >>> #add figure
 
             .. include:: ../../docs/_templates/md/example-end.md
-
-        Note: 
-            For visualization of comparision plot please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
         """
         guard_results = {(str(technique)): result for technique,
