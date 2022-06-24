@@ -242,7 +242,7 @@ class Data_Petri_Net():
             float: Fraction of traces that respected all decision point guards passed during token based replay.
 
         Examples:
-           ```pyshef  
+         
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net

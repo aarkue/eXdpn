@@ -1,4 +1,7 @@
+<img class="dark-invert" src="./images/exdpn-logo.svg" alt="eXdpn Logo"/>
+
 exdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
+
 
 ---
 
@@ -52,5 +55,6 @@ Furthermore, the Github also includes a graphical user interface in the form of 
 
 ## Qualitative Analysis of eXdpn ##
 To provide some insights to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. The analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+
 
 ---
