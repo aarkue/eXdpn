@@ -185,6 +185,9 @@ class Neural_Network_Guard(Guard):
     def get_explainable_representation(self, data:Optional[DataFrame]) -> Figure:
         """Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP.
 
+        Example explainable representation:
+        <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 300px;"/>
+
         Args:
             data (DataFrame): Dataset of input instances used to construct an explainable representation.
 
