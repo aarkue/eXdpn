@@ -13,8 +13,15 @@
    - `source venv/bin/activate`
    - `venv/Scripts/Activate.ps1` (powershell)
    - `venv\Scripts\activate.bat` (windows)
-2. Run `python setup.py bdist_wheel` to build the project.
+2. Run `python -m build` to build the project (Install `build` via `pip install build`).
 3. Install it using `pip install dist/[wheel name].whl --force-reinstall`.
+
+## Uploading to (Test) PyPi ##
+1. Update the information in the `setup.cfg` file and build the package.
+2. - Run `twine upload -r testpypi dist/*` from the root directory to upload to Test PyPi.
+   - Run `twine upload dist/*` from the root directory to upload to PyPi.
+- Note that your account needs to be associated with the package.
+
 
 ## UI: Flask Webserver ##
 1. Set the FLASK_ENV env. variable:
@@ -23,4 +30,4 @@
 2. Navigate into the `ui/` directory and run `flask run`
 
 ## Generating Documentation ##
-- Run `pdoc ./exdpn -o ./docs -d google -t ./docs/_templates --footer-text "exdpn - version 0.0.1"` from the root directory
+- Run `pdoc ./exdpn -o ./docs -d google -t ./docs/_templates --footer-text "exdpn - version 0.0.1"` from the root directory.
