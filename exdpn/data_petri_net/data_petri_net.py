@@ -246,7 +246,7 @@ class Data_Petri_Net():
             float: Fraction of traces that respected all decision point guards passed during token based replay.
 
         Examples:
-         
+            
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -260,8 +260,8 @@ class Data_Petri_Net():
             >>> dpn.get_mean_guard_conformance(event_log) # value may deviate
             0.949
             
-
             .. include:: ../../docs/_templates/md/example-end.md
+
         """
 
         if self.guard_per_place == None:
