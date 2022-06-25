@@ -105,6 +105,10 @@ class Data_Petri_Net():
             ...                      verbose = False)
 
             .. include:: ../../docs/_templates/md/example-end.md
+
+        Note: 
+            For a full example please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
+
             """
 
         self.verbose = verbose
@@ -242,7 +246,7 @@ class Data_Petri_Net():
             float: Fraction of traces that respected all decision point guards passed during token based replay.
 
         Examples:
-           ```pyshef  
+         
             >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
@@ -255,6 +259,7 @@ class Data_Petri_Net():
             ...                      verbose = False)
             >>> dpn.get_mean_guard_conformance(event_log) # value may deviate
             0.949
+            
 
             .. include:: ../../docs/_templates/md/example-end.md
         """
