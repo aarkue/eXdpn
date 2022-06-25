@@ -74,8 +74,8 @@ class Neural_Network_Guard(Guard):
             ...                                       case_level_attributes =["concept:name"], 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
-            >>> # select a certrain decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> # select a certain decision point and the corresponding data set 
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Neural_Network_Guard()
@@ -138,7 +138,7 @@ class Neural_Network_Guard(Guard):
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certrain decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Neural_Network_Guard()
@@ -183,9 +183,6 @@ class Neural_Network_Guard(Guard):
     def get_explainable_representation(self, data:Optional[DataFrame]) -> Figure:
         """Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP. For Neural Networks, as the calculation of the SHAP values can be very time-consuming, we recommend using sampled or aggregated (clustered) data.
 
-        Example explainable representation:
-        <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 300px;"/>
-
         Args:
             data (DataFrame): Dataset of input instances used to construct an explainable representation.
 
@@ -206,21 +203,19 @@ class Neural_Network_Guard(Guard):
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
             >>> pn, im, fm = get_petri_net(event_log)
             >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
-            ...                                       case_level_attributes =["concept:name"], 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certrain decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Neural_Network_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
             >>> # sample from test data, as explainable representation of NN is computationally expensive
-            >>> sampled_test_data = X_test.sample(n=min(10, len(X_test)));
+            >>> sampled_test_data = X_test.sample(n=min(100, len(X_test)));
             >>> # return figure of explainable representation
             >>> fig = guard.get_explainable_representation(sampled_test_data) # results may deviate 
-
             
             <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 350px;"/>
             

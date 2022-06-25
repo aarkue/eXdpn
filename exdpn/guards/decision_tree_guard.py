@@ -69,7 +69,7 @@ class Decision_Tree_Guard(Guard):
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a c decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Decision_Tree_Guard()
@@ -124,8 +124,8 @@ class Decision_Tree_Guard(Guard):
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certain decision point and the corresponding data set 
-            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
-            >>> dp_dataset = dp_dataset_map[dp_key]
+            >>> dp = [k for k in dp_dataset_map.keys()][0]
+            >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Decision_Tree_Guard()
             >>> guard.train(X_train, y_train)
@@ -185,19 +185,19 @@ class Decision_Tree_Guard(Guard):
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
             >>> pn, im, fm = get_petri_net(event_log)
             >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
-            ...                                       case_level_attributes =["concept:name"], 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certain decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
             >>> guard = Decision_Tree_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
             >>> # return figure of explainable representation
-            >>> fig = guard.get_explainable_representation()
-            >>> # add figure: <img src="../../images/dt-example-representation.svg" alt="Example explainable representation of a decision tree guard" style="max-height: 350px;"/>
+            >>> fig = guard.get_explainable_representation() # results may deviate 
+            
+            <img src="../../images/dt-example-representation.svg" alt="Example explainable representation of a decision tree guard" style="max-height: 350px;"/>
 
             .. include:: ../../docs/_templates/md/example-end.md
             

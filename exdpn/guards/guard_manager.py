@@ -53,7 +53,7 @@ class Guard_Manager():
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certrain decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> # create a guard manager for that decision point
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
@@ -98,7 +98,7 @@ class Guard_Manager():
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certrain decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> # create a guard manager for that decision point
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
@@ -157,7 +157,7 @@ class Guard_Manager():
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certrain decision point and the corresponding data set 
-            >>> dp_key = [k for k in dp_dataset_map.keys()][1]
+            >>> dp_key = [k for k in dp_dataset_map.keys()][0]
             >>> dp_dataset = dp_dataset_map[dp_key]
             >>> # create a guard manager for that decision point
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
@@ -194,16 +194,21 @@ class Guard_Manager():
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certrain decision point and the corresponding data set 
-            >>> dp = list(dp_dataset_map.keys())[1]
+            >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> # create a guard manager for that decision point
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
             >>> guard_manager_results = guard_manager.train_test()
             >>> # return comparision plot
             >>> fig = guard_manager.get_comparison_plot()
-            >>> #add figure: <img src="../../images/comparision_plot.svg" alt="Comparision plot of the performance of the used machine learning techniques" style="max-height: 350px;"/>
+            
+            <img src="../../images/comparision-plot.svg" alt="Comparision plot of the performance of the used machine learning techniques" style="max-height: 350px;"/>
 
             .. include:: ../../docs/_templates/md/example-end.md
+
+        Note: 
+            For an example of the explainable representations of all machine learning techniques please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
+
 
         """
         guard_results = {(str(technique)): result for technique,
