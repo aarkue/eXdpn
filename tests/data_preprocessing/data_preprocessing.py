@@ -1,4 +1,5 @@
 import unittest
+from matplotlib.pyplot import sca
 from pandas import DataFrame
 import pandas as pd 
 import os 
@@ -8,10 +9,10 @@ from exdpn import guard_datasets
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, data_preprocessing_evaluation, apply_scaling, fit_ohe, fit_scaling
 import random 
 import pm4py 
-from typing import Tuple
+from typing import List, Tuple
 
 # set up test by loading a test dataframe and perform some preprocessing 
-def preprocess_data() -> Tuple[DataFrame]:
+def preprocess_data() -> Tuple[DataFrame,DataFrame,DataFrame,DataFrame,DataFrame,List[str]]:
 
     event_log = import_log(os.path.join(os.getcwd(), 'tests', 'data_preprocessing', 'example.xes'))
     net, im, fm = petri_net.get_petri_net(event_log, "IM")
@@ -45,18 +46,31 @@ def preprocess_data() -> Tuple[DataFrame]:
     df_X_train_scaled_ohe = apply_ohe(df_X_train_scaled, ohe) 
     df_X_test_scaled_ohe = apply_ohe(df_X_test_scaled, ohe) 
 
-    return df, df_X_train_scaled_ohe, df_X_test_scaled_ohe, df_y_train, df_y_test
+    return df, df_X_train_scaled_ohe, df_X_test_scaled_ohe, df_y_train, df_y_test, scalable_columns
 
 class TestDataPreprocessing(unittest.TestCase):
     def test_simple_preprocessing(self):
-        df, df_X_train_scaled_ohe, df_X_test_scaled_ohe, df_y_train, df_y_test = preprocess_data()
+        df_X_train_scaled_ohe: DataFrame = None
+        df, df_X_train_scaled_ohe, df_X_test_scaled_ohe, df_y_train, df_y_test, scalable_columns = preprocess_data()
         
         # check if all nans droped
         self.assertEqual(df_X_train_scaled_ohe.shape, df_X_train_scaled_ohe.dropna(how = 'all', axis = 1).shape)
 
-        # check normalization 
-        self.assertEqual(df_X_train_scaled_ohe.max().max(), 1)
-        self.assertEqual(df_X_train_scaled_ohe.min().min(), 0)
+        # check scaling
+        for column in scalable_columns:
+            # Mean is 0 
+            self.assertAlmostEqual(
+                df_X_train_scaled_ohe[column].mean(),
+                0,
+                delta=0.1
+            )
+
+            # Variance/Standard Deviation is 1
+            self.assertAlmostEqual(
+                df_X_train_scaled_ohe[column].std(),
+                1,
+                delta=0.1
+            )
 
         # check if training and test data frame have same columns after one hot encoding 
         self.assertEqual(df_X_train_scaled_ohe.columns.all(), df_X_test_scaled_ohe.columns.all())
