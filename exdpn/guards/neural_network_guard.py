@@ -181,7 +181,7 @@ class Neural_Network_Guard(Guard):
         return True
 
     def get_explainable_representation(self, data:Optional[DataFrame]) -> Figure:
-        """Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP.
+        """Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP. For Neural Networks, as the calculation of the SHAP values can be very time-consuming, we recommend using sampled or aggregated (clustered) data.
 
         Example explainable representation:
         <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 300px;"/>
