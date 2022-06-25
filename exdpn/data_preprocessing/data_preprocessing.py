@@ -4,7 +4,7 @@
 """
 
 from pandas import DataFrame, concat, Series
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
@@ -78,14 +78,14 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
     return df_X, df_y
 
 
-def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
+def fit_scaling(X: DataFrame) -> Tuple[StandardScaler, List[str]]:
     """Fits a min-max-scaler on the dataset and returns a scaler for a scaling to [0, 1] as well as the scalable columns.
 
     Args:
         X (DataFrame): The dataset with the data to fit.
 
     Returns:
-        * scaler (MinMaxScaler): The min-max-scaler fitted on dataset. Scales to [0, 1].
+        * scaler (StandardScaler): The standard-scaler fitted on dataset. Scales to mean 0 and standard deviation 1.
         * scalable_columns (List[str]): The list of names of columns that can be scaled.
 
     """
@@ -97,18 +97,18 @@ def fit_scaling(X: DataFrame) -> Tuple[MinMaxScaler, List[str]]:
         return None, []
 
     # define and fit scaler
-    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler = StandardScaler()
     scaler.fit(X[scalable_columns])
 
     return scaler, list(scalable_columns)
 
 
-def apply_scaling(X: DataFrame, scaler: MinMaxScaler, scalable_columns: List[str]) -> DataFrame:
+def apply_scaling(X: DataFrame, scaler: StandardScaler, scalable_columns: List[str]) -> DataFrame:
     """Performs min-max scaling on data with a fitted scaler object on all scalable columns.
 
     Args:
         X (DataFrame): The dataset with the data to scale.
-        scaler (MinMaxScaler): The fitted min-max-scaler.
+        scaler (StandardScaler): The fitted standard-scaler.
         scalable_columns (List[str]): The list of names of columns that will be scaled.
 
     Returns:
