@@ -504,12 +504,6 @@
       </block>
       <block id="ID1413073870">
         <id>Functions</id>
-        <ml id="ID1414860110">fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;
-          <layout>fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;</layout>
-        </ml>
-        <ml id="ID1414847286">fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;
-          <layout>fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;</layout>
-        </ml>
         <ml id="ID1413139466">fun expb_h(av:real,high:real) = let val x = exponential(1.0/av) in if x &gt; high then expb_h(av,high) else x end:real;
           <layout>fun expb_h(av:real,high:real) = let val x = exponential(1.0/av) in if x &gt; high then expb_h(av,high) else x end:real;</layout>
         </ml>
@@ -543,11 +537,17 @@
         <ml id="ID1414406638">fun isReqForOrd((oid,mat,reqMats), reqMat) = List.exists (fn x =&gt; reqMat = x) reqMats;
           <layout>fun isReqForOrd((oid,mat,reqMats), reqMat) = List.exists (fn x =&gt; reqMat = x) reqMats;</layout>
         </ml>
-        <ml id="ID1414663936">fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt;= 800.0;
-          <layout>fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt;= 800.0;</layout>
+        <ml id="ID1414663936">fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt; 800.0;
+          <layout>fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt; 800.0;</layout>
         </ml>
         <ml id="ID1414668778">fun guardManagerConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 800.0;
           <layout>fun guardManagerConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 800.0;</layout>
+        </ml>
+        <ml id="ID1414860110">fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;
+          <layout>fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;</layout>
+        </ml>
+        <ml id="ID1414847286">fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;
+          <layout>fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;</layout>
         </ml>
         <ml id="ID1414745298">fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 500.0 andalso expb_h(100.0,200.0) &gt; 120.0;
           <layout>fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 500.0 andalso expb_h(100.0,200.0) &gt; 120.0;</layout>
@@ -3057,7 +3057,7 @@ action
                    currentcyckle="2"/>
         <transend idref="ID1414445040"/>
         <placeend idref="ID1414453695"/>
-        <annot id="ID1431576154">
+        <annot id="ID1431576344">
           <posattr x="-1957.000000"
                    y="1321.000000"/>
           <fillattr colour="White"
@@ -4322,7 +4322,7 @@ action
         <textattr colour="Black"
                   bold="false"/>
         <label/>
-        <text>total_price &lt;= 800</text>
+        <text>total_price &lt; 800</text>
       </Aux>
       <Aux id="ID1414846358">
         <posattr x="-871.000000"
@@ -4378,12 +4378,12 @@ action
           <text>&lt;same as model&gt;</text>
         </value>
       </option>
-      <option name="extensions.10003.enable">
+      <option name="extensions.10005.enable">
         <value>
           <boolean>true</boolean>
         </value>
       </option>
-      <option name="extensions.10001.enable">
+      <option name="extensions.10006.enable">
         <value>
           <boolean>true</boolean>
         </value>
@@ -4393,12 +4393,12 @@ action
           <boolean>true</boolean>
         </value>
       </option>
-      <option name="extensions.10005.enable">
+      <option name="extensions.10001.enable">
         <value>
           <boolean>true</boolean>
         </value>
       </option>
-      <option name="extensions.10006.enable">
+      <option name="extensions.10003.enable">
         <value>
           <boolean>true</boolean>
         </value>
@@ -4607,8 +4607,8 @@ action
                  height="863">
         <sheets>
           <cpnsheet id="ID2215"
-                    panx="890.260000"
-                    pany="758.150000"
+                    panx="394.260000"
+                    pany="612.150000"
                     zoom="0.800000"
                     instance="ID2149">
             <zorder>
@@ -4774,7 +4774,7 @@ action
           <IndexNode expanded="false"/>
           <IndexNode expanded="true"/>
           <IndexNode expanded="true"/>
-          <IndexNode expanded="true"/>
+          <IndexNode expanded="false"/>
         </IndexNode>
         <IndexNode expanded="true">
           <IndexNode expanded="true"/>
