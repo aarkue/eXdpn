@@ -3358,7 +3358,7 @@ action
                    currentcyckle="2"/>
         <transend idref="ID1414445040"/>
         <placeend idref="ID1414453695"/>
-        <annot id="ID1432107959">
+        <annot id="ID1432109780">
           <posattr x="-1957.000000"
                    y="1321.000000"/>
           <fillattr colour="White"
@@ -5126,7 +5126,7 @@ action
           <textattr colour="Black"
                     bold="false"/>
         </bendpoint>
-        <annot id="ID1432107960">
+        <annot id="ID1432109781">
           <posattr x="-1721.000000"
                    y="614.000000"/>
           <fillattr colour="White"
@@ -5171,7 +5171,7 @@ action
           <textattr colour="Black"
                     bold="false"/>
         </bendpoint>
-        <annot id="ID1432107961">
+        <annot id="ID1432109782">
           <posattr x="-624.000000"
                    y="228.000000"/>
           <fillattr colour="White"
@@ -5229,7 +5229,7 @@ action
           <textattr colour="Black"
                     bold="false"/>
         </bendpoint>
-        <annot id="ID1432107962">
+        <annot id="ID1432109783">
           <posattr x="-370.000000"
                    y="955.000000"/>
           <fillattr colour="White"
@@ -5274,7 +5274,7 @@ action
           <textattr colour="Black"
                     bold="false"/>
         </bendpoint>
-        <annot id="ID1432107963">
+        <annot id="ID1432109784">
           <posattr x="178.000000"
                    y="504.000000"/>
           <fillattr colour="White"
@@ -5319,7 +5319,7 @@ action
           <textattr colour="Black"
                     bold="false"/>
         </bendpoint>
-        <annot id="ID1432107964">
+        <annot id="ID1432109785">
           <posattr x="41.000000"
                    y="333.000000"/>
           <fillattr colour="White"
@@ -5361,6 +5361,11 @@ action
           <text>&lt;same as model&gt;</text>
         </value>
       </option>
+      <option name="extensions.10005.enable">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
       <option name="extensions.10006.enable">
         <value>
           <boolean>true</boolean>
@@ -5371,17 +5376,12 @@ action
           <boolean>true</boolean>
         </value>
       </option>
-      <option name="extensions.10003.enable">
-        <value>
-          <boolean>true</boolean>
-        </value>
-      </option>
-      <option name="extensions.10005.enable">
-        <value>
-          <boolean>true</boolean>
-        </value>
-      </option>
       <option name="extensions.10001.enable">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="extensions.10003.enable">
         <value>
           <boolean>true</boolean>
         </value>
@@ -5590,9 +5590,9 @@ action
                  height="907">
         <sheets>
           <cpnsheet id="ID2215"
-                    panx="821.987885"
-                    pany="657.039352"
-                    zoom="1.007080"
+                    panx="438.790308"
+                    pany="474.031482"
+                    zoom="0.805664"
                     instance="ID2149">
             <zorder>
               <position value="0"/>
@@ -5678,9 +5678,7 @@ action
           <IndexNode expanded="false"/>
         </IndexNode>
       </IndexNode>
-      <IndexNode expanded="false">
-        <IndexNode expanded="false"/>
-      </IndexNode>
+      <IndexNode expanded="false"/>
       <IndexNode expanded="true">
         <IndexNode expanded="false">
           <IndexNode expanded="true"/>

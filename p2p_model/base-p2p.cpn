@@ -543,8 +543,8 @@
         <ml id="ID1414668778">fun guardManagerConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 800.0;
           <layout>fun guardManagerConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 800.0;</layout>
         </ml>
-        <ml id="ID1414745298">fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 400.0 andalso expb_h(100.0,200.0) &gt; 120.0;
-          <layout>fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 400.0 andalso expb_h(100.0,200.0) &gt; 120.0;</layout>
+        <ml id="ID1414745298">fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 400.0 andalso expb_h(100.0,200.0) &gt; 100.0;
+          <layout>fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 400.0 andalso expb_h(100.0,200.0) &gt; 100.0;</layout>
         </ml>
       </block>
       <use id="ID1412339236">
@@ -3051,7 +3051,7 @@ action
                    currentcyckle="2"/>
         <transend idref="ID1414445040"/>
         <placeend idref="ID1414453695"/>
-        <annot id="ID1431576334">
+        <annot id="ID1431576710">
           <posattr x="-1957.000000"
                    y="1321.000000"/>
           <fillattr colour="White"
@@ -4316,17 +4316,17 @@ action
           <text>&lt;same as model&gt;</text>
         </value>
       </option>
-      <option name="extensions.10006.enable">
-        <value>
-          <boolean>true</boolean>
-        </value>
-      </option>
       <option name="extensions.10002.enable">
         <value>
           <boolean>true</boolean>
         </value>
       </option>
-      <option name="extensions.10003.enable">
+      <option name="extensions.10001.enable">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="extensions.10006.enable">
         <value>
           <boolean>true</boolean>
         </value>
@@ -4336,7 +4336,7 @@ action
           <boolean>true</boolean>
         </value>
       </option>
-      <option name="extensions.10001.enable">
+      <option name="extensions.10003.enable">
         <value>
           <boolean>true</boolean>
         </value>
@@ -4545,8 +4545,8 @@ action
                  height="932">
         <sheets>
           <cpnsheet id="ID2215"
-                    panx="69.700000"
-                    pany="598.990000"
+                    panx="443.700000"
+                    pany="542.990000"
                     zoom="0.800000"
                     instance="ID2149">
             <zorder>
@@ -4633,9 +4633,7 @@ action
           <IndexNode expanded="false"/>
         </IndexNode>
       </IndexNode>
-      <IndexNode expanded="false">
-        <IndexNode expanded="false"/>
-      </IndexNode>
+      <IndexNode expanded="false"/>
       <IndexNode expanded="true">
         <IndexNode expanded="false">
           <IndexNode expanded="true"/>

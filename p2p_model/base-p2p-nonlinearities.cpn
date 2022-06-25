@@ -2273,8 +2273,8 @@ order</text>
         <binding x="7.200000"
                  y="-3.000000"/>
         <cond id="ID1431652199">
-          <posattr x="-501.000000"
-                   y="577.000000"/>
+          <posattr x="-324.500000"
+                   y="546.000000"/>
           <fillattr colour="White"
                     pattern="Solid"
                     filled="false"/>
@@ -2284,7 +2284,7 @@ order</text>
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="4.0.1"/>
+                version="4.0.1">[not(guardRejectOrder(purOrd))]</text>
         </cond>
         <time id="ID1414658946">
           <posattr x="-417.500000"
@@ -2430,8 +2430,8 @@ approval</text>
         <binding x="7.200000"
                  y="-3.000000"/>
         <cond id="ID1414676701">
-          <posattr x="-501.000000"
-                   y="829.000000"/>
+          <posattr x="-435.000000"
+                   y="854.000000"/>
           <fillattr colour="White"
                     pattern="Solid"
                     filled="false"/>
@@ -2441,7 +2441,7 @@ approval</text>
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="4.0.1"/>
+                version="4.0.1">[not(guardRejectOrder(purOrd))]</text>
         </cond>
         <time id="ID1414676702">
           <posattr x="-417.500000"
@@ -3895,7 +3895,7 @@ action
                    currentcyckle="2"/>
         <transend idref="ID1414445040"/>
         <placeend idref="ID1414453695"/>
-        <annot id="ID1431653474">
+        <annot id="ID1431653874">
           <posattr x="-1957.000000"
                    y="1321.000000"/>
           <fillattr colour="White"
@@ -6017,8 +6017,8 @@ action
                  height="860">
         <sheets>
           <cpnsheet id="ID2215"
-                    panx="-1878.287500"
-                    pany="592.150000"
+                    panx="-1587.287500"
+                    pany="616.150000"
                     zoom="0.800000"
                     instance="ID2149">
             <zorder>
