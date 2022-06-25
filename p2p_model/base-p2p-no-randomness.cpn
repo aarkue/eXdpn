@@ -498,18 +498,12 @@
         <ml id="ID1414631648">val AllItems = [&quot;iPhone7&quot;,&quot;iPhone8&quot;,&quot;iPad Pro&quot;]
           <layout>val AllItems = [&quot;iPhone7&quot;,&quot;iPhone8&quot;,&quot;iPad Pro&quot;]</layout>
         </ml>
-        <ml id="ID1414646984">val AllItemData = [(&quot;HP OfficeJet Pro 8025e Printer&quot;,&quot;Electronics&quot;,14.99,&quot;Scamming Corp.&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,29.99,&quot;Scamming Corp.&quot;),(&quot;Amscan Mini Stars Confetti&quot;,&quot;Fun&quot;,20.49,&quot;Staples&quot;),(&quot;RECARO Exo Gaming Stuhl&quot;,&quot;Misc&quot;,929.99,&quot;MediaMarkt GmbH&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,598.99,&quot;MediaMarkt GmbH&quot;),(&quot;Ducky One 3 Matcha TKL&quot;,&quot;Electronics&quot;,138.99,&quot;MediaMarkt GmbH&quot;),(&quot;iPad Pro&quot;,&quot;Electronics&quot;,898.99,&quot;MediaMarkt GmbH&quot;),(&quot;Samsung TV FSA34DSJ3&quot;,&quot;Electronics&quot;,439.99,&quot;MediaMarkt GmbH&quot;),(&quot;Apple Pencil 2nd Gen.&quot;,&quot;Electronics&quot;,139.99,&quot;MediaMarkt GmbH&quot;),(&quot;SAMSUNG 970 EVO Plus SSD 1TB&quot;,&quot;Electronics&quot;,89.69,&quot;MediaMarkt GmbH&quot;),(&quot;xerox Kopierpapier Business DIN A4 80 g/qm &quot;,&quot;Office Supplies&quot;,161.78,&quot;Dunder Mifflin&quot;),(&quot;FlexFit Dexley Mesh Task Chair&quot;,&quot;Office Supplies&quot;,179.99,&quot;Staples&quot;),(&quot;HP 950XL/951 Black&quot;,&quot;Office Supplies&quot;,121.89,&quot;Staples&quot;)]
-          <layout>val AllItemData = [(&quot;HP OfficeJet Pro 8025e Printer&quot;,&quot;Electronics&quot;,14.99,&quot;Scamming Corp.&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,29.99,&quot;Scamming Corp.&quot;),(&quot;Amscan Mini Stars Confetti&quot;,&quot;Fun&quot;,20.49,&quot;Staples&quot;),(&quot;RECARO Exo Gaming Stuhl&quot;,&quot;Misc&quot;,929.99,&quot;MediaMarkt GmbH&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,598.99,&quot;MediaMarkt GmbH&quot;),(&quot;Ducky One 3 Matcha TKL&quot;,&quot;Electronics&quot;,138.99,&quot;MediaMarkt GmbH&quot;),(&quot;iPad Pro&quot;,&quot;Electronics&quot;,898.99,&quot;MediaMarkt GmbH&quot;),(&quot;Samsung TV FSA34DSJ3&quot;,&quot;Electronics&quot;,439.99,&quot;MediaMarkt GmbH&quot;),(&quot;Apple Pencil 2nd Gen.&quot;,&quot;Electronics&quot;,139.99,&quot;MediaMarkt GmbH&quot;),(&quot;SAMSUNG 970 EVO Plus SSD 1TB&quot;,&quot;Electronics&quot;,89.69,&quot;MediaMarkt GmbH&quot;),(&quot;xerox Kopierpapier Business DIN A4 80 g/qm &quot;,&quot;Office Supplies&quot;,161.78,&quot;Dunder Mifflin&quot;),(&quot;FlexFit Dexley Mesh Task Chair&quot;,&quot;Office Supplies&quot;,179.99,&quot;Staples&quot;),(&quot;HP 950XL/951 Black&quot;,&quot;Office Supplies&quot;,121.89,&quot;Staples&quot;)]</layout>
+        <ml id="ID1414646984">val AllItemData = [(&quot;RECARO Exo Gaming Stuhl&quot;,&quot;Odds and Ends&quot;,929.99,&quot;MediaMarkt GmbH&quot;),(&quot;HP OfficeJet Pro 8025e Printer&quot;,&quot;Electronics&quot;,14.99,&quot;Scamming Corp.&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,29.99,&quot;Scamming Corp.&quot;),(&quot;FlexFit Dexley Mesh Task Chair&quot;,&quot;Office Supplies&quot;,69.99,&quot;Scamming Corp.&quot;),(&quot;Amscan Mini Stars Confetti&quot;,&quot;Fun&quot;,20.49,&quot;Staples&quot;),(&quot;RYZE Tello Drone&quot;,&quot;Fun&quot;,104.99,&quot;Saturn&quot;),(&quot;Scrabble Original&quot;,&quot;Fun&quot;,21.95,&quot;Staples&quot;),(&quot;Funny Balloons&quot;,&quot;Fun&quot;,3.50,&quot;MediaMarkt GmbH&quot;),(&quot;iPhone 7 Screen Protector&quot;,&quot;Odds and Ends&quot;,3.49,&quot;Saturn&quot;),(&quot;iPhone 7 Screen Protector&quot;,&quot;Odds and Ends&quot;,3.49,&quot;MediaMarkt GmbH&quot;),(&quot;GP Batteries 9V Block&quot;,&quot;Odds and Ends&quot;,12.99,&quot;Dunder Mifflin&quot;),(&quot;Duracell Lithium Battery 3V&quot;,&quot;Odds and Ends&quot;,2.49,&quot;Staples&quot;),(&quot;Duracell Batteries AA&quot;,&quot;Odds and Ends&quot;,1.99,&quot;MediaMarkt GmbH&quot;),(&quot;VARTA Batteries AAA&quot;,&quot;Odds and Ends&quot;,2.99,&quot;Saturn&quot;),(&quot;BROTHER MFC&quot;,&quot;Electronic&quot;,279.00,&quot;Saturn&quot;),(&quot;HP DeskJet&quot;,&quot;Electronics&quot;,84.90,&quot;Saturn&quot;),(&quot;ASUS ZenBook 13&quot;,&quot;Electronics&quot;,1198.99,&quot;Saturn&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,598.99,&quot;MediaMarkt GmbH&quot;),(&quot;Ducky One 3 Matcha TKL&quot;,&quot;Electronics&quot;,138.99,&quot;MediaMarkt GmbH&quot;),(&quot;iPad Pro&quot;,&quot;Electronics&quot;,898.99,&quot;MediaMarkt GmbH&quot;),(&quot;Samsung TV FSA34DSJ3&quot;,&quot;Electronics&quot;,439.99,&quot;MediaMarkt GmbH&quot;),(&quot;Apple Pencil 2nd Gen.&quot;,&quot;Electronics&quot;,139.99,&quot;MediaMarkt GmbH&quot;),(&quot;SAMSUNG 970 EVO Plus SSD 1TB&quot;,&quot;Electronics&quot;,89.69,&quot;MediaMarkt GmbH&quot;),(&quot;xerox Kopierpapier Business DIN A4 80 g/qm &quot;,&quot;Office Supplies&quot;,161.78,&quot;Dunder Mifflin&quot;),(&quot;FlexFit Dexley Mesh Task Chair&quot;,&quot;Office Supplies&quot;,179.99,&quot;Staples&quot;),(&quot;HP 950XL/951 Black&quot;,&quot;Office Supplies&quot;,121.89,&quot;Staples&quot;)]
+          <layout>val AllItemData = [(&quot;RECARO Exo Gaming Stuhl&quot;,&quot;Odds and Ends&quot;,929.99,&quot;MediaMarkt GmbH&quot;),(&quot;HP OfficeJet Pro 8025e Printer&quot;,&quot;Electronics&quot;,14.99,&quot;Scamming Corp.&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,29.99,&quot;Scamming Corp.&quot;),(&quot;FlexFit Dexley Mesh Task Chair&quot;,&quot;Office Supplies&quot;,69.99,&quot;Scamming Corp.&quot;),(&quot;Amscan Mini Stars Confetti&quot;,&quot;Fun&quot;,20.49,&quot;Staples&quot;),(&quot;RYZE Tello Drone&quot;,&quot;Fun&quot;,104.99,&quot;Saturn&quot;),(&quot;Scrabble Original&quot;,&quot;Fun&quot;,21.95,&quot;Staples&quot;),(&quot;Funny Balloons&quot;,&quot;Fun&quot;,3.50,&quot;MediaMarkt GmbH&quot;),(&quot;iPhone 7 Screen Protector&quot;,&quot;Odds and Ends&quot;,3.49,&quot;Saturn&quot;),(&quot;iPhone 7 Screen Protector&quot;,&quot;Odds and Ends&quot;,3.49,&quot;MediaMarkt GmbH&quot;),(&quot;GP Batteries 9V Block&quot;,&quot;Odds and Ends&quot;,12.99,&quot;Dunder Mifflin&quot;),(&quot;Duracell Lithium Battery 3V&quot;,&quot;Odds and Ends&quot;,2.49,&quot;Staples&quot;),(&quot;Duracell Batteries AA&quot;,&quot;Odds and Ends&quot;,1.99,&quot;MediaMarkt GmbH&quot;),(&quot;VARTA Batteries AAA&quot;,&quot;Odds and Ends&quot;,2.99,&quot;Saturn&quot;),(&quot;BROTHER MFC&quot;,&quot;Electronic&quot;,279.00,&quot;Saturn&quot;),(&quot;HP DeskJet&quot;,&quot;Electronics&quot;,84.90,&quot;Saturn&quot;),(&quot;ASUS ZenBook 13&quot;,&quot;Electronics&quot;,1198.99,&quot;Saturn&quot;),(&quot;iPhone 7&quot;,&quot;Electronics&quot;,598.99,&quot;MediaMarkt GmbH&quot;),(&quot;Ducky One 3 Matcha TKL&quot;,&quot;Electronics&quot;,138.99,&quot;MediaMarkt GmbH&quot;),(&quot;iPad Pro&quot;,&quot;Electronics&quot;,898.99,&quot;MediaMarkt GmbH&quot;),(&quot;Samsung TV FSA34DSJ3&quot;,&quot;Electronics&quot;,439.99,&quot;MediaMarkt GmbH&quot;),(&quot;Apple Pencil 2nd Gen.&quot;,&quot;Electronics&quot;,139.99,&quot;MediaMarkt GmbH&quot;),(&quot;SAMSUNG 970 EVO Plus SSD 1TB&quot;,&quot;Electronics&quot;,89.69,&quot;MediaMarkt GmbH&quot;),(&quot;xerox Kopierpapier Business DIN A4 80 g/qm &quot;,&quot;Office Supplies&quot;,161.78,&quot;Dunder Mifflin&quot;),(&quot;FlexFit Dexley Mesh Task Chair&quot;,&quot;Office Supplies&quot;,179.99,&quot;Staples&quot;),(&quot;HP 950XL/951 Black&quot;,&quot;Office Supplies&quot;,121.89,&quot;Staples&quot;)]</layout>
         </ml>
       </block>
       <block id="ID1413073870">
         <id>Functions</id>
-        <ml id="ID1414860110">fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;
-          <layout>fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;</layout>
-        </ml>
-        <ml id="ID1414847286">fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;
-          <layout>fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;</layout>
-        </ml>
         <ml id="ID1413139466">fun expb_h(av:real,high:real) = let val x = exponential(1.0/av) in if x &gt; high then expb_h(av,high) else x end:real;
           <layout>fun expb_h(av:real,high:real) = let val x = exponential(1.0/av) in if x &gt; high then expb_h(av,high) else x end:real;</layout>
         </ml>
@@ -543,11 +537,17 @@
         <ml id="ID1414406638">fun isReqForOrd((oid,mat,reqMats), reqMat) = List.exists (fn x =&gt; reqMat = x) reqMats;
           <layout>fun isReqForOrd((oid,mat,reqMats), reqMat) = List.exists (fn x =&gt; reqMat = x) reqMats;</layout>
         </ml>
-        <ml id="ID1414663936">fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt;= 800.0;
-          <layout>fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt;= 800.0;</layout>
+        <ml id="ID1414663936">fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt; 800.0;
+          <layout>fun guardNormalConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &lt; 800.0;</layout>
         </ml>
         <ml id="ID1414668778">fun guardManagerConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 800.0;
           <layout>fun guardManagerConfirm((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 800.0;</layout>
+        </ml>
+        <ml id="ID1414860110">fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;
+          <layout>fun guardStandardReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = item_category = &quot;Fun&quot; orelse supplier = &quot;Scamming Corp.&quot;;</layout>
+        </ml>
+        <ml id="ID1414847286">fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;
+          <layout>fun guardManagerReject((oid,(total_price,iid,amount,item_category,supplier)): PurOrd) = iid = &quot;RECARO Exo Gaming Stuhl&quot; orelse iid = &quot;Ducky One 3 Matcha TKL&quot;;</layout>
         </ml>
         <ml id="ID1414745298">fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 500.0 andalso expb_h(100.0,200.0) &gt; 120.0;
           <layout>fun guardRejectOrder((oid, (total_price,iid,amount,item_category,supplier)): PurOrd) = total_price &gt;= 500.0 andalso expb_h(100.0,200.0) &gt; 120.0;</layout>
@@ -1069,12 +1069,12 @@ data</text>
                  h="40.000000"/>
         <token x="-10.000000"
                y="0.000000"/>
-        <marking x="-32.800000"
-                 y="44.000000"
+        <marking x="12.200000"
+                 y="76.500000"
                  hidden="false">
           <snap snap_id="0"
-                anchor.horizontal="3"
-                anchor.vertical="2"/>
+                anchor.horizontal="1"
+                anchor.vertical="3"/>
         </marking>
         <type id="ID1414645268">
           <posattr x="-978.500000"
@@ -1767,7 +1767,7 @@ action
           <textattr colour="Purple"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="4.0.1">[oid&lt;=993000]</text>
+                version="4.0.1">[oid&lt;=994000]</text>
         </cond>
         <time id="ID1414445431">
           <posattr x="-1675.000000"
@@ -2135,8 +2135,8 @@ approval</text>
         <binding x="7.200000"
                  y="-3.000000"/>
         <cond id="ID1414660892">
-          <posattr x="-964.000000"
-                   y="794.000000"/>
+          <posattr x="-946.000000"
+                   y="821.000000"/>
           <fillattr colour="White"
                     pattern="Solid"
                     filled="false"/>
@@ -3057,7 +3057,7 @@ action
                    currentcyckle="2"/>
         <transend idref="ID1414445040"/>
         <placeend idref="ID1414453695"/>
-        <annot id="ID1414843290">
+        <annot id="ID1431576344">
           <posattr x="-1957.000000"
                    y="1321.000000"/>
           <fillattr colour="White"
@@ -4322,7 +4322,7 @@ action
         <textattr colour="Black"
                   bold="false"/>
         <label/>
-        <text>total_price &lt;= 800</text>
+        <text>total_price &lt; 800</text>
       </Aux>
       <Aux id="ID1414846358">
         <posattr x="-871.000000"
@@ -4378,17 +4378,17 @@ action
           <text>&lt;same as model&gt;</text>
         </value>
       </option>
-      <option name="extensions.10002.enable">
-        <value>
-          <boolean>true</boolean>
-        </value>
-      </option>
       <option name="extensions.10005.enable">
         <value>
           <boolean>true</boolean>
         </value>
       </option>
       <option name="extensions.10006.enable">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="extensions.10002.enable">
         <value>
           <boolean>true</boolean>
         </value>
@@ -4601,15 +4601,15 @@ action
     </options>
     <binders>
       <cpnbinder id="ID2222"
-                 x="683"
-                 y="-10"
-                 width="1891"
-                 height="1227">
+                 x="1130"
+                 y="59"
+                 width="1828"
+                 height="863">
         <sheets>
           <cpnsheet id="ID2215"
-                    panx="741.468750"
-                    pany="899.046875"
-                    zoom="1.250000"
+                    panx="394.260000"
+                    pany="612.150000"
+                    zoom="0.800000"
                     instance="ID2149">
             <zorder>
               <position value="0"/>
@@ -4695,9 +4695,7 @@ action
           <IndexNode expanded="false"/>
         </IndexNode>
       </IndexNode>
-      <IndexNode expanded="false">
-        <IndexNode expanded="false"/>
-      </IndexNode>
+      <IndexNode expanded="false"/>
       <IndexNode expanded="true">
         <IndexNode expanded="false">
           <IndexNode expanded="true"/>
@@ -4773,10 +4771,10 @@ action
           <IndexNode expanded="true"/>
         </IndexNode>
         <IndexNode expanded="true">
+          <IndexNode expanded="false"/>
           <IndexNode expanded="true"/>
           <IndexNode expanded="true"/>
-          <IndexNode expanded="true"/>
-          <IndexNode expanded="true"/>
+          <IndexNode expanded="false"/>
         </IndexNode>
         <IndexNode expanded="true">
           <IndexNode expanded="true"/>

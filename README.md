@@ -1,47 +1,63 @@
-# eXdpn #
-E**x**plainable **d**ata **P**etri **n**ets
-Tool to mine and evaluate explainable data Petri nets using different classification techniques. 
+<!--This file is a copy of ./docs/_templates/md/exdpn.md, adding code block denotation around code examples. Please keep this file up to date-->
+exdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
 
-## Docker Deployment ##
-The project can be run with Docker.
-The easiest way to do so is with the included `docker-compose.yml` file.
+---
 
-### Using Docker Compose ###
-1. `docker-compose up`
+## Getting Started ##
+Installing exdpn is possible via pip:
+```bash
+python -m pip install exdpn 
+```
 
-To force re-creation of the container add the `--build` flag to the `docker-compose` command: `docker-compose up --build`.
-The web ui will then be available on port 8080.
+Now you can mine your first explainable data Petri net given an event log in XES format:
+```python
+from exdpn.util import import_log
+from exdpn.data_petri_net import Data_Petri_Net
+event_log = import_log('<path_to_event_log.xes>')
+dpn = Data_Petri_Net(event_log, event_level_attributes=['event_level_attribute'])
+```
 
-### Building the Docker Container ###
-1. `docker build .`
-2. `docker run -p 8080:5000 <container id>`
+This will mine a data Petri net for your event log, considering only "event_level_attribute" as a possible attribute for classification. 
+The `exdpn.data_petri_net.data_petri_net.Data_Petri_Net` class already takes care of the workflow to create a data Petri net. In cases where fine-grained 
+control of the data Petri net creation is needed or only certain functionallity of this package is needed, one can simply call all the needed functions and methods directly. 
 
-The web ui will then be available on port 8080.
+Let's say we are only interested in extracting the guard dataset at one specific decision point in the Petri net.
+We start off by importing the event log from memory and creating a standard Petri net:
 
-## Development
-### First Steps ###
-1. First, create a virtual environment using `python3 -m venv venv`
-2. Activate it with one of:
-   - `source venv/bin/activate` 
-   - `venv/Scripts/Activate.ps1` (powershell)
-   - `venv\Scripts\activate.bat` (windows)
-3. Install all packages required for development using `pip install -r requirements.txt`.
+```python
+from exdpn.util import import_log
+from exdpn.petri_net import get_petri_net
+event_log = import_log('<path_to_event_log.xes>')
+pn, im, fm = get_petri_net(event_log)
+```
 
-### Building and Installing the Package ###
-1. Activate the environment using one of:
-   - `source venv/bin/activate`
-   - `venv/Scripts/Activate.ps1` (powershell)
-   - `venv\Scripts\activate.bat` (windows)
-2. Run `python setup.py bdist_wheel` to build the project.
-3. Install it using `pip install dist/[wheel name].whl --force-reinstall`.
+We then extract all the decision points and specify our place of interest using the `exdpn.decisionpoints` module:
 
-### UI: Flask Webserver ###
-1. Set the FLASK_ENV env. variable:
-   -  `export FLASK_ENV=development` (bash) or
-   -  `$env:FLASK_ENV = "development"` (powershell)
-2. Navigate into the `ui/` directory and run `flask run`
+```python
+from exdpn.decisionpoints import find_decision_points
+dp_dict = find_decision_points(pn)
+decision_point = list(dp_dict.keys())[0]
+```
 
-### Generating Documentation ###
-- Run `pdoc ./exdpn -o ./docs -d google -t ./docs/_templates --footer-text "exdpn - version 0.0.1"` from the root directory.
+To extract a guard dataset for the specific place `decision_point`, we call the following data extraction function from `exdpn.guard_datasets`:
+
+```python
+from exdpn.guard_datasets import extract_all_datasets
+dataset = extract_all_datasets(event_log, net, im, fm, event_level_attributes=['event_level_attribute'], places=[decision_point])
+```
 
 
+Further examples can be seen in the API documentation. The sometimes referenced XES file `p2p_base.xes` can be found on Github.
+
+---
+
+## Source Code and UI-application ##
+The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally. 
+
+---
+
+## Qualitative Analysis of eXdpn ##
+To provide some insights to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. The analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+
+---
