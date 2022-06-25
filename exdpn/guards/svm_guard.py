@@ -63,7 +63,6 @@ class SVM_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import SVM_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -117,7 +116,6 @@ class SVM_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import SVM_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -185,7 +183,6 @@ class SVM_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import SVM_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -201,8 +198,9 @@ class SVM_Guard(Guard):
             >>> guard = SVM_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
-            >>> guard.get_explainable_representation(X_test)
-            >>> #add figure
+            >>> # return figure of explainable representation
+            >>> fig = guard.get_explainable_representation(X_test)
+            >>> #add figure: <img src="../../images/svm-example-representation.svg" alt="Example explainable representation of a support vector machine guard" style="max-height: 350px;"/>
 
             .. include:: ../../docs/_templates/md/example-end.md
             

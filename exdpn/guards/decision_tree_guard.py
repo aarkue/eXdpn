@@ -60,7 +60,6 @@ class Decision_Tree_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import Decision_Tree_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -115,7 +114,6 @@ class Decision_Tree_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import Decision_Tree_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> # event_log = import_log('p2p_base.xes')
@@ -182,7 +180,6 @@ class Decision_Tree_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import Decision_Tree_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -198,9 +195,9 @@ class Decision_Tree_Guard(Guard):
             >>> guard = Decision_Tree_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
+            >>> # return figure of explainable representation
             >>> fig = guard.get_explainable_representation()
-            >>> # Returns a Figure with the explainable representation
-            >>> # add figure
+            >>> # add figure: <img src="../../images/dt-example-representation.svg" alt="Example explainable representation of a decision tree guard" style="max-height: 350px;"/>
 
             .. include:: ../../docs/_templates/md/example-end.md
             

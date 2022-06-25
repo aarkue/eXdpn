@@ -199,8 +199,9 @@ class Guard_Manager():
             >>> # create a guard manager for that decision point
             >>> guard_manager = guards.Guard_Manager(dataframe = dp_dataset)
             >>> guard_manager_results = guard_manager.train_test()
-            >>> guard_manager.get_comparison_plot()
-            >>> #add figure
+            >>> # return comparision plot
+            >>> fig = guard_manager.get_comparison_plot()
+            >>> #add figure: <img src="../../images/comparision_plot.svg" alt="Comparision plot of the performance of the used machine learning techniques" style="max-height: 350px;"/>
 
             .. include:: ../../docs/_templates/md/example-end.md
 

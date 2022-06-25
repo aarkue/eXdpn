@@ -66,7 +66,6 @@ class Neural_Network_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import Neural_Network_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -130,7 +129,6 @@ class Neural_Network_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import Neural_Network_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -203,7 +201,6 @@ class Neural_Network_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn import guards
             >>> from exdpn.guards import Neural_Network_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
@@ -219,13 +216,16 @@ class Neural_Network_Guard(Guard):
             >>> guard = Neural_Network_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
-            >>> # Sample from test data, as explainable representation of NN is computationally expensive
+            >>> # sample from test data, as explainable representation of NN is computationally expensive
             >>> sampled_test_data = X_test.sample(n=min(10, len(X_test)));
-            >>> guard.get_explainable_representation(sampled_test_data)
+            >>> # return figure of explainable representation
+            >>> fig = guard.get_explainable_representation(sampled_test_data) # results may deviate 
 
+            
+            <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 350px;"/>
+            
+            
             .. include:: ../../docs/_templates/md/example-end.md
-
-        <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 300px;"/>
 
         Note: 
             For an example of the explainable representations of all machine learning techniques please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).

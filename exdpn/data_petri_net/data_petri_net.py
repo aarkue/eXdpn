@@ -259,6 +259,7 @@ class Data_Petri_Net():
             ...                      verbose = False)
             >>> dpn.get_mean_guard_conformance(event_log) # value may deviate
             0.949
+            
 
             .. include:: ../../docs/_templates/md/example-end.md
         """
