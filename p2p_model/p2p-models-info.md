@@ -1,8 +1,8 @@
 ## p2p_base: 
 - 3 decision points
 - 1: Request Manager Approval if total_price >= 800, Request Standard Approval if total_price <= 1000
-- 2: Manager Rejection if total_price >= 500 and random_exponential(100, 200) > 120, otherwise Manager Approval 
-- 3: Standard Rejection if total_price >= 500 and random_exponential(100, 200) > 120, otherwise Standard Approval 
+- 2: Manager Rejection if total_price >= 400 and random_exponential(100, 200) > 100, otherwise Manager Approval 
+- 3: Standard Rejection if total_price >= 400 and random_exponential(100, 200) > 100, otherwise Standard Approval 
 
 ## p2p_base_no_randomness: 
 - 3 decision points
