@@ -329,7 +329,7 @@
 </span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">            float: Fraction of traces that respected all decision point guards passed during token based replay.</span>
 </span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>
 </span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">        Examples:</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">           ```pyshef  </span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">         </span>
 </span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="sd">            &gt;&gt;&gt; import os</span>
 </span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="sd">            &gt;&gt;&gt; from exdpn.util import import_log</span>
 </span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">            &gt;&gt;&gt; from exdpn.data_petri_net import Data_Petri_Net</span>
@@ -635,7 +635,7 @@
 </span><span id="Data_Petri_Net-243"><a href="#Data_Petri_Net-243"><span class="linenos">243</span></a><span class="sd">            float: Fraction of traces that respected all decision point guards passed during token based replay.</span>
 </span><span id="Data_Petri_Net-244"><a href="#Data_Petri_Net-244"><span class="linenos">244</span></a>
 </span><span id="Data_Petri_Net-245"><a href="#Data_Petri_Net-245"><span class="linenos">245</span></a><span class="sd">        Examples:</span>
-</span><span id="Data_Petri_Net-246"><a href="#Data_Petri_Net-246"><span class="linenos">246</span></a><span class="sd">           ```pyshef  </span>
+</span><span id="Data_Petri_Net-246"><a href="#Data_Petri_Net-246"><span class="linenos">246</span></a><span class="sd">         </span>
 </span><span id="Data_Petri_Net-247"><a href="#Data_Petri_Net-247"><span class="linenos">247</span></a><span class="sd">            &gt;&gt;&gt; import os</span>
 </span><span id="Data_Petri_Net-248"><a href="#Data_Petri_Net-248"><span class="linenos">248</span></a><span class="sd">            &gt;&gt;&gt; from exdpn.util import import_log</span>
 </span><span id="Data_Petri_Net-249"><a href="#Data_Petri_Net-249"><span class="linenos">249</span></a><span class="sd">            &gt;&gt;&gt; from exdpn.data_petri_net import Data_Petri_Net</span>
@@ -1111,7 +1111,7 @@
 </span><span id="Data_Petri_Net.get_mean_guard_conformance-243"><a href="#Data_Petri_Net.get_mean_guard_conformance-243"><span class="linenos">243</span></a><span class="sd">            float: Fraction of traces that respected all decision point guards passed during token based replay.</span>
 </span><span id="Data_Petri_Net.get_mean_guard_conformance-244"><a href="#Data_Petri_Net.get_mean_guard_conformance-244"><span class="linenos">244</span></a>
 </span><span id="Data_Petri_Net.get_mean_guard_conformance-245"><a href="#Data_Petri_Net.get_mean_guard_conformance-245"><span class="linenos">245</span></a><span class="sd">        Examples:</span>
-</span><span id="Data_Petri_Net.get_mean_guard_conformance-246"><a href="#Data_Petri_Net.get_mean_guard_conformance-246"><span class="linenos">246</span></a><span class="sd">           ```pyshef  </span>
+</span><span id="Data_Petri_Net.get_mean_guard_conformance-246"><a href="#Data_Petri_Net.get_mean_guard_conformance-246"><span class="linenos">246</span></a><span class="sd">         </span>
 </span><span id="Data_Petri_Net.get_mean_guard_conformance-247"><a href="#Data_Petri_Net.get_mean_guard_conformance-247"><span class="linenos">247</span></a><span class="sd">            &gt;&gt;&gt; import os</span>
 </span><span id="Data_Petri_Net.get_mean_guard_conformance-248"><a href="#Data_Petri_Net.get_mean_guard_conformance-248"><span class="linenos">248</span></a><span class="sd">            &gt;&gt;&gt; from exdpn.util import import_log</span>
 </span><span id="Data_Petri_Net.get_mean_guard_conformance-249"><a href="#Data_Petri_Net.get_mean_guard_conformance-249"><span class="linenos">249</span></a><span class="sd">            &gt;&gt;&gt; from exdpn.data_petri_net import Data_Petri_Net</span>
@@ -1189,27 +1189,23 @@
   <p>float: Fraction of traces that respected all decision point guards passed during token based replay.</p>
 </blockquote>
 
-<h6 id="examples">Examples</h6>
+<p>Examples:</p>
 
-<blockquote>
-  <p>```pyshef  </p>
-  
-  <div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn"><a href="../util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">import_log</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn"><a href="../data_petri_net.html">exdpn.data_petri_net</a></span> <span class="kn">import</span> <span class="n">Data_Petri_Net</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn"><a href="../guards.html">exdpn.guards</a></span> <span class="kn">import</span> <span class="n">ML_Technique</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">event_log</span> <span class="o">=</span> <span class="n">import_log</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;datasets&#39;</span><span class="p">,</span> <span class="s1">&#39;p2p_base.xes&#39;</span><span class="p">))</span>        
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dpn</span> <span class="o">=</span> <span class="n">Data_Petri_Net</span><span class="p">(</span><span class="n">event_log</span> <span class="o">=</span> <span class="n">event_log</span><span class="p">,</span> 
-<span class="gp">... </span>                     <span class="n">case_level_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;concept:name&quot;</span><span class="p">],</span>
-<span class="gp">... </span>                     <span class="n">event_level_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;item_category&#39;</span><span class="p">,</span><span class="s1">&#39;item_id&#39;</span><span class="p">,</span><span class="s1">&#39;item_amount&#39;</span><span class="p">,</span><span class="s1">&#39;supplier&#39;</span><span class="p">,</span><span class="s1">&#39;total_price&#39;</span><span class="p">],</span>
-<span class="gp">... </span>                     <span class="n">ml_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ML_Technique</span><span class="o">.</span><span class="n">SVM</span><span class="p">,</span> <span class="n">ML_Technique</span><span class="o">.</span><span class="n">DT</span><span class="p">],</span>
-<span class="gp">... </span>                     <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dpn</span><span class="o">.</span><span class="n">get_mean_guard_conformance</span><span class="p">(</span><span class="n">event_log</span><span class="p">)</span> <span class="c1"># value may deviate</span>
-<span class="go">0.949</span>
-</code></pre></div>
-  
-  <p>For more examples refer to the <a href="https://aarkue.github.io/eXdpn">User Guide</a>.</p>
-</blockquote>
+<pre><code>&gt;&gt;&gt; import os
+&gt;&gt;&gt; from <a href="../util.html">exdpn.util</a> import import_log
+&gt;&gt;&gt; from <a href="../data_petri_net.html">exdpn.data_petri_net</a> import Data_Petri_Net
+&gt;&gt;&gt; from <a href="../guards.html">exdpn.guards</a> import ML_Technique
+&gt;&gt;&gt; event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))        
+&gt;&gt;&gt; dpn = Data_Petri_Net(event_log = event_log, 
+...                      case_level_attributes = ["concept:name"],
+...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+...                      ml_list = [ML_Technique.SVM, ML_Technique.DT],
+...                      verbose = False)
+&gt;&gt;&gt; dpn.get_mean_guard_conformance(event_log) # value may deviate
+0.949
+
+For more examples refer to the [User Guide](https://aarkue.github.io/eXdpn).
+</code></pre>
 </div>
 
 

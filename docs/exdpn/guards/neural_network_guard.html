@@ -273,7 +273,7 @@
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>        <span class="sd">&quot;&quot;&quot;Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP.</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>        <span class="sd">&quot;&quot;&quot;Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP. For Neural Networks, as the calculation of the SHAP values can be very time-consuming, we recommend using sampled or aggregated (clustered) data.</span>
 </span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>
 </span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        Example explainable representation:</span>
 </span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        &lt;img src=&quot;../../images/nn-example-representation.svg&quot; alt=&quot;Example explainable representation of a neural network guard&quot; style=&quot;max-height: 300px;&quot;/&gt;</span>
@@ -532,7 +532,7 @@
 </span><span id="Neural_Network_Guard-184"><a href="#Neural_Network_Guard-184"><span class="linenos">184</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="Neural_Network_Guard-185"><a href="#Neural_Network_Guard-185"><span class="linenos">185</span></a>
 </span><span id="Neural_Network_Guard-186"><a href="#Neural_Network_Guard-186"><span class="linenos">186</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-</span><span id="Neural_Network_Guard-187"><a href="#Neural_Network_Guard-187"><span class="linenos">187</span></a>        <span class="sd">&quot;&quot;&quot;Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP.</span>
+</span><span id="Neural_Network_Guard-187"><a href="#Neural_Network_Guard-187"><span class="linenos">187</span></a>        <span class="sd">&quot;&quot;&quot;Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP. For Neural Networks, as the calculation of the SHAP values can be very time-consuming, we recommend using sampled or aggregated (clustered) data.</span>
 </span><span id="Neural_Network_Guard-188"><a href="#Neural_Network_Guard-188"><span class="linenos">188</span></a>
 </span><span id="Neural_Network_Guard-189"><a href="#Neural_Network_Guard-189"><span class="linenos">189</span></a><span class="sd">        Example explainable representation:</span>
 </span><span id="Neural_Network_Guard-190"><a href="#Neural_Network_Guard-190"><span class="linenos">190</span></a><span class="sd">        &lt;img src=&quot;../../images/nn-example-representation.svg&quot; alt=&quot;Example explainable representation of a neural network guard&quot; style=&quot;max-height: 300px;&quot;/&gt;</span>
@@ -962,14 +962,14 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_explainable_representation</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">matplotlib</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span>:</span></span>
+        <span class="name">get_explainable_representation</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">matplotlib</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span>:</span></span>
 
                 <label class="view-source-button" for="Neural_Network_Guard.get_explainable_representation-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Neural_Network_Guard.get_explainable_representation"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Neural_Network_Guard.get_explainable_representation-186"><a href="#Neural_Network_Guard.get_explainable_representation-186"><span class="linenos">186</span></a>    <span class="k">def</span> <span class="nf">get_explainable_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span><span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-</span><span id="Neural_Network_Guard.get_explainable_representation-187"><a href="#Neural_Network_Guard.get_explainable_representation-187"><span class="linenos">187</span></a>        <span class="sd">&quot;&quot;&quot;Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP.</span>
+</span><span id="Neural_Network_Guard.get_explainable_representation-187"><a href="#Neural_Network_Guard.get_explainable_representation-187"><span class="linenos">187</span></a>        <span class="sd">&quot;&quot;&quot;Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP. For Neural Networks, as the calculation of the SHAP values can be very time-consuming, we recommend using sampled or aggregated (clustered) data.</span>
 </span><span id="Neural_Network_Guard.get_explainable_representation-188"><a href="#Neural_Network_Guard.get_explainable_representation-188"><span class="linenos">188</span></a>
 </span><span id="Neural_Network_Guard.get_explainable_representation-189"><a href="#Neural_Network_Guard.get_explainable_representation-189"><span class="linenos">189</span></a><span class="sd">        Example explainable representation:</span>
 </span><span id="Neural_Network_Guard.get_explainable_representation-190"><a href="#Neural_Network_Guard.get_explainable_representation-190"><span class="linenos">190</span></a><span class="sd">        &lt;img src=&quot;../../images/nn-example-representation.svg&quot; alt=&quot;Example explainable representation of a neural network guard&quot; style=&quot;max-height: 300px;&quot;/&gt;</span>
@@ -1046,7 +1046,7 @@
 </span></pre></div>
 
 
-            <div class="docstring"><p>Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP.</p>
+            <div class="docstring"><p>Returns an explainable representation of the neural network guard, a Matplotlib plot using SHAP. For Neural Networks, as the calculation of the SHAP values can be very time-consuming, we recommend using sampled or aggregated (clustered) data.</p>
 
 <p>Example explainable representation:
 <img src="../../images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 300px;"/></p>
