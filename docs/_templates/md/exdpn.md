@@ -52,6 +52,16 @@ To extract a guard dataset for the specific place `decision_point`, we call the 
 Further examples can be seen in the API documentation. The sometimes referenced XES file `p2p_base.xes` can be found on Github.
 
 ---
+## Explainable Representation ##
+To provide a better understandig of the prediction models created by the used machine learning techniques, we use two types of explainable representations.   
+Decision Tree models are represented by simply drawing the detected Decision Tree. Each node represents a splitting point and contains information about the splitting criteria. The leaves show the final classification for all samples in the particular leaf.   
+For the explainable representation of Neural Network, Support Vector Machine and Logistic Regression the [SHAP library](https://shap.readthedocs.io/en/latest/index.html) is used. The bar plots show the mean absolute values of the SHAP values of the most important feature attributes. These SHAP values indicate the importance of a feature attribute on the the model prediction. If you are interested in learning more about SHAP values and the theory behind them, please check the references.  
+  
+References:  
+https://towardsdatascience.com/shap-explained-the-way-i-wish-someone-explained-it-to-me-ab81cc69ef30  
+https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137
+
+---
 
 ## Source Code and UI-application ##
 The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
@@ -60,7 +70,7 @@ Furthermore, the Github also includes a graphical user interface in the form of 
 ---
 
 ## Qualitative Analysis of eXdpn ##
-To provide some insights to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. The analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+To provide insight to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. The analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
 
 
 ---
