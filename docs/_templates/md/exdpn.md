@@ -8,7 +8,7 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
 <p align="center"> 
     Example of explainable representation of a neural network guard 
 </p>
-
+  
 ---
 
 ## Getting Started ##
@@ -49,9 +49,10 @@ To extract a guard dataset for the specific place `decision_point`, we call the 
 >>> dataset = extract_all_datasets(event_log, net, im, fm, event_level_attributes=['event_level_attribute'], places=[decision_point])
 
 
-Further examples can be seen in the API documentation. The sometimes referenced XES file `p2p_base.xes` can be found on Github.
+Further examples can be seen in the API documentation. The sometimes referenced XES file `p2p_base.xes` can be found on Github.  
 
 ---
+
 ## Explainable Representation ##
 To provide a better understandig of the prediction models created by the used machine learning techniques, we use two types of explainable representations.   
 Decision Tree models are represented by simply drawing the detected Decision Tree. Each node represents a splitting point and contains information about the splitting criteria. The leaves show the final classification for all samples in the particular leaf.   
@@ -59,20 +60,19 @@ For the explainable representation of Neural Network, Support Vector Machine and
   
 References:  
 https://towardsdatascience.com/shap-explained-the-way-i-wish-someone-explained-it-to-me-ab81cc69ef30  
-https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137
+https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137  
 
 ---
 
 ## Source Code and UI-application ##
 The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
-Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally. 
+Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally.  
 
 ---
 
 ## Qualitative Analysis of eXdpn ##
 To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
 The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards.  
-The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
-
+The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).  
 
 ---

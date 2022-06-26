@@ -111,7 +111,7 @@ We start off by importing the event log from memory and creating a standard Petr
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">extract_all_datasets</span><span class="p">(</span><span class="n">event_log</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span> <span class="n">event_level_attributes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event_level_attribute&#39;</span><span class="p">],</span> <span class="n">places</span><span class="o">=</span><span class="p">[</span><span class="n">decision_point</span><span class="p">])</span>
 </code></pre></div>
 
-<p>Further examples can be seen in the API documentation. The sometimes referenced XES file <code>p2p_base.xes</code> can be found on Github.</p>
+<p>Further examples can be seen in the API documentation. The sometimes referenced XES file <code>p2p_base.xes</code> can be found on Github.  </p>
 
 <hr />
 
@@ -123,14 +123,14 @@ For the explainable representation of Neural Network, Support Vector Machine and
 
 <p>References: <br />
 <a href="https://towardsdatascience.com/shap-explained-the-way-i-wish-someone-explained-it-to-me-ab81cc69ef30">https://towardsdatascience.com/shap-explained-the-way-i-wish-someone-explained-it-to-me-ab81cc69ef30</a> <br />
-<a href="https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137">https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137</a></p>
+<a href="https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137">https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137</a>  </p>
 
 <hr />
 
 <h2 id="source-code-and-ui-application">Source Code and UI-application</h2>
 
 <p>The source code of this package is available on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).
-Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally. </p>
+Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally.  </p>
 
 <hr />
 
@@ -138,7 +138,7 @@ Furthermore, the Github also includes a graphical user interface in the form of 
 
 <p>To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities. <br />
 The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards. <br />
-The complete analysis can be found on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).</p>
+The complete analysis can be found on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).  </p>
 
 <hr />
 </div>
@@ -149,7 +149,7 @@ The complete analysis can be found on Github (<a href="https://github.com/aarkue
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ./../docs/_templates/md/exdpn.md</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">&quot;&quot;&quot;</span> 
 </span></pre></div>
 
 
