@@ -2,7 +2,7 @@
 eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
 
 <p align="center">
-    <img src="./images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 350px;"/>
+    <img src="docs/images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 350px;"/>
 </p>
 <p align="center"> 
     Example of explainable representation of a neural network guard 
