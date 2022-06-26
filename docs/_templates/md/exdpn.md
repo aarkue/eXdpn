@@ -1,6 +1,6 @@
 <img class="dark-invert" src="./images/exdpn-logo.svg" alt="eXdpn Logo"/>
 
-exdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
+eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
 
 <p align="center">
     <img src="./images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 350px;"/>
@@ -70,7 +70,9 @@ Furthermore, the Github also includes a graphical user interface in the form of 
 ---
 
 ## Qualitative Analysis of eXdpn ##
-To provide insight to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. The analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+To provide insight to the eXdpn application, the tool was tested and analyzed using four different syntetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
+The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards.  
+The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
 
 
 ---
