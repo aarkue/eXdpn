@@ -81,8 +81,11 @@ def log_page(logid: str):
         if logid in uploaded_logs:
             # Remove all traces of the event log
             uploaded_logs.pop(logid)
-            loaded_event_logs.pop(logid)
-            discovered_models.pop(logid)
+            if logid in loaded_event_logs:
+                loaded_event_logs.pop(logid)
+            if logid in discovered_models:
+                discovered_models.pop(logid)
+
             safe_path = get_upload_path(logid)
             if safe_path is not None:
                 os.remove(safe_path)
