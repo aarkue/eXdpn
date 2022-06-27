@@ -12,7 +12,7 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
 ---
 
 ## Getting Started ##
-Installing exdpn is possible via pip:
+Installing eXdpn is possible via pip:
 ```bash
 python -m pip install exdpn 
 ```
