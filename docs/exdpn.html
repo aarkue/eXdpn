@@ -69,6 +69,25 @@ exdpn    </h1>
     Example of explainable representation of a neural network guard 
 </p>
 
+<p><strong>Table of Contents:</strong></p>
+
+<ul>
+<li><a href="#getting-started">Getting Started</a>
+<ul>
+<li><a href="#explainable-representation">Explainable Representation</a></li>
+<li><a href="#source-code-and-ui-application">Source Code and UI-application</a></li>
+<li><a href="#qualitative-analysis-of-exdpn">Qualitative Analysis of eXdpn</a></li>
+<li><a href="#user-guide">User Guide</a></li>
+<li><a href="#getting-started-1">Getting Started</a></li>
+<li><a href="#example-run">Example Run</a>
+<ul>
+<li><a href="#discovering-a-process-model">Discovering a Process Model</a></li>
+<li><a href="#configuring-the-mining-parameters">Configuring the Mining Parameters</a></li>
+<li><a href="#mining-and-viewing-results">Mining and Viewing Results</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
 <hr />
 
 <h2 id="getting-started">Getting Started</h2>
@@ -169,16 +188,19 @@ If you do not have any XES event log at hand, you can try our P2P base event log
 <p>To gain insights into the decisions of the process, you will need to go through the following steps:</p>
 
 <ol>
-<li>Discover Process Model</li>
-<li>Select Mining Parameters</li>
-<li>Mine Decisions</li>
-<li>Inspect and Analyze Mined Decisions</li>
+<li><a href="#discovering-a-process-model">Discovering a Process Model</a></li>
+<li><a href="#configuring-the-mining-parameters">Configuring the Mining Parameters</a></li>
+<li><a href="#mining-and-viewing-results">Mining and Viewing Results</a></li>
 </ol>
+
+<h4 id="discovering-a-process-model">Discovering a Process Model</h4>
 
 <p>To find where decisions are made in the process, you first have to <strong>discover a process model</strong> for it. This can be done using the Inductive Miner or the Alpha Miner.
 Once the process mining is done the discovered accepting Petri net will be displayed on the page, and every decision point is highlighted in red.</p>
 
 <p><img src="./images/user-guide/mine_decisions_step2.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/></p>
+
+<h4 id="configuring-the-mining-parameters">Configuring the Mining Parameters</h4>
 
 <p>Next, you can select the <strong>parameters for the decision mining</strong>.
 The techniques that should be used can be changed.
@@ -206,6 +228,8 @@ For that, you can choose for each of the following attribute type whether or not
 </ul></li>
 </ul></li>
 </ul>
+
+<h4 id="mining-and-viewing-results">Mining and Viewing Results</h4>
 
 <p>By clicking on <strong>Mine Decisions</strong> the decision mining process is started in the background. Please stand by as this might take a few minutes. Once the mining finished, the loading indicator on the button will disappear, and the <em>mean guard conformance</em><sup class="footnote-ref" id="fnref-1"><a href="#fn-1">1</a></sup> will be displayed on the Petri net.</p>
 
