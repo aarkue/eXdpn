@@ -6,7 +6,7 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
     <img src="./images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 350px;"/>
 </p>
 <p align="center"> 
-    Example of explainable representation of a neural network guard 
+    Example of explainable representation of a Neural Network guard 
 </p>
 
 **Table of Contents:**
@@ -134,7 +134,7 @@ For that, you can choose for each of the following attribute type whether or not
 - Case attributes
   - Case attributes are on a case-level and are used for all decisions related to that case
 - Event attributes
-  - Event-level attributes found in the event log. These attributes are used for decision points occurring immediately after this event.
+  - Event-level attributes found in the event log. These attributes are used for decision points occurring immediately after this event
 - Synthetic attributes
   - Synthetic attributes are not present in the input event log but added artifically based on other event data
   - The following synthetic attributes are currently available:
@@ -154,5 +154,3 @@ This will open a panel on the bottom, which displays further information on the 
 The technique that performed best for the selected place and its corresponding F1 score is shown together with a comparison of the F1 scores of the all other techniques.
 Additionally the *explainable representation* of the winning technique is shown and can give further insights into what aspects motivate the decision in question.
 To view the explainable representation of other technique, simply select it from the dropdown menu.
-
----
