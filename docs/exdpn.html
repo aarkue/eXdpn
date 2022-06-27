@@ -27,6 +27,7 @@
   <li><a href="#explainable-representation">Explainable Representation</a></li>
   <li><a href="#source-code-and-ui-application">Source Code and UI-application</a></li>
   <li><a href="#qualitative-analysis-of-exdpn">Qualitative Analysis of eXdpn</a></li>
+  <li><a href="#user-guide">User Guide</a></li>
 </ul>
 
 
@@ -141,6 +142,92 @@ The qualitative analysis revealed some differences between the four different ma
 The complete analysis can be found on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).  </p>
 
 <hr />
+
+<h2 id="user-guide">User Guide</h2>
+
+<p>In the next few sections we will introduce how you can use the web UI to mine decisions in a process. </p>
+
+<h3 id="getting-started-2">Getting Started</h3>
+
+<p>When you first run the web UI (either locally or through docker) you will be prompted with the following screen:
+<img src="./images/user-guide/start.png" alt="Welcome screen of eXdpn UI" style=""/>
+Here you can start by importing any existing event log in the XES format.
+If you do not have any XES event log at hand, you can try our P2P base event log and download it <a href="https://github.com/aarkue/eXdpn/raw/main/datasets/p2p_base.xes" target="_blank">here</a>.</p>
+
+<p>After importing a local event log, you will see it appear on the page.</p>
+
+<p><img src="./images/user-guide/log-imported.png" alt="Screenshot showing the page listing the uploaded event log p2p_base.xes" style=""/></p>
+
+<p>To continue select an event log from the list of imported logs.</p>
+
+<h3 id="example-run">Example Run</h3>
+
+<p>When selecting an event log the log will be loaded to memory and initial statistics about the log (like case or event count) are displayed.</p>
+
+<p><img src="./images/user-guide/mine_decisions_step1.png" alt="Screenshot showing the basic statistics of the selected event log" style=""/></p>
+
+<p>To gain insights into the decisions of the process, you will need to go through the following steps:</p>
+
+<ol>
+<li>Discover Process Model</li>
+<li>Select Mining Parameters</li>
+<li>Mine Decisions</li>
+<li>Inspect and Analyze Mined Decisions</li>
+</ol>
+
+<p>To find where decisions are made in the process, you first have to <strong>discover a process model</strong> for it. This can be done using the Inductive Miner or the Alpha Miner.
+Once the process mining is done the discovered accepting Petri net will be displayed on the page, and every decision point is highlighted in red.</p>
+
+<p><img src="./images/user-guide/mine_decisions_step2.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/></p>
+
+<p>Next, you can select the <strong>parameters for the decision mining</strong>.
+The techniques that should be used can be changed.
+By default, all available techniques (Decision Tree, Logistic Regression, Support-vector Machine (SVM), Neural Network) are selected.</p>
+
+<p>In addition, the data on which the machine learning techniques will base their decisions can be configured.
+For that, you can choose for each of the following attribute type whether or not it should be considered in the decision mining:</p>
+
+<ul>
+<li>Case attributes
+<ul>
+<li>Case attributes are on a case-level and are used for all decisions related to that case</li>
+</ul></li>
+<li>Event attributes
+<ul>
+<li>Event-level attributes found in the event log. These attributes are used for decision points occurring immediately after this event.</li>
+</ul></li>
+<li>Synthetic attributes
+<ul>
+<li>Synthetic attributes are not present in the input event log but added artifically based on other event data</li>
+<li>The following synthetic attributes are currently available:
+<ul>
+<li><strong><em>Elapsed time in case</em></strong>: Time duration since the case started is added as an attribute to every event</li>
+<li><strong><em>Time since last event</em></strong>: The duration since the previous event occurred is added as an attribute to every event</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>By clicking on <strong>Mine Decisions</strong> the decision mining process is started in the background. Please stand by as this might take a few minutes. Once the mining finished, the loading indicator on the button will disappear, and the <em>mean guard conformance</em><sup class="footnote-ref" id="fnref-1"><a href="#fn-1">1</a></sup> will be displayed on the Petri net.</p>
+
+<p><img src="./images/user-guide/mine_decisions_step3.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/></p>
+
+<p>To <strong>inspect how decisions are made</strong> at a certain part of the process, you can click on one of the colored decision places in the Petri net.
+This will open a panel on the bottom, which displays further information on the discovered decision guards for the selected place.</p>
+
+<p>The technique that performed best for the selected place and its corresponding F1 score is shown together with a comparison of the F1 scores of the all other techniques.
+Additionally the <em>explainable representation</em> of the winning technique is shown and can give further insights into what aspects motivate the decision in question.
+To view the explainable representation of other technique, simply select it from the dropdown menu.</p>
+
+<hr />
+
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn-1">
+<p>The mean guard conformance represents the fraction of cases which can be replayed perfectly on the Data Petri net, respecting all discovered guards.&#160;<a href="#fnref-1" class="footnoteBackLink" title="Jump back to footnote 1 in the text.">&#8617;</a></p>
+</li>
+</ol>
+</div>
 </div>
 
                         <input id="exdpn-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">

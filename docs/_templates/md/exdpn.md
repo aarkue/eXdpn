@@ -76,3 +76,66 @@ The qualitative analysis revealed some differences between the four different ma
 The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).  
 
 ---
+
+
+## User Guide ##
+In the next few sections we will introduce how you can use the web UI to mine decisions in a process. 
+### Getting Started ###
+When you first run the web UI (either locally or through docker) you will be prompted with the following screen:
+<img src="./images/user-guide/start.png" alt="Welcome screen of eXdpn UI" style=""/>
+Here you can start by importing any existing event log in the XES format.
+If you do not have any XES event log at hand, you can try our P2P base event log and download it <a href="https://github.com/aarkue/eXdpn/raw/main/datasets/p2p_base.xes" target="_blank">here</a>.
+
+After importing a local event log, you will see it appear on the page.
+
+<img src="./images/user-guide/log-imported.png" alt="Screenshot showing the page listing the uploaded event log p2p_base.xes" style=""/>
+
+To continue select an event log from the list of imported logs.
+
+### Example Run ###
+When selecting an event log the log will be loaded to memory and initial statistics about the log (like case or event count) are displayed.
+
+<img src="./images/user-guide/mine_decisions_step1.png" alt="Screenshot showing the basic statistics of the selected event log" style=""/>
+
+To gain insights into the decisions of the process, you will need to go through the following steps:
+
+1. Discover Process Model
+2. Select Mining Parameters
+3. Mine Decisions
+4. Inspect and Analyze Mined Decisions
+
+To find where decisions are made in the process, you first have to **discover a process model** for it. This can be done using the Inductive Miner or the Alpha Miner.
+Once the process mining is done the discovered accepting Petri net will be displayed on the page, and every decision point is highlighted in red.
+
+<img src="./images/user-guide/mine_decisions_step2.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/>
+
+Next, you can select the **parameters for the decision mining**.
+The techniques that should be used can be changed.
+By default, all available techniques (Decision Tree, Logistic Regression, Support-vector Machine (SVM), Neural Network) are selected.
+
+In addition, the data on which the machine learning techniques will base their decisions can be configured.
+For that, you can choose for each of the following attribute type whether or not it should be considered in the decision mining:
+- Case attributes
+  - Case attributes are on a case-level and are used for all decisions related to that case
+- Event attributes
+  - Event-level attributes found in the event log. These attributes are used for decision points occurring immediately after this event.
+- Synthetic attributes
+  - Synthetic attributes are not present in the input event log but added artifically based on other event data
+  - The following synthetic attributes are currently available:
+      - ***Elapsed time in case***: Time duration since the case started is added as an attribute to every event
+      - ***Time since last event***: The duration since the previous event occurred is added as an attribute to every event
+
+By clicking on **Mine Decisions** the decision mining process is started in the background. Please stand by as this might take a few minutes. Once the mining finished, the loading indicator on the button will disappear, and the *mean guard conformance*[^1] will be displayed on the Petri net.
+
+[^1]: The mean guard conformance represents the fraction of cases which can be replayed perfectly on the Data Petri net, respecting all discovered guards.
+
+<img src="./images/user-guide/mine_decisions_step3.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/>
+
+To **inspect how decisions are made** at a certain part of the process, you can click on one of the colored decision places in the Petri net.
+This will open a panel on the bottom, which displays further information on the discovered decision guards for the selected place.
+
+The technique that performed best for the selected place and its corresponding F1 score is shown together with a comparison of the F1 scores of the all other techniques.
+Additionally the *explainable representation* of the winning technique is shown and can give further insights into what aspects motivate the decision in question.
+To view the explainable representation of other technique, simply select it from the dropdown menu.
+
+---
