@@ -11,7 +11,7 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
 
 **Table of Contents:**
 
-  - [Getting Started](#getting-started)
+- [Getting Started](#getting-started)
 - [Explainable Representation](#explainable-representation)
 - [Source Code and UI-application](#source-code-and-ui-application)
 - [Qualitative Analysis of eXdpn](#qualitative-analysis-of-exdpn)
