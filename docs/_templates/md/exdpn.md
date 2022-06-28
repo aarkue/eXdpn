@@ -1,13 +1,16 @@
 <img class="dark-invert" src="./images/exdpn-logo.svg" alt="eXdpn Logo"/>
 
-eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
+eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
 
-<p align="center">
-    <img src="./images/nn-example-representation.svg" alt="Example explainable representation of a neural network guard" style="max-height: 350px;"/>
+<figure style="text-align: center; width: 90%">
+    <img src="./images/hero.svg" alt="Example explainable representation of a neural network guard" style=" width: 90%; border-radius: 7.5px;" class=""/>
+<figcaption style="margin-top: 0.5rem;">
+<p>
+<b><i>A Motivational Example:</i></b> Decisions in the process are identified and different machine learning techniques are trained to find patterns in the decision making.
 </p>
-<p align="center"> 
-    Example of explainable representation of a Neural Network guard 
-</p>
+</figcaption>
+</figure>
+
 
 **Table of Contents:**
 
