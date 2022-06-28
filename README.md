@@ -1,4 +1,7 @@
 <!--This file is a copy of ./docs/_templates/md/exdpn.md, adding code block denotation around code examples. Please keep this file up to date-->
+
+<img src="docs/images/exdpn-logo.svg" alt="eXdpn Logo" style="display: block; margin-left: auto; margin-right: auto;"/>
+
 eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
 
 <figure style="text-align: center; width: 90%">
