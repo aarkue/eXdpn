@@ -65,34 +65,9 @@ To extract a guard dataset for the specific place `decision_point`, we call the 
 
 Further examples can be seen in the API documentation. The sometimes referenced XES file `p2p_base.xes` can be found on Github.  
 
----
+--- 
 
-## Explainable Representation ##
-To provide a better understandig of the prediction models created by the used machine learning techniques, we use two types of explainable representations.   
-Decision Tree models are represented by simply drawing the detected Decision Tree. Each node represents a splitting point and contains information about the splitting criteria. The leaves show the final classification for all samples in the particular leaf.   
-For the explainable representation of Neural Network, Support Vector Machine and Logistic Regression the [SHAP library](https://shap.readthedocs.io/en/latest/index.html) is used. The bar plots show the mean absolute values of the SHAP values of the most important feature attributes. These SHAP values indicate the importance of a feature attribute on the the model prediction. If you are interested in learning more about SHAP values and the theory behind them, please check the references.  
-  
-References:  
-https://towardsdatascience.com/shap-explained-the-way-i-wish-someone-explained-it-to-me-ab81cc69ef30  
-https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137  
-
----
-
-## Source Code and UI-application ##
-The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
-Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web-UI locally.  
-
----
-
-## Qualitative Analysis of eXdpn ##
-To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
-The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards.  
-The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).  
-
----
-
-
-## User Guide ##
+## User Guide web UI ##
 In the next few sections we will introduce how you can use the web UI to mine decisions in a process. 
 ### Getting Started ###
 When you first run the web UI (either locally or through docker) you will be prompted with the following screen:
@@ -154,3 +129,29 @@ This will open a panel on the bottom, which displays further information on the 
 The technique that performed best for the selected place and its corresponding F1 score is shown together with a comparison of the F1 scores of the all other techniques.
 Additionally the *explainable representation* of the winning technique is shown and can give further insights into what aspects motivate the decision in question.
 To view the explainable representation of other technique, simply select it from the dropdown menu.
+
+---
+
+## Explainable Representation ##
+To provide a better understandig of the prediction models created by the used machine learning techniques, we use two types of explainable representations.   
+Decision Tree models are represented by simply drawing the detected Decision Tree. Each node represents a splitting point and contains information about the splitting criteria. The leaves show the final classification for all samples in the particular leaf.   
+For the explainable representation of Neural Network, Support Vector Machine and Logistic Regression the [SHAP library](https://shap.readthedocs.io/en/latest/index.html) is used. The bar plots show the mean absolute values of the SHAP values of the most important feature attributes. These SHAP values indicate the importance of a feature attribute on the the model prediction. If you are interested in learning more about SHAP values and the theory behind them, please check the references.  
+  
+References:  
+https://towardsdatascience.com/shap-explained-the-way-i-wish-someone-explained-it-to-me-ab81cc69ef30  
+https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-learning-model-works-732b3f40e137  
+
+---
+
+## Qualitative Analysis of eXdpn ##
+To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
+The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards.  
+The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).  
+
+---
+
+## Source Code and UI-application ##
+The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web UI locally.  
+
+
