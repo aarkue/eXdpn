@@ -27,7 +27,6 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
         * y_test (Series): The test attribute values corresponding to the training data.
 
     """
-
     # perform basic preprocessing
     df_X, df_y = basic_data_preprocessing(dataframe)
 
@@ -62,7 +61,6 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
         * df_y (Series): The preprocessed dataset of the target attribute.
 
     """
-
     # drop columns with all NaNs
     dataframe.dropna(how='all', axis=1, inplace=True)
     # Drop all rows which contain at least one NaN (after NaN Columns are dropped)
@@ -89,7 +87,6 @@ def fit_scaling(X: DataFrame) -> Tuple[StandardScaler, List[str]]:
         * scalable_columns (List[str]): The list of names of columns that can be scaled.
 
     """
-
     # exclude all columns that cannot be scaled
     scalable_columns = X.select_dtypes(include=[np.number]).columns
 
@@ -115,7 +112,6 @@ def apply_scaling(X: DataFrame, scaler: StandardScaler, scalable_columns: List[s
         DataFrame: The data where all `scalable_columns` were scaled using the `scaler`.
 
     """
-
     # apply scaler on data
     X_scaled = X.copy()
 
@@ -136,7 +132,6 @@ def fit_ohe(X: DataFrame) -> OneHotEncoder:
         OneHotEncoder: The one-hot-encoder fitted on the dataset.
 
     """
-
     ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
     X_object = X.select_dtypes('object')
 
@@ -154,7 +149,6 @@ def apply_ohe(X: DataFrame, ohe: OneHotEncoder) -> DataFrame:
         DataFrame: The data where all categorical columns were encoded using the `ohe`.
 
     """
-
     X = X.reset_index(drop=True)
     X_object = X.select_dtypes('object')
 

@@ -13,13 +13,11 @@ class ML_Technique(enum.Enum):
         Creating a data Petri net (see `exdpn.data_petri_net.data_petri_net.Data_Petri_Net`) \
             with only decision tree-based guards can be done using the ml_list parameter a list containing only `DT`:
         
-        >>> import os
         >>> from exdpn.util import import_log
         >>> from exdpn.data_petri_net import data_petri_net
         >>> from exdpn.guards import ML_Technique
-        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
-        >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log, 
-        ...                                     case_level_attributes = ["concept:name"],
+        >>> event_log = import_log('./datasets/p2p_base.xes')
+        >>> dpn = data_petri_net.Data_Petri_Net(event_log = event_log,
         ...                                     event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
         ...                                     ml_list = [ML_Technique.DT],
         ...                                     verbose = False)
