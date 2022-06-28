@@ -65,39 +65,34 @@ class Data_Petri_Net():
 
         Examples:
             Use an event log to mine a Petri net based on it:
-            >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> dpn = Data_Petri_Net(event_log = event_log,
             ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
             ...                      ml_list = [ML_Technique.SVM, ML_Technique.DT],
             ...                      verbose = False)
 
             Providing an already mined Petri net:
-            >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.petri_net import get_petri_net
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> net, im, fm = get_petri_net(event_log)
             >>> dpn = Data_Petri_Net(event_log = event_log, 
             ...                      petri_net = net,
             ...                      initial_marking = im,
             ...                      final_marking = fm,
-            ...                      case_level_attributes = ["concept:name"],
             ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
             ...                      verbose = False)
 
             Customize a data Petri net with personal hyperparameters and a guard threshold:
-            >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
-            >>> dpn = Data_Petri_Net(event_log = event_log, 
-            ...                      case_level_attributes = ["concept:name"],
+            >>> event_log = import_log('./datasets/p2p_base.xes')
+            >>> dpn = Data_Petri_Net(event_log = event_log,
             ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
             ...                      ml_list = [ML_Technique.SVM, ML_Technique.DT],
             ...                      hyperparameters = {ML_Technique.SVM: {"C": 0.5}, ML_Technique.DT: {'max_depth': 2}},
@@ -109,8 +104,7 @@ class Data_Petri_Net():
         Note: 
             For a full example please check [Data Petri Net Example](https://github.com/aarkue/eXdpn/blob/main/docs/dpn_example.ipynb).
 
-            """
-
+        """
         self.verbose = verbose
         if petri_net is None or initial_marking is None or final_marking is None:
             self.petri_net, self.im, self.fm = get_petri_net(
@@ -165,13 +159,11 @@ class Data_Petri_Net():
       
         Examples:
             
-            >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
-            >>> dpn = Data_Petri_Net(event_log = event_log, 
-            ...                      case_level_attributes = ["concept:name"],
+            >>> event_log = import_log('./datasets/p2p_base.xes')
+            >>> dpn = Data_Petri_Net(event_log = event_log,
             ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
             ...                      ml_list = [ML_Technique.SVM, ML_Technique.DT],
             ...                      verbose = False)
@@ -179,8 +171,8 @@ class Data_Petri_Net():
 
              
             .. include:: ../../docs/_templates/md/example-end.md
-        """
 
+        """
         if self.guard_per_place != None:
             return
 
@@ -212,14 +204,12 @@ class Data_Petri_Net():
 
         Examples:
             
-            >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
             >>> from exdpn.decisionpoints import find_decision_points
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
-            >>> dpn = Data_Petri_Net(event_log = event_log, 
-            ...                      case_level_attributes = ["concept:name"], 
+            >>> event_log = import_log('./datasets/p2p_base.xes')
+            >>> dpn = Data_Petri_Net(event_log = event_log,
             ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
             ...                      ml_list = [ML_Technique.SVM, ML_Technique.DT],
             ...                      verbose = False)
@@ -228,8 +218,8 @@ class Data_Petri_Net():
             >>> my_guard = dpn.get_guard_at_place(my_decision_point)
 
             .. include:: ../../docs/_templates/md/example-end.md
-        """
 
+        """
         if self.guard_per_place == None:
             self.get_best()
 
@@ -247,13 +237,11 @@ class Data_Petri_Net():
 
         Examples:
             
-            >>> import os
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))        
-            >>> dpn = Data_Petri_Net(event_log = event_log, 
-            ...                      case_level_attributes = ["concept:name"],
+            >>> event_log = import_log('./datasets/p2p_base.xes')        
+            >>> dpn = Data_Petri_Net(event_log = event_log,
             ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
             ...                      ml_list = [ML_Technique.SVM, ML_Technique.DT],
             ...                      verbose = False)
@@ -263,7 +251,6 @@ class Data_Petri_Net():
             .. include:: ../../docs/_templates/md/example-end.md
 
         """
-
         if self.guard_per_place == None:
             self.get_best()
 

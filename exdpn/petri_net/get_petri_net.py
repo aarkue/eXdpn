@@ -27,10 +27,9 @@ def get_petri_net (log: EventLog, miner_type: str = "AM") -> Tuple[PetriNet, Mar
 
     Examples:
         
-        >>> import os 
         >>> from exdpn.util import import_log
         >>> from exdpn import petri_net
-        >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+        >>> event_log = import_log('./datasets/p2p_base.xes')
         >>> net, im, fm = petri_net.get_petri_net(event_log)
 
         .. include:: ../../docs/_templates/md/example-end.md

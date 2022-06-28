@@ -59,16 +59,14 @@ class SVM_Guard(Guard):
 
         Examples:
             
-            >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
             >>> from exdpn.guards import SVM_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> pn, im, fm = get_petri_net(event_log)
-            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
-            ...                                       case_level_attributes =["concept:name"], 
+            >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certain decision point and the corresponding data set 
@@ -112,16 +110,14 @@ class SVM_Guard(Guard):
 
         Examples:
             
-            >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
             >>> from exdpn.guards import SVM_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> pn, im, fm = get_petri_net(event_log)
             >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
-            ...                                       case_level_attributes =["concept:name"], 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
             >>> # select a certrain decision point and the corresponding data set 
@@ -179,13 +175,12 @@ class SVM_Guard(Guard):
 
         Examples:
             
-            >>> import os 
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
             >>> from exdpn.guards import SVM_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
-            >>> event_log = import_log(os.path.join(os.getcwd(), 'datasets', 'p2p_base.xes'))
+            >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> pn, im, fm = get_petri_net(event_log)
             >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm,
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
