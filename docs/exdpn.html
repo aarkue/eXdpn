@@ -73,19 +73,23 @@ exdpn    </h1>
 <h2 id="table-of-contents"><strong>Table of Contents:</strong> ##</h2>
 
 <ul>
+<li><a href="#table-of-contents"><strong>Table of Contents:</strong></a></li>
 <li><a href="#getting-started">Getting Started</a></li>
-<li><a href="#explainable-representation">Explainable Representation</a></li>
-<li><a href="#source-code-and-ui-application">Source Code and UI-application</a></li>
-<li><a href="#qualitative-analysis-of-exdpn">Qualitative Analysis of eXdpn</a></li>
-<li><a href="#user-guide">User Guide</a>
+<li><a href="#user-guide-web-ui">User Guide web UI</a>
 <ul>
 <li><a href="#getting-started-1">Getting Started</a></li>
-<li><a href="#example-run">Example Run</a>
-<ul>
+<li><a href="#example-run">Example Run</a></li>
 <li><a href="#discovering-a-process-model">Discovering a Process Model</a></li>
 <li><a href="#configuring-the-mining-parameters">Configuring the Mining Parameters</a></li>
 <li><a href="#mining-and-viewing-results">Mining and Viewing Results</a></li>
 </ul></li>
+<li><a href="#explainable-representation">Explainable Representation</a></li>
+<li><a href="#qualitative-analysis-of-exdpn">Qualitative Analysis of eXdpn</a></li>
+<li><a href="#source-code-and-ui-application">Source Code and UI-application</a>
+<ul>
+<li><a href="#docker-deployment">Docker Deployment</a></li>
+<li><a href="#using-docker-compose">Using Docker Compose</a></li>
+<li><a href="#building-the-docker-container">Building the Docker Container</a></li>
 </ul></li>
 </ul>
 
@@ -241,7 +245,28 @@ The complete analysis can be found on Github (<a href="https://github.com/aarkue
 <h2 id="source-code-and-ui-application">Source Code and UI-application</h2>
 
 <p>The source code of this package is available on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).
-Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web UI locally.  </p>
+Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.</p>
+
+<h3 id="docker-deployment">Docker Deployment</h3>
+
+<p>The project can be run with Docker.
+The easiest way to do so is with the included <code>docker-compose.yml</code> file.</p>
+
+<h4 id="using-docker-compose">Using Docker Compose</h4>
+
+<p>To create and start the docker container with docker compose simply execute <code>docker-compose up</code> in the root directory of the project.
+The web ui will then be available on port 8080.</p>
+
+<p>To force re-creation of the container add the <code>--build</code> flag to the <code>docker-compose</code> command: <code>docker-compose up --build</code>.-</p>
+
+<h4 id="building-the-docker-container">Building the Docker Container</h4>
+
+<ol>
+<li><code>docker build .</code></li>
+<li><code>docker run -p 8080:5000 &lt;container id&gt;</code></li>
+</ol>
+
+<p>The web ui will then be available on port 8080.</p>
 
 <div class="footnotes">
 <hr />

@@ -10,16 +10,20 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
 
 ## **Table of Contents:** ## 
 
+- [**Table of Contents:**](#table-of-contents)
 - [Getting Started](#getting-started)
+- [User Guide web UI](#user-guide-web-ui)
+  - [Getting Started](#getting-started-1)
+  - [Example Run](#example-run)
+    - [Discovering a Process Model](#discovering-a-process-model)
+    - [Configuring the Mining Parameters](#configuring-the-mining-parameters)
+    - [Mining and Viewing Results](#mining-and-viewing-results)
 - [Explainable Representation](#explainable-representation)
-- [Source Code and UI-application](#source-code-and-ui-application)
 - [Qualitative Analysis of eXdpn](#qualitative-analysis-of-exdpn)
-- [User Guide](#user-guide)
-    - [Getting Started](#getting-started-1)
-    - [Example Run](#example-run)
-      - [Discovering a Process Model](#discovering-a-process-model)
-      - [Configuring the Mining Parameters](#configuring-the-mining-parameters)
-      - [Mining and Viewing Results](#mining-and-viewing-results)
+- [Source Code and UI-application](#source-code-and-ui-application)
+  - [Docker Deployment](#docker-deployment)
+    - [Using Docker Compose](#using-docker-compose)
+    - [Building the Docker Container](#building-the-docker-container)
 
 ---
 
@@ -156,6 +160,23 @@ The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/
 
 ## Source Code and UI-application ##
 The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
-Furthermore, the Github also includes a graphical user interface in the form of a Python-webserver and a Docker container to easily start the web UI locally.  
+Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.
+
+### Docker Deployment ###
+The project can be run with Docker.
+The easiest way to do so is with the included `docker-compose.yml` file.
+
+#### Using Docker Compose ####
+To create and start the docker container with docker compose simply execute `docker-compose up` in the root directory of the project.
+The web ui will then be available on port 8080.
+
+To force re-creation of the container add the `--build` flag to the `docker-compose` command: `docker-compose up --build`.-
+
+
+#### Building the Docker Container ####
+1. `docker build .`
+2. `docker run -p 8080:5000 <container id>`
+
+The web ui will then be available on port 8080.
 
 
