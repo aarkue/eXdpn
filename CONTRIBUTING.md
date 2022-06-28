@@ -16,6 +16,10 @@
 2. Run `python -m build` to build the project (Install `build` via `pip install build`).
 3. Install it using `pip install dist/[wheel name].whl --force-reinstall`.
 
+## Testing ##
+1. Run `python -m unittest discover -s tests -p "*.py"` from the root directory.
+- Remember to always test the newest build.
+
 ## Uploading to (Test) PyPi ##
 1. Update the information in the `setup.cfg` file and build the package.
 2. - Run `twine upload -r testpypi dist/*` from the root directory to upload to Test PyPi.
