@@ -8,22 +8,21 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
     Example of explainable representation of a Neural Network guard 
 </p>
 
-## **Table of Contents:** ## 
+**Table of Contents:**
 
-- [**Table of Contents:**](#table-of-contents)
 - [Getting Started](#getting-started)
-- [User Guide web UI](#user-guide-web-ui)
+- [User Guide Web UI](#user-guide-web-ui)
   - [Getting Started](#getting-started-1)
   - [Example Run](#example-run)
-    - [Discovering a Process Model](#discovering-a-process-model)
-    - [Configuring the Mining Parameters](#configuring-the-mining-parameters)
-    - [Mining and Viewing Results](#mining-and-viewing-results)
+      - [Discovering a Process Model](#discovering-a-process-model)
+      - [Configuring the Mining Parameters](#configuring-the-mining-parameters)
+      - [Mining and Viewing Results](#mining-and-viewing-results)
 - [Explainable Representation](#explainable-representation)
 - [Qualitative Analysis of eXdpn](#qualitative-analysis-of-exdpn)
 - [Source Code and UI-application](#source-code-and-ui-application)
   - [Docker Deployment](#docker-deployment)
-    - [Using Docker Compose](#using-docker-compose)
-    - [Building the Docker Container](#building-the-docker-container)
+      - [Using Docker Compose](#using-docker-compose)
+      - [Building the Docker Container](#building-the-docker-container)
 
 ---
 
@@ -75,7 +74,7 @@ Further examples can be seen in the API documentation. The sometimes referenced 
 
 --- 
 
-## User Guide web UI ##
+## User Guide Web UI ##
 In the next few sections we will introduce how you can use the web UI to mine decisions in a process. 
 ### Getting Started ###
 When you first run the web UI (either locally or through docker) you will be prompted with the following screen:
