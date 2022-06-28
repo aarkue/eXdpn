@@ -12,15 +12,15 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
 ## **Table of Contents:** ##
 
 - [Getting Started](#getting-started)
-- [Explainable Representation](#explainable-representation)
-- [Source Code and UI-application](#source-code-and-ui-application)
-- [Qualitative Analysis of eXdpn](#qualitative-analysis-of-exdpn)
-- [User Guide](#user-guide)
+- [User Guide Web UI](#user-guide)
     - [Getting Started](#getting-started-1)
     - [Example Run](#example-run)
       - [Discovering a Process Model](#discovering-a-process-model)
       - [Configuring the Mining Parameters](#configuring-the-mining-parameters)
       - [Mining and Viewing Results](#mining-and-viewing-results)
+- [Explainable Representation](#explainable-representation)
+- [Qualitative Analysis of eXdpn](#qualitative-analysis-of-exdpn)
+- [Source Code and UI-application](#source-code-and-ui-application)
 
 ---
 
@@ -66,7 +66,7 @@ Further examples can be seen in the API documentation. The sometimes referenced 
 
 --- 
 
-## User Guide web UI ##
+## User Guide Web UI ##
 In the next few sections we will introduce how you can use the web UI to mine decisions in a process. 
 ### Getting Started ###
 When you first run the web UI (either locally or through docker) you will be prompted with the following screen:
