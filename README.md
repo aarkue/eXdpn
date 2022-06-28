@@ -62,20 +62,20 @@ Further examples can be seen in the API documentation. The sometimes referenced 
 In the next few sections we will introduce how you can use the web UI to mine decisions in a process. 
 ### Getting Started ###
 When you first run the web UI (either locally or through docker) you will be prompted with the following screen:
-<img src="./images/user-guide/start.png" alt="Welcome screen of eXdpn UI" style=""/>
+<img src="docs/images/user-guide/start.png" alt="Welcome screen of eXdpn UI" style=""/>
 Here you can start by importing any existing event log in the XES format.
 If you do not have any XES event log at hand, you can try our P2P base event log and download it <a href="https://github.com/aarkue/eXdpn/raw/main/datasets/p2p_base.xes" target="_blank">here</a>.
 
 After importing a local event log, you will see it appear on the page.
 
-<img src="./images/user-guide/log-imported.png" alt="Screenshot showing the page listing the uploaded event log p2p_base.xes" style=""/>
+<img src="docs/images/user-guide/log-imported.png" alt="Screenshot showing the page listing the uploaded event log p2p_base.xes" style=""/>
 
 To continue select an event log from the list of imported logs.
 
 ### Example Run ###
 When selecting an event log the log will be loaded to memory and initial statistics about the log (like case or event count) are displayed.
 
-<img src="./images/user-guide/mine_decisions_step1.png" alt="Screenshot showing the basic statistics of the selected event log" style=""/>
+<img src="docs/images/user-guide/mine_decisions_step1.png" alt="Screenshot showing the basic statistics of the selected event log" style=""/>
 
 To gain insights into the decisions of the process, you will need to go through the following steps:
 
@@ -88,7 +88,7 @@ To gain insights into the decisions of the process, you will need to go through 
 To find where decisions are made in the process, you first have to **discover a process model** for it. This can be done using the Inductive Miner or the Alpha Miner.
 Once the process mining is done the discovered accepting Petri net will be displayed on the page, and every decision point is highlighted in red.
 
-<img src="./images/user-guide/mine_decisions_step2.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/>
+<img src="docs/images/user-guide/mine_decisions_step2.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/>
 
 #### Configuring the Mining Parameters ###
 Next, you can select the **parameters for the decision mining**.
@@ -112,7 +112,7 @@ By clicking on **Mine Decisions** the decision mining process is started in the 
 
 [^1]: The mean guard conformance represents the fraction of cases which can be replayed perfectly on the Data Petri net, respecting all discovered guards.
 
-<img src="./images/user-guide/mine_decisions_step3.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/>
+<img src="docs/images/user-guide/mine_decisions_step3.png" alt="Screenshot showing the discovered Petri net and the available mining parameters." style=""/>
 
 To **inspect how decisions are made** at a certain part of the process, you can click on one of the colored decision places in the Petri net.
 This will open a panel on the bottom, which displays further information on the discovered decision guards for the selected place.
