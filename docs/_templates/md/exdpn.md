@@ -9,7 +9,7 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
     Example of explainable representation of a Neural Network guard 
 </p>
 
-**Table of Contents:**
+## **Table of Contents:** ## 
 
 - [Getting Started](#getting-started)
 - [Explainable Representation](#explainable-representation)
@@ -21,7 +21,6 @@ eXdpn (e**x**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
       - [Discovering a Process Model](#discovering-a-process-model)
       - [Configuring the Mining Parameters](#configuring-the-mining-parameters)
       - [Mining and Viewing Results](#mining-and-viewing-results)
-
 
 ---
 
