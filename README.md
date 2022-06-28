@@ -1,6 +1,6 @@
 <!--This file is a copy of ./docs/_templates/md/exdpn.md, adding code block denotation around code examples. Please keep this file up to date-->
 
-<img src="docs/images/exdpn-logo.svg" alt="eXdpn Logo" style="display: block; margin-left: auto; margin-right: auto;"/>
+<img class="dark-invert" src="docs/images/exdpn-logo.svg" alt="eXdpn Logo" style="display: block; margin-left: auto; margin-right: auto;"/>
 
 eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
 
@@ -115,7 +115,7 @@ Once the process mining is done the discovered accepting Petri net will be displ
 #### Configuring the Mining Parameters ###
 Next, you can select the **parameters for the decision mining**.
 The techniques that should be used can be changed.
-By default, all available techniques (Decision Tree, Logistic Regression, Support-vector Machine (SVM), Neural Network) are selected.
+By default, all available techniques (Decision Tree, Logistic Regression, Support Vector Machine (SVM), Neural Network) are selected.
 
 In addition, the data on which the machine learning techniques will base their decisions can be configured.
 For that, you can choose for each of the following attribute type whether or not it should be considered in the decision mining:
@@ -157,9 +157,9 @@ https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-lea
 ---
 
 ## Qualitative Analysis of eXdpn ##
-To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic p2p event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
+To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic P2P event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
 The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards.  
-The complete analysis can be found on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).  
+The complete analysis can be found [here](https://github.com/aarkue/eXdpn/tree/main/qualitative_analysis).  
 
 ---
 
