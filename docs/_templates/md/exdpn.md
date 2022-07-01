@@ -1,6 +1,7 @@
 <img class="dark-invert" src="./images/exdpn-logo.svg" alt="eXdpn Logo"/>
 
 eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
+This can help you can find the underlying motivating factors behind decisions in your process.
 
 <figure style="text-align: center; width: 90%">
     <img src="./images/hero.svg" alt="Example explainable representation of a neural network guard" style=" width: 90%; border-radius: 7.5px;" class=""/>
@@ -15,6 +16,10 @@ eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
 **Table of Contents:**
 
 - [Getting Started](#getting-started)
+- [Source Code and UI-application](#source-code-and-ui-application)
+  - [Docker Deployment](#docker-deployment)
+      - [Using Docker Compose](#using-docker-compose)
+      - [Building the Docker Container](#building-the-docker-container)
 - [User Guide Web UI](#user-guide-web-ui)
   - [Getting Started](#getting-started-1)
   - [Example Run](#example-run)
@@ -23,10 +28,6 @@ eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
       - [Mining and Viewing Results](#mining-and-viewing-results)
 - [Explainable Representation](#explainable-representation)
 - [Qualitative Analysis of eXdpn](#qualitative-analysis-of-exdpn)
-- [Source Code and UI-application](#source-code-and-ui-application)
-  - [Docker Deployment](#docker-deployment)
-      - [Using Docker Compose](#using-docker-compose)
-      - [Building the Docker Container](#building-the-docker-container)
 
 ---
 
@@ -71,6 +72,30 @@ To extract a guard dataset for the specific place `decision_point`, we call the 
 Further examples can be seen in the API documentation. The sometimes referenced XES file `p2p_base.xes` can be found on Github.  
 
 --- 
+
+
+## Source Code and UI-application ##
+The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.
+
+### Docker Deployment ###
+The project can be run with Docker.
+The easiest way to do so is with the included `docker-compose.yml` file.
+
+#### Using Docker Compose ####
+To create and start the docker container with docker compose simply execute `docker-compose up` in the root directory of the project.
+The web ui will then be available on port 5000.
+
+To force re-creation of the container add the `--build` flag to the `docker-compose` command: `docker-compose up --build`.-
+
+
+#### Building the Docker Container ####
+1. `docker build .`
+2. `docker run -p 5000:5000 <container id>`
+
+The web ui will then be available on port 5000.
+
+---
 
 ## User Guide Web UI ##
 In the next few sections we will introduce how you can use the web UI to mine decisions in a process. 
@@ -173,29 +198,4 @@ The complete analysis (in the form of jupyter notebooks) can be found [here](htt
   <a href="./qualitative_analysis_timebaseddiscount.html" target="_blank">Open in new tab</a>
   <iframe src="./qualitative_analysis_timebaseddiscount.html" style="width: 100%; height:50vh; border: 2px dashed black; border-radius: 10px;"></iframe>
 </details>
-
----
-
-## Source Code and UI-application ##
-The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
-Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.
-
-### Docker Deployment ###
-The project can be run with Docker.
-The easiest way to do so is with the included `docker-compose.yml` file.
-
-#### Using Docker Compose ####
-To create and start the docker container with docker compose simply execute `docker-compose up` in the root directory of the project.
-The web ui will then be available on port 8080.
-
-To force re-creation of the container add the `--build` flag to the `docker-compose` command: `docker-compose up --build`.-
-
-
-#### Building the Docker Container ####
-1. `docker build .`
-2. `docker run -p 8080:5000 <container id>`
-
-The web ui will then be available on port 8080.
-
-
 

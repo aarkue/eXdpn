@@ -4,8 +4,7 @@
 </p>
 
 eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
-
-
+This can help you can find the underlying motivating factors behind decisions in your process.
 
 <figure style="text-align: center; width: 90%">
 <p align="center">
@@ -24,6 +23,10 @@ eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
 **Table of Contents:**
 
 - [Getting Started](#getting-started)
+- [Source Code and UI-application](#source-code-and-ui-application)
+  - [Docker Deployment](#docker-deployment)
+      - [Using Docker Compose](#using-docker-compose)
+      - [Building the Docker Container](#building-the-docker-container)
 - [User Guide Web UI](#user-guide-web-ui)
   - [Getting Started](#getting-started-1)
   - [Example Run](#example-run)
@@ -32,10 +35,6 @@ eXdpn (e**X**plainable **d**ata **P**etri **n**ets) is a tool to mine and evalua
       - [Mining and Viewing Results](#mining-and-viewing-results)
 - [Explainable Representation](#explainable-representation)
 - [Qualitative Analysis of eXdpn](#qualitative-analysis-of-exdpn)
-- [Source Code and UI-application](#source-code-and-ui-application)
-  - [Docker Deployment](#docker-deployment)
-      - [Using Docker Compose](#using-docker-compose)
-      - [Building the Docker Container](#building-the-docker-container)
 
 ---
 
@@ -86,6 +85,30 @@ dataset = extract_all_datasets(event_log, net, im, fm, event_level_attributes=['
 Further examples can be seen in the API documentation. The sometimes referenced XES file `p2p_base.xes` can be found on Github.
 
 --- 
+
+
+## Source Code and UI-application ##
+The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
+Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.
+
+### Docker Deployment ###
+The project can be run with Docker.
+The easiest way to do so is with the included `docker-compose.yml` file.
+
+#### Using Docker Compose ####
+To create and start the docker container with docker compose simply execute `docker-compose up` in the root directory of the project.
+The web ui will then be available on port 5000.
+
+To force re-creation of the container add the `--build` flag to the `docker-compose` command: `docker-compose up --build`.-
+
+
+#### Building the Docker Container ####
+1. `docker build .`
+2. `docker run -p 5000:5000 <container id>`
+
+The web ui will then be available on port 5000.
+
+---
 
 ## User Guide Web UI ##
 In the next few sections we will introduce how you can use the web UI to mine decisions in a process. 
@@ -167,28 +190,3 @@ https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-lea
 To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic P2P event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
 The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards.  
 The complete analysis can be found [here](https://github.com/aarkue/eXdpn/tree/main/qualitative_analysis).  
-
----
-
-## Source Code and UI-application ##
-The source code of this package is available on Github ([aarkue/eXdpn](https://github.com/aarkue/eXdpn)).
-Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.
-
-### Docker Deployment ###
-The project can be run with Docker.
-The easiest way to do so is with the included `docker-compose.yml` file.
-
-#### Using Docker Compose ####
-To create and start the docker container with docker compose simply execute `docker-compose up` in the root directory of the project.
-The web ui will then be available on port 8080.
-
-To force re-creation of the container add the `--build` flag to the `docker-compose` command: `docker-compose up --build`.-
-
-
-#### Building the Docker Container ####
-1. `docker build .`
-2. `docker run -p 8080:5000 <container id>`
-
-The web ui will then be available on port 8080.
-
-

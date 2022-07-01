@@ -25,10 +25,10 @@
         <h2>Contents</h2>
         <ul>
   <li><a href="#getting-started">Getting Started</a></li>
+  <li><a href="#source-code-and-ui-application">Source Code and UI-application</a></li>
   <li><a href="#user-guide-web-ui">User Guide Web UI</a></li>
   <li><a href="#explainable-representation">Explainable Representation</a></li>
   <li><a href="#qualitative-analysis-using-exdpn">Qualitative Analysis using eXdpn</a></li>
-  <li><a href="#source-code-and-ui-application">Source Code and UI-application</a></li>
 </ul>
 
 
@@ -60,7 +60,8 @@ exdpn    </h1>
 
                         <div class="docstring"><p><img class="dark-invert" src="./images/exdpn-logo.svg" alt="eXdpn Logo"/></p>
 
-<p>eXdpn (e<strong>X</strong>plainable <strong>d</strong>ata <strong>P</strong>etri <strong>n</strong>ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.</p>
+<p>eXdpn (e<strong>X</strong>plainable <strong>d</strong>ata <strong>P</strong>etri <strong>n</strong>ets) is a tool to mine and evaluate explainable data Petri nets using different classification techniques.
+This can help you can find the underlying motivating factors behind decisions in your process.</p>
 
 <figure style="text-align: center; width: 90%">
     <img src="./images/hero.svg" alt="Example explainable representation of a neural network guard" style=" width: 90%; border-radius: 7.5px;" class=""/>
@@ -75,6 +76,14 @@ exdpn    </h1>
 
 <ul>
 <li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#source-code-and-ui-application">Source Code and UI-application</a>
+<ul>
+<li><a href="#docker-deployment">Docker Deployment</a>
+<ul>
+<li><a href="#using-docker-compose">Using Docker Compose</a></li>
+<li><a href="#building-the-docker-container">Building the Docker Container</a></li>
+</ul></li>
+</ul></li>
 <li><a href="#user-guide-web-ui">User Guide Web UI</a>
 <ul>
 <li><a href="#getting-started-1">Getting Started</a></li>
@@ -87,14 +96,6 @@ exdpn    </h1>
 </ul></li>
 <li><a href="#explainable-representation">Explainable Representation</a></li>
 <li><a href="#qualitative-analysis-of-exdpn">Qualitative Analysis of eXdpn</a></li>
-<li><a href="#source-code-and-ui-application">Source Code and UI-application</a>
-<ul>
-<li><a href="#docker-deployment">Docker Deployment</a>
-<ul>
-<li><a href="#using-docker-compose">Using Docker Compose</a></li>
-<li><a href="#building-the-docker-container">Building the Docker Container</a></li>
-</ul></li>
-</ul></li>
 </ul>
 
 <hr />
@@ -141,6 +142,34 @@ We start off by importing the event log from memory and creating a standard Petr
 </code></pre></div>
 
 <p>Further examples can be seen in the API documentation. The sometimes referenced XES file <code>p2p_base.xes</code> can be found on Github.  </p>
+
+<hr />
+
+<h2 id="source-code-and-ui-application">Source Code and UI-application</h2>
+
+<p>The source code of this package is available on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).
+Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.</p>
+
+<h3 id="docker-deployment">Docker Deployment</h3>
+
+<p>The project can be run with Docker.
+The easiest way to do so is with the included <code>docker-compose.yml</code> file.</p>
+
+<h4 id="using-docker-compose">Using Docker Compose</h4>
+
+<p>To create and start the docker container with docker compose simply execute <code>docker-compose up</code> in the root directory of the project.
+The web ui will then be available on port 5000.</p>
+
+<p>To force re-creation of the container add the <code>--build</code> flag to the <code>docker-compose</code> command: <code>docker-compose up --build</code>.-</p>
+
+<h4 id="building-the-docker-container">Building the Docker Container</h4>
+
+<ol>
+<li><code>docker build .</code></li>
+<li><code>docker run -p 5000:5000 &lt;container id&gt;</code></li>
+</ol>
+
+<p>The web ui will then be available on port 5000.</p>
 
 <hr />
 
@@ -264,34 +293,6 @@ The complete analysis (in the form of jupyter notebooks) can be found <a href="h
   <a href="./qualitative_analysis_timebaseddiscount.html" target="_blank">Open in new tab</a>
   <iframe src="./qualitative_analysis_timebaseddiscount.html" style="width: 100%; height:50vh; border: 2px dashed black; border-radius: 10px;"></iframe>
 </details></p>
-
-<hr />
-
-<h2 id="source-code-and-ui-application">Source Code and UI-application</h2>
-
-<p>The source code of this package is available on Github (<a href="https://github.com/aarkue/eXdpn">aarkue/eXdpn</a>).
-Furthermore, a graphical user interface is available in the form of a web-based UI and a Docker container to easily start it locally.</p>
-
-<h3 id="docker-deployment">Docker Deployment</h3>
-
-<p>The project can be run with Docker.
-The easiest way to do so is with the included <code>docker-compose.yml</code> file.</p>
-
-<h4 id="using-docker-compose">Using Docker Compose</h4>
-
-<p>To create and start the docker container with docker compose simply execute <code>docker-compose up</code> in the root directory of the project.
-The web ui will then be available on port 8080.</p>
-
-<p>To force re-creation of the container add the <code>--build</code> flag to the <code>docker-compose</code> command: <code>docker-compose up --build</code>.-</p>
-
-<h4 id="building-the-docker-container">Building the Docker Container</h4>
-
-<ol>
-<li><code>docker build .</code></li>
-<li><code>docker run -p 8080:5000 &lt;container id&gt;</code></li>
-</ol>
-
-<p>The web ui will then be available on port 8080.</p>
 
 <div class="footnotes">
 <hr />
