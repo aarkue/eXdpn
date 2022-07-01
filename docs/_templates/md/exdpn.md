@@ -148,10 +148,31 @@ https://towardsdatascience.com/using-shap-values-to-explain-how-your-machine-lea
 
 ---
 
-## Qualitative Analysis of eXdpn ##
+## Qualitative Analysis using eXdpn ##
 To provide insight to the eXdpn application, the tool was tested and analyzed using four different synthetic P2P event logs. This allowed us to test whether the different machine learning techniques are able to model the decision-making behavior in the event logs. For each event log different so-called guards have been created. These guards are used to model the behavior at a decision point by either enabling or disabling the possible transitions after the decision point. Each event log focuses on differnt types of decision behavior, like non-random or random decisions, decisions based on nonlinear functions or based on previous activities.  
 The qualitative analysis revealed some differences between the four different machine learning techniques. If the decision was made based on the value of a feature attribute, either numerical or categorical, most machine learning guards were able to detect that behavior. This also applies if a decision was made based on previous activities. If the decision points became more complex, guards based on Neural Networks, Support Vector Machines or Logistic Regression often performed better than the corresponding Decision Tree guards.  
-The complete analysis can be found [here](https://github.com/aarkue/eXdpn/tree/main/qualitative_analysis).  
+The complete analysis (in the form of jupyter notebooks) can be found [here](https://github.com/aarkue/eXdpn/tree/main/qualitative_analysis).  
+
+<details>
+  <summary>**Qualitative Analysis (Base Model)**</summary>
+  <a href="./qualitative_analysis_base.html" target="_blank">Open in new tab</a>
+  <iframe src="./qualitative_analysis_base.html" style="width: 100%; height:50vh; border: 2px dashed black; border-radius: 10px;"></iframe>
+</details>
+<details>
+  <summary>**Qualitative Analysis (Base Log without Randomness)**</summary>
+  <a href="./qualitative_analysis_norandomness.html" target="_blank">Open in new tab</a>
+  <iframe src="./qualitative_analysis_norandomness.html" style="width: 100%; height:50vh; border: 2px dashed black; border-radius: 10px;"></iframe>
+</details>
+<details>
+  <summary>**Qualitative Analysis (Model with Non-Linearities)**</summary>
+  <a href="./qualitative_analysis_nonlinearities.html" target="_blank">Open in new tab</a>
+  <iframe src="./qualitative_analysis_nonlinearities.html" style="width: 100%; height:50vh; border: 2px dashed black; border-radius: 10px;"></iframe>
+</details>
+<details>
+  <summary>**Qualitative Analysis (Time Based Discount)**</summary>
+  <a href="./qualitative_analysis_timebaseddiscount.html" target="_blank">Open in new tab</a>
+  <iframe src="./qualitative_analysis_timebaseddiscount.html" style="width: 100%; height:50vh; border: 2px dashed black; border-radius: 10px;"></iframe>
+</details>
 
 ---
 
