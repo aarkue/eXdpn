@@ -125,13 +125,13 @@ We start off by importing the event log from memory and creating a standard Petr
 <div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn"><a href="exdpn/util.html">exdpn.util</a></span> <span class="kn">import</span> <span class="n">import_log</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn"><a href="exdpn/petri_net.html">exdpn.petri_net</a></span> <span class="kn">import</span> <span class="n">get_petri_net</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">event_log</span> <span class="o">=</span> <span class="n">import_log</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_event_log.xes&gt;&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pn</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">fm</span> <span class="o">=</span> <span class="n">get_petri_net</span><span class="p">(</span><span class="n">event_log</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">fm</span> <span class="o">=</span> <span class="n">get_petri_net</span><span class="p">(</span><span class="n">event_log</span><span class="p">)</span>
 </code></pre></div>
 
 <p>We then extract all the decision points and specify our place of interest using the <code><a href="exdpn/decisionpoints.html">exdpn.decisionpoints</a></code> module:</p>
 
 <div class="pdoc-code codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn"><a href="exdpn/decisionpoints.html">exdpn.decisionpoints</a></span> <span class="kn">import</span> <span class="n">find_decision_points</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dp_dict</span> <span class="o">=</span> <span class="n">find_decision_points</span><span class="p">(</span><span class="n">pn</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dp_dict</span> <span class="o">=</span> <span class="n">find_decision_points</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">decision_point</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dp_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>
 

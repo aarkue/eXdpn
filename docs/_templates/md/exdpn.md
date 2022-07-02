@@ -55,12 +55,12 @@ We start off by importing the event log from memory and creating a standard Petr
 >>> from exdpn.util import import_log
 >>> from exdpn.petri_net import get_petri_net
 >>> event_log = import_log('<path_to_event_log.xes>')
->>> pn, im, fm = get_petri_net(event_log)
+>>> net, im, fm = get_petri_net(event_log)
 
 We then extract all the decision points and specify our place of interest using the `exdpn.decisionpoints` module:
 
 >>> from exdpn.decisionpoints import find_decision_points
->>> dp_dict = find_decision_points(pn)
+>>> dp_dict = find_decision_points(net)
 >>> decision_point = list(dp_dict.keys())[0]
 
 To extract a guard dataset for the specific place `decision_point`, we call the following data extraction function from `exdpn.guard_datasets`:
