@@ -11,3 +11,4 @@ from exdpn.guards.svm_guard import SVM_Guard
 from exdpn.guards.ml_technique import ML_Technique
 from exdpn.guards.guard_manager import Guard_Manager
 from exdpn.guards.model_builder import model_builder
+from exdpn.guards.random_forest_guard import Random_Forest_Guard 

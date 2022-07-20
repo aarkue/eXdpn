@@ -3,7 +3,7 @@
 
 """
 
-from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.ensemble import RandomForestClassifier
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe
@@ -15,11 +15,12 @@ from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List, Any, Optional
 import numpy as np
 
-class Decision_Tree_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'min_samples_split': 0.1,
+class Random_Forest_Guard(Guard):
+    def __init__(self, hyperparameters: Dict[str, Any] = {'n_estimators': 100,
+                                                          'min_samples_split': 0.1,
                                                           'min_samples_leaf': 0.1,
                                                           'ccp_alpha': 0.2}) -> None:
-        """Initializes a decision tree based guard with the provided hyperparameters.
+        """Initializes a random forest based guard with the provided hyperparameters.
 
         Args:
             hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier.
@@ -29,17 +30,17 @@ class Decision_Tree_Guard(Guard):
 
         Examples:
             
-            >>> from exdpn.guards import Decision_Tree_Guard
-            >>> guard = Decision_Tree_Guard()
+            >>> from exdpn.guards import Random_Forest_Guard
+            >>> guard = Random_Forest_Guard()
 
             
             .. include:: ../../docs/_templates/md/example-end.md
         """
 
         super().__init__(hyperparameters)
-        
+
         try:
-            self.model = DecisionTreeClassifier(**hyperparameters)
+            self.model = RandomForestClassifier(**hyperparameters)
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the decision tree guard")
@@ -59,7 +60,7 @@ class Decision_Tree_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn.guards import Decision_Tree_Guard
+            >>> from exdpn.guards import Random_Forest_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> pn, im, fm = get_petri_net(event_log)
@@ -70,7 +71,7 @@ class Decision_Tree_Guard(Guard):
             >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
-            >>> guard = Decision_Tree_Guard()
+            >>> guard = Random_Forest_Guard()
             >>> guard.train(X_train, y_train)
 
             
@@ -111,7 +112,7 @@ class Decision_Tree_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn.guards import Decision_Tree_Guard
+            >>> from exdpn.guards import Random_Forest_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> pn, im, fm = get_petri_net(event_log)
@@ -122,7 +123,7 @@ class Decision_Tree_Guard(Guard):
             >>> dp = [k for k in dp_dataset_map.keys()][0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
-            >>> guard = Decision_Tree_Guard()
+            >>> guard = Random_Forest_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
 
@@ -146,8 +147,8 @@ class Decision_Tree_Guard(Guard):
 
         Examples:
             
-            >>> from exdpn.guards import Decision_Tree_Guard
-            >>> guard = Decision_Tree_Guard()
+            >>> from exdpn.guards import Random_Forest_Guard
+            >>> guard = Random_Forest_Guard()
             >>> guard.is_explainable()
             True
 
@@ -157,6 +158,8 @@ class Decision_Tree_Guard(Guard):
         """
 
         return True
+
+    ### lower part is still under construction ### 
 
     def get_explainable_representation(self, data:Optional[DataFrame] = None) -> Figure:
         """Returns an explainable representation of the decision tree guard.
@@ -174,7 +177,7 @@ class Decision_Tree_Guard(Guard):
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn.guards import Decision_Tree_Guard
+            >>> from exdpn.guards import Random_Forest_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> pn, im, fm = get_petri_net(event_log)
@@ -185,7 +188,7 @@ class Decision_Tree_Guard(Guard):
             >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
-            >>> guard = Decision_Tree_Guard()
+            >>> guard = Random_Forest_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
             >>> # return figure of explainable representation
@@ -223,4 +226,4 @@ class Decision_Tree_Guard(Guard):
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-# run python .\exdpn\guards\decision_tree_guard.py from eXdpn file
+# run python .\exdpn\guards\random_forest_guard.py from eXdpn file

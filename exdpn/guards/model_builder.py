@@ -1,4 +1,4 @@
-from exdpn.guards import Decision_Tree_Guard, Logistic_Regression_Guard, SVM_Guard, Neural_Network_Guard
+from exdpn.guards import Decision_Tree_Guard, Logistic_Regression_Guard, SVM_Guard, Neural_Network_Guard, Random_Forest_Guard
 from exdpn.guards import Guard
 from typing import Dict, Any 
 from exdpn.guards import ML_Technique
@@ -37,6 +37,8 @@ def model_builder(model_type: ML_Technique, hp: Dict[str, Any]) -> Guard:
         return Logistic_Regression_Guard(hp)
     elif model_type == ML_Technique.DT:
         return Decision_Tree_Guard(hp)
+    elif model_type == ML_Technique(RF):
+        return Random_Forest_Guard(hp)
     else:
         raise TypeError ("Guard not implemented")
 
