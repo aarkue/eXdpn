@@ -4,6 +4,7 @@
 """
 
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import plot_tree
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe
@@ -208,14 +209,16 @@ class Random_Forest_Guard(Guard):
                 "Guard is not explainable and therefore has no explainable representation")
 
         fig, ax = plt.subplots()
-        plot_tree(self.model,
+
+        # plots first decision tree in random forest as an example
+        plot_tree(self.model.estimators_[0],
                   ax=ax,
                   feature_names=self.feature_names,
                   class_names=[
                       t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()],
                   impurity=False,
                   filled=True)
-        plt.suptitle("Decision Tree", fontsize=14)
+        plt.suptitle("Individual Decision Tree from Random Forest", fontsize=14)
         if self.single_class:
             plt.title("Warning: Only one target class present. Results may be misleading.",{'color':  'darkred'})
         plt.ylabel("Feature Attributes", fontsize=14)

@@ -37,7 +37,7 @@ def model_builder(model_type: ML_Technique, hp: Dict[str, Any]) -> Guard:
         return Logistic_Regression_Guard(hp)
     elif model_type == ML_Technique.DT:
         return Decision_Tree_Guard(hp)
-    elif model_type == ML_Technique(RF):
+    elif model_type == ML_Technique.RF:
         return Random_Forest_Guard(hp)
     else:
         raise TypeError ("Guard not implemented")
