@@ -227,7 +227,7 @@ class Neural_Network_Guard(Guard):
 
         def shap_predict(data: np.ndarray):
             data_asframe = DataFrame(data, columns=self.feature_names)
-            ret = self.model.predict(data_asframe)
+            ret = self.model.predict_proba(data_asframe)
             return ret
 
         explainer = shap.KernelExplainer(
@@ -250,6 +250,59 @@ class Neural_Network_Guard(Guard):
         plt.ylabel("Feature Attributes", fontsize=14)
         return fig
 
+
+    def get_local_explanation(self, base_sample: DataFrame, local_data:DataFrame) -> Dict[str,Figure]:
+        assert local_data.shape[0] == 1
+        # Pre-process local_data
+        # Scale data
+        processed_local_data = apply_scaling(local_data, self.scaler, self.scaler_columns)
+        # One-Hot Encoding for categorical data
+        processed_local_data = apply_ohe(processed_local_data, self.ohe)
+        
+        # Pre-process base_sample
+        # Scale data
+        processed_base_sample = apply_scaling(base_sample, self.scaler, self.scaler_columns)
+        # One-Hot Encoding for categorical data
+        processed_base_sample = apply_ohe(processed_base_sample, self.ohe)
+
+        def shap_predict(data: np.ndarray):
+            data_asframe = DataFrame(data, columns=self.feature_names)
+            ret = self.model.predict_proba(data_asframe)
+            return ret
+
+        predictions = shap_predict(processed_local_data)
+
+        explainer = shap.KernelExplainer(
+            shap_predict, processed_base_sample, output_names=self.target_names)
+        single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
+        
+        unscaled_local_data = processed_local_data.copy().iloc[0]
+        for n in self.scaler.get_feature_names_out():
+            unscaled_local_data[n] = local_data.iloc[0][n]
+
+        ret = dict()
+        fig = plt.figure()
+        shap.multioutput_decision_plot(list(explainer.expected_value),single_shap,
+        features=unscaled_local_data, row_index=0, feature_names=self.feature_names,
+        highlight=[np.argmax(predictions[0])], link='logit', legend_labels=self.target_names,
+        legend_location="lower right", feature_display_range=slice(-1,-11,-1),show=False)
+        ret['decision_multioutput'] = fig
+        
+        
+        winner_index = np.argmax(predictions[0])
+        for key in range(len(single_shap)):
+            fig = plt.figure()
+            shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=unscaled_local_data, link='logit',
+            legend_labels=[self.target_names[key].label], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
+            ret[f"decision_single_{key}"] = fig
+
+            # fig = plt.figure()
+            fig = shap.force_plot(explainer.expected_value[key],
+                            single_shap[key],
+                            unscaled_local_data, out_names=self.target_names[key].label, matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
+            fig = plt.gcf()
+            ret[f"force_{key}"] = fig
+        return ret
 
 # tests implemented examples
 if __name__ == "__main__":
