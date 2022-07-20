@@ -29,7 +29,8 @@ class Guard_Manager():
                                                                                           'min_samples_leaf': 0.1,
                                                                                           'ccp_alpha': 0.2},
                                                                         ML_Technique.LR: {"C": 0.5},
-                                                                        ML_Technique.SVM: {"C": 0.5}}) -> None:
+                                                                        ML_Technique.SVM: {"C": 0.5},
+                                                                        ML_Technique.XGB: {}}) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
 
