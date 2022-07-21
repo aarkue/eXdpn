@@ -3,6 +3,7 @@ from typing import Any, Dict, Tuple
 from flask import Flask, render_template, request, redirect
 import os
 from datetime import datetime as dt
+from pandas import DataFrame
 
 app = Flask("eXdpn")
 from werkzeug.utils import secure_filename
@@ -200,10 +201,13 @@ def mine_decisions(logid: str):
                 sampled_test_data = dpn.guard_manager_per_place[p].X_test.sample(
                      n=min(100, len(dpn.guard_manager_per_place[p].X_test)));
                 explainable_representation:plt.Figure = best_guard.get_explainable_representation(sampled_test_data)
-                imgdata = io.StringIO()
-                explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
-                imgdata.seek(0)  # rewind the data
-                svg_representation = imgdata.getvalue()
+
+                svg_representation = get_svg_from_figure(explainable_representation)
+
+                # imgdata = io.StringIO()
+                # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
+                # imgdata.seek(0)  # rewind the data
+                # svg_representation = imgdata.getvalue()
             else:
                 svg_representation = ""
             cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representation)
@@ -266,10 +270,13 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
         sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
                 n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
         explainable_representation:plt.Figure = selected_guard.get_explainable_representation(sampled_test_data)
-        imgdata = io.StringIO()
-        explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
-        imgdata.seek(0)  # rewind the data
-        svg_representation = imgdata.getvalue()
+
+        svg_representation = get_svg_from_figure(explainable_representation)
+
+        # imgdata = io.StringIO()
+        # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
+        # imgdata.seek(0)  # rewind the data
+        # svg_representation = imgdata.getvalue()
     else:
         svg_representation = ""
 
@@ -279,6 +286,71 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
         'svg_representation': svg_representation
     }, 200
     # return svg_representation
+
+@app.route("/log/<logid>/place/<int:placeid>/explainable-representation/<ml_technique>/local/<case_id>/<int:decision_repetition>", methods=["GET"])
+def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: str, decision_repetition: int):
+    dpn = data_petri_nets.get(logid, None)
+    if dpn is None:
+        return {"message": "No models trained yet."}, 400
+    # Find the corresponding place object
+    place = None
+    for p in dpn.petri_net.places:
+        if id(p) == placeid:
+            place = p
+            break
+    if place is None:
+        return {"message": "Place not found."}, 400
+
+    # Get the Enum representation of the selected Technique
+    if ml_technique == str(ML_Technique.LR):
+        technique_enum_value =  ML_Technique.LR
+    elif ml_technique == str(ML_Technique.SVM):
+        technique_enum_value =  ML_Technique.SVM
+    elif ml_technique == str(ML_Technique.DT):
+        technique_enum_value =  ML_Technique.DT
+    elif ml_technique == str(ML_Technique.NN):
+        technique_enum_value =  ML_Technique.NN
+    else:
+        return {"message": "Invalid ML technique"}, 400
+
+    guards = dpn.guard_manager_per_place[place].guards_list
+
+
+    selected_guard = guards[technique_enum_value]
+    if selected_guard.is_explainable():
+        # Find Explainable Representation
+        sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
+                n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
+        # local_data_exp = df.loc[['990003']]
+        # local_data_exp.drop(['target'],axis=1, inplace=True)
+        # sample = df.sample(50).drop(['target'],axis=1)
+        local_data : DataFrame = dpn.guard_manager_per_place[place].dataframe.loc[[(case_id,decision_repetition)]]
+        local_data.drop(['target'],axis=1, inplace=True)
+        explainable_representations: Dict[str,plt.Figure] = selected_guard.get_local_explanations(local_data,sampled_test_data)
+
+        svg_representations = {}
+
+        svg_representations = {
+            plot_type: get_svg_from_figure(explainable_representation)
+            for plot_type, explainable_representation in explainable_representations.items()
+        }
+        # imgdata = io.StringIO()
+        # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
+        # imgdata.seek(0)  # rewind the data
+        # svg_representation = imgdata.getvalue()
+    else:
+        svg_representations = {}
+
+    return {
+        'svg_representations': svg_representations
+    }, 200
+
+def get_svg_from_figure(figure: plt.Figure):
+    imgdata = io.StringIO()
+    figure.savefig(imgdata, format='svg', bbox_inches="tight")
+    imgdata.seek(0)  # rewind the data
+    return imgdata.getvalue()
+
 
 def cache_representation(logid:str, placeid:int, technique_enum_value: ML_Technique, svg_representation:str):
     log_representations = explainable_representations.get(logid, dict())
