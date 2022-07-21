@@ -12,43 +12,6 @@ from sklearn.preprocessing import OneHotEncoder
 from typing import Tuple, List
 
 
-def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
-    """Preprocessing of datasets before they are used for the machine learning training and testing. This function does some \
-    basic preprocessing, such as droping columns with missing values and defining feature attributes and the target attribute. \
-    Furthermore, the data is split into train and test datasets.
-
-    Args:
-        dataframe (DataFrame): The dataset to be transformed for evaluation of the best model.
-
-    Returns:
-        * X_train (DataFrame): The training data without the target attribute.
-        * X_test (DataFrame): The test data without the target attribute.
-        * y_train (Series): The target attribute values corresponding to the training data.
-        * y_test (Series): The test attribute values corresponding to the training data.
-
-    """
-    # perform basic preprocessing
-    df_X, df_y = basic_data_preprocessing(dataframe)
-
-    # split data
-    # use mapping for stratify (map transition to integers)
-    transition_int_map = {transition: index for index,
-                          transition in enumerate(list(set(df_y)))}
-    df_y_transformed = [transition_int_map[transition] for transition in df_y]
-    try:
-        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(
-            df_X, df_y_transformed, stratify=df_y_transformed)
-    except ValueError:
-        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(
-            df_X, df_y_transformed)
-
-    # map back to transitions
-    y_train = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped]
-    y_test = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_test_mapped]
-
-    return X_train, X_test, pd.Series(y_train), pd.Series(y_test)
-
-
 def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
     """Basic preprocessing before datasets, i.e., dropping of columns \
     with only missing values and rows with any NaN value, defining feature attributes and the target attribute.

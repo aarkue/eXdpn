@@ -40,6 +40,7 @@ class Data_Petri_Net():
                                                                                           'ccp_alpha': 0.2},
                                                                         ML_Technique.LR: {"C": 0.5},
                                                                         ML_Technique.SVM: {"C": 0.5}},
+                 CV_splits: int = 5,
                  guard_threshold: float = 0.0,
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
@@ -129,7 +130,8 @@ class Data_Petri_Net():
         # initialize all gms
         self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place],
                                                              ml_list=ml_list,
-                                                             hyperparameters=hyperparameters)
+                                                             hyperparameters=hyperparameters,
+                                                             CV_splits=CV_splits)
                                         for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers
