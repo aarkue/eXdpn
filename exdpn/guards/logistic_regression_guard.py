@@ -227,7 +227,7 @@ class Logistic_Regression_Guard(Guard):
         return fig
 
 
-    def get_local_explanation(self, base_sample: DataFrame, local_data:DataFrame) -> Dict[str,Figure]:
+    def get_local_explanations(self,local_data:DataFrame, base_sample:DataFrame) -> Dict[str,Figure]:
         assert local_data.shape[0] == 1
         # Pre-process local_data
         # Scale data
@@ -266,7 +266,7 @@ class Logistic_Regression_Guard(Guard):
         features=unscaled_local_data, row_index=0, feature_names=self.feature_names,
         highlight=[np.argmax(predictions[0])], link='logit', legend_labels=target_names,
         legend_location="lower right", feature_display_range=slice(-1,-11,-1),show=False)
-        ret['decision_multioutput'] = fig
+        ret['Decision plot (Multioutput)'] = fig
         
         
         winner_index = np.argmax(predictions[0])
@@ -274,14 +274,14 @@ class Logistic_Regression_Guard(Guard):
             fig = plt.figure()
             shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=unscaled_local_data, link='logit',
             legend_labels=[target_names[key]], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
-            ret[f"decision_single_{key}"] = fig
+            ret[f"Decision plot for {target_names[key]}"] = fig
 
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
                             single_shap[key],
                             unscaled_local_data, out_names=target_names[key], matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
             fig = plt.gcf()
-            ret[f"force_{key}"] = fig
+            ret[f"Force plot for {target_names[key]}"] = fig
         return ret
 
 
