@@ -43,6 +43,7 @@ class Guard_Manager():
             ml_list (List[ML_Technique]): List of all machine learning techniques that should be evaluated, default is all implemented.
             hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
                 if not specified, standard/generic parameters are used.
+            CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
 
         Examples:
             
@@ -115,17 +116,16 @@ class Guard_Manager():
             .. include:: ../../docs/_templates/md/example-end.md
         """
         
-        self.guards_results = {guard_name: [] for guard_name in self.guards_list.keys()}
-        # evaluate all selected ml techniques for all guards of the given decision point
-        failing_guards = list()
-        # use mapping for stratify (map transition to integers)
+        # use mapping for target column (map transition to integers)
         transition_int_map = {transition: index for index,
                           transition in enumerate(list(set(self.df_y)))}
         df_y_transformed = [transition_int_map[transition] for transition in self.df_y]
-
-        guards_list_temp = {guard_name: np.repeat(guard_models, self.CV_splits) for guard_name, guard_models in self.guards_list.items()}
-        counter = 0 
+        
+        guards_results = {guard_name: [] for guard_name in self.guards_list.keys()}
+        failing_guards = list()
+        # evaluate all selected ml techniques for all guards of the given decision point
         for train_idx, test_idx in self.skf.split(self.df_X, df_y_transformed):
+            # get training and test data for current cv split
             X_train = self.df_X.iloc[train_idx, :]
             X_test = self.df_X.iloc[test_idx, :]
             y_train_mapped = list(df_y_transformed[i] for i in train_idx)
@@ -135,11 +135,11 @@ class Guard_Manager():
             y_train = pd.Series([next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped])
             y_test = pd.Series([next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_test_mapped])
             
-            for guard_name, guard_models in guards_list_temp.items():
+            for guard_name, guard_models in self.guards_list.items():
                 try:
                     # train model for current cv split 
-                    guard_models[counter].train(X_train, y_train)
-                    y_prediction = guard_models[counter].predict(X_test)
+                    guard_models.train(X_train, y_train)
+                    y_prediction = guard_models.predict(X_test)
 
                     # convert Transition objects to integers so that sklearn's F1 score doesn't freak out
                     # this is ugly, we know
@@ -153,15 +153,20 @@ class Guard_Manager():
                     # get f1 score for current cv split
                     guards_results_temp = f1_score(
                         y_test_transformed, y_prediction_transformed, average="weighted")
-                    self.guards_results[guard_name] += [guards_results_temp] 
+                    guards_results[guard_name] += [guards_results_temp] 
                 except Exception as e:
                     failing_guards.append(guard_name)
                     warnings.warn(f"Warning: Technique {guard_name} failed to train/test on the provided data: {e}. Removing technique from consideration.")
-            counter += 1
-            self.guards_list = guards_list_temp
             for failing_guard in failing_guards:
                 self.guards_list.pop(failing_guard)
-        return self.guards_results
+            
+            # get mean f1 score for each machine learning technique
+            self.guards_results_mean = {technique: np.mean(results) for technique, results in guards_results.items()}
+
+            # retrain models on whole data 
+            for guard_models in self.guards_list.values():
+                guard_models.train(self.df_X, self.df_y)
+        return self.guards_results_mean
 
     def get_best(self) -> Tuple[str, Guard]:
         """Returns "best" guard for a decision point (see `train_test`).
@@ -198,15 +203,7 @@ class Guard_Manager():
             .. include:: ../../docs/_templates/md/example-end.md
         """
         assert self.guards_results != None, "Guards must be evaluated first"
-        guards_results_mean = {technique: np.mean(results) for technique, results in self.guards_results.items()}
-        best_guard_name = max(guards_results_mean, key=guards_results_mean.get)
-        
-        # retrain best guard
-        final_model = model_builder(best_guard_name, self.hyperparameters[best_guard_name])
-        final_model.train(self.df_X, self.df_y)
-
-        self.final_model = {best_guard_name: final_model}
-
+        best_guard_name = max(self.guards_results_mean, key=self.guards_results_mean.get)
 
         return best_guard_name, self.guards_list[best_guard_name]
 
@@ -245,8 +242,8 @@ class Guard_Manager():
 
 
         """
-        guard_results = {(str(technique)): np.mean(result) for technique,
-                         result in self.guards_results.items()}
+        guard_results = {(str(technique)): result for technique,
+                         result in self.guards_results_mean.items()}
         fig = plt.figure(figsize=(6, 3))
         plt.xticks(rotation=45, ha='right')
         plt.ylim(0, 1)

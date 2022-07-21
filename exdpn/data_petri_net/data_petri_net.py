@@ -60,6 +60,7 @@ class Data_Petri_Net():
                 implemented techniques.
             hyperparameters (Dict[ML_Technique, Dict[str, Any]], optional): The hyperparameters that should be used for the machine learning techniques. \
                 If not specified, standard/generic parameters are used.
+            CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
             guard_threshold (float, optional): The performance threshold (between 0 and 1) that determines if a guard is added to the data Petri net or not. If the guard performance \
                 is smaller than the threshold the guard is not added (see `exdpn.guards.guard_manager.Guard_Manager.train_test`). Default is 0. 
             verbose (bool, optional): Specifies if the execution should print status-esque messages or not.
