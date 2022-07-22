@@ -42,6 +42,7 @@ class Data_Petri_Net():
                                                                         ML_Technique.SVM: {"C": 0.5}},
                  CV_splits: int = 5,
                  guard_threshold: float = 0.0,
+                 impute: bool = False,
                  verbose: bool = True) -> None:
         """Initializes a data Petri net based on the event log provided.
 
@@ -63,6 +64,7 @@ class Data_Petri_Net():
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
             guard_threshold (float, optional): The performance threshold (between 0 and 1) that determines if a guard is added to the data Petri net or not. If the guard performance \
                 is smaller than the threshold the guard is not added (see `exdpn.guards.guard_manager.Guard_Manager.train_test`). Default is 0. 
+            impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
             verbose (bool, optional): Specifies if the execution should print status-esque messages or not.
 
         Examples:
@@ -132,7 +134,8 @@ class Data_Petri_Net():
         self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place],
                                                              ml_list=ml_list,
                                                              hyperparameters=hyperparameters,
-                                                             CV_splits=CV_splits)
+                                                             CV_splits=CV_splits,
+                                                             impute=impute)
                                         for place in self.decision_points.keys()}
 
         # evaluate all guards for all guard managers
@@ -147,6 +150,7 @@ class Data_Petri_Net():
         self.ml_technique_per_place = {}
         self.performance_per_place = {}
         self.guard_threshold = guard_threshold
+        self.impute = impute
 
     def _print_if_verbose(self, string: str, end: str = '\n'):
         """Internal method used as a shortcut for printing messages only if self.verbose is set to True."""
@@ -183,14 +187,14 @@ class Data_Petri_Net():
 
         for place, guard_manager in self.guard_manager_per_place.items():
             ml_technique, guard = guard_manager.get_best()
-            if max(guard_manager.guards_results.values()) < self.guard_threshold:
+            if max(guard_manager.guards_results_mean.values()) < self.guard_threshold:
                 max_performance = max(guard_manager.guards_results.values())
                 self._print_if_verbose(
                     f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
                 continue
             self.guard_per_place[place] = guard
             self.ml_technique_per_place[place] = ml_technique
-            self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results[ml_technique]
+            self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results_mean[ml_technique]
             self._print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
 
@@ -288,7 +292,7 @@ class Data_Petri_Net():
             trace_ids = dp_dataset.index.get_level_values(
                 xes.DEFAULT_TRACEID_KEY)  # preserves order, duplicates not deleted
             seen_trace_ids.update(trace_ids)
-            X, y_raw = basic_data_preprocessing(dp_dataset)
+            X, y_raw = basic_data_preprocessing(dp_dataset, impute=self.impute)
             y = y_raw.tolist()
 
             # Check if prediction is correct.

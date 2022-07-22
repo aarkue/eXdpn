@@ -34,7 +34,8 @@ class Guard_Manager():
                                                                                           'ccp_alpha': 0.2},
                                                                         ML_Technique.LR: {"C": 0.5},
                                                                         ML_Technique.SVM: {"C": 0.5}},
-                 CV_splits: int = 5) -> None:
+                 CV_splits: int = 5,
+                 impute: bool = False) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
 
@@ -44,6 +45,7 @@ class Guard_Manager():
             hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
                 if not specified, standard/generic parameters are used.
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
+            impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
 
         Examples:
             
@@ -65,12 +67,13 @@ class Guard_Manager():
             .. include:: ../../docs/_templates/md/example-end.md
 
         """
-        df_X, df_y = basic_data_preprocessing(dataframe)
+        df_X, df_y = basic_data_preprocessing(dataframe, impute=impute)
         self.df_X = df_X
         self.df_y = df_y
         self.hyperparameters = hyperparameters
 
         self.CV_splits = CV_splits 
+        self.impute = impute
 
         # set up cross validation for model evaluation
         try:
@@ -202,7 +205,7 @@ class Guard_Manager():
             
             .. include:: ../../docs/_templates/md/example-end.md
         """
-        assert self.guards_results != None, "Guards must be evaluated first"
+        assert self.guards_results_mean != None, "Guards must be evaluated first"
         best_guard_name = max(self.guards_results_mean, key=self.guards_results_mean.get)
 
         return best_guard_name, self.guards_list[best_guard_name]
