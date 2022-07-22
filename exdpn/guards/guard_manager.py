@@ -223,7 +223,8 @@ class Guard_Manager():
             'Decision Tree': '#478736',
             'Logistic Regression': '#e26f8f',
             'Support Vector Machine': '#e1ad01',
-            'Neural Network': '#263488'
+            'Neural Network': '#263488',
+            'Random Forest': '#87CEFA'
         }
         keys = list(guard_results.keys())
         values = [guard_results[key] for key in keys]
