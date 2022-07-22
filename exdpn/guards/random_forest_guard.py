@@ -4,7 +4,6 @@
 """
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import plot_tree
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe
@@ -16,6 +15,7 @@ from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List, Any, Optional
 import numpy as np
+import shap 
 
 class Random_Forest_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, Any] = {'n_estimators': 100,
@@ -83,6 +83,8 @@ class Random_Forest_Guard(Guard):
         # one hot encoding for categorical data
         self.ohe = fit_ohe(X)
         X = apply_ohe(X, self.ohe)
+
+        self.X_train = X
 
         # store feature names for the explainable representation
         self.feature_names = list(X.columns)
@@ -161,8 +163,6 @@ class Random_Forest_Guard(Guard):
 
         return True
 
-    ### lower part is still under construction ### 
-
     def get_explainable_representation(self, data:Optional[DataFrame]) -> Figure:
         """Returns an explainable representation of the support vector machine guard, a Matplotlib plot using SHAP.
         Args:
@@ -205,10 +205,9 @@ class Random_Forest_Guard(Guard):
 
         classes = [t.label if t.label !=
                    None else f"None ({t.name})" for t in self.transition_int_map.keys()]
-        data = apply_scaling(data, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data
         data = apply_ohe(data, self.ohe)
-        explainer = shap.LinearExplainer(self.model, self.X_train)
+        explainer = shap.TreeExplainer(self.model)
 
         shap_values = explainer.shap_values(data)
 
@@ -228,16 +227,12 @@ class Random_Forest_Guard(Guard):
     def get_local_explanations(self, local_data:DataFrame, base_sample: DataFrame) -> Dict[str,Figure]:
         assert local_data.shape[0] == 1
         # Pre-process local_data
-        # Scale data
-        processed_local_data = apply_scaling(local_data, self.scaler, self.scaler_columns)
         # One-Hot Encoding for categorical data
-        processed_local_data = apply_ohe(processed_local_data, self.ohe)
+        processed_local_data = apply_ohe(local_data, self.ohe)
         
         # Pre-process base_sample
-        # Scale data
-        processed_base_sample = apply_scaling(base_sample, self.scaler, self.scaler_columns)
         # One-Hot Encoding for categorical data
-        processed_base_sample = apply_ohe(processed_base_sample, self.ohe)
+        processed_base_sample = apply_ohe(base_sample, self.ohe)
 
         # transitions_labels =  {i: n for n,i in self.transition_int_map.items()}
         # target_names = [transitions_labels[i] for i in sorted(transitions_labels.keys())]
@@ -250,18 +245,14 @@ class Random_Forest_Guard(Guard):
 
         predictions = shap_predict(processed_local_data)
 
-        explainer = shap.KernelExplainer(
-            shap_predict, processed_base_sample, output_names=target_names)
-        single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
-        
-        unscaled_local_data = processed_local_data.copy().iloc[0]
-        for n in self.scaler.get_feature_names_out():
-            unscaled_local_data[n] = local_data.iloc[0][n]
+        explainer = shap.TreeExplainer(
+            self.model, output_names=target_names)
+        single_shap = explainer.shap_values(processed_local_data)
 
         ret = dict()
         fig = plt.figure()
         shap.multioutput_decision_plot(list(explainer.expected_value),single_shap,
-        features=unscaled_local_data, row_index=0, feature_names=self.feature_names,
+        features=processed_local_data, row_index=0, feature_names=self.feature_names,
         highlight=[np.argmax(predictions[0])], link='logit', legend_labels=target_names,
         legend_location="lower right", feature_display_range=slice(-1,-11,-1),show=False)
         ret['Decision plot (Multioutput)'] = fig
@@ -270,17 +261,19 @@ class Random_Forest_Guard(Guard):
         winner_index = np.argmax(predictions[0])
         for key in range(len(single_shap)):
             fig = plt.figure()
-            shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=unscaled_local_data, link='logit',
+            shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=processed_local_data, link='logit',
             legend_labels=[target_names[key]], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
             ret[f"Decision plot for {target_names[key]}"] = fig
 
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
                             single_shap[key],
-                            unscaled_local_data, out_names=target_names[key], matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
+                            processed_local_data, out_names=target_names[key], matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
             fig = plt.gcf()
             ret[f"Force plot for {target_names[key]}"] = fig
         return ret
+
+        
 # tests implemented examples
 if __name__ == "__main__":
     import doctest
