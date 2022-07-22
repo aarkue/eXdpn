@@ -87,7 +87,6 @@ class Guard_Manager():
         self.guards_list = {technique: model_builder(
             technique, hyperparameters[technique]) for technique in ml_list}
 
-        self.guards_results = None
 
     def train_test(self) -> Dict[str, Any]:
         """Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
@@ -124,6 +123,7 @@ class Guard_Manager():
                           transition in enumerate(list(set(self.df_y)))}
         df_y_transformed = [transition_int_map[transition] for transition in self.df_y]
         
+        self.guards_results_mean = {}
         guards_results = {guard_name: [] for guard_name in self.guards_list.keys()}
         failing_guards = list()
         # evaluate all selected ml techniques for all guards of the given decision point
