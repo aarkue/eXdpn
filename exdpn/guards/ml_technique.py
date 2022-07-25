@@ -4,6 +4,8 @@ from exdpn.guards import Decision_Tree_Guard
 from exdpn.guards import Logistic_Regression_Guard
 from exdpn.guards import SVM_Guard
 from exdpn.guards import Neural_Network_Guard
+from exdpn.guards import XGBoost_Guard
+from exdpn.guards import Random_Forest_Guard
 
 
 class ML_Technique(enum.Enum):
@@ -23,8 +25,8 @@ class ML_Technique(enum.Enum):
         ...                                     verbose = False)
 
         .. include:: ../../docs/_templates/md/example-end.md
-
     """
+
     NN = Neural_Network_Guard
     """Corresponds to the guard implementation using a neural network classifier."""
     DT = Decision_Tree_Guard
@@ -33,6 +35,10 @@ class ML_Technique(enum.Enum):
     """Corresponds to the guard implementation using a logistic regression classifier."""
     SVM = SVM_Guard
     """Corresponds to the guard implementation using a support vector machine classifier."""
+    XGB = XGBoost_Guard
+    """Corresponds to the guard implementation using a XGBoost classifier."""
+    RF = Random_Forest_Guard
+    """Corresponds to the guard implementation using a random forest classifier."""
 
     def __str__(self) -> str:
         if self == ML_Technique.DT:
@@ -43,6 +49,10 @@ class ML_Technique(enum.Enum):
             return "Logistic Regression"
         elif self == ML_Technique.NN:
             return "Neural Network"
+        elif self == ML_Technique.XGB:
+            return "XGBoost"
+        elif self == ML_Technique.RF:
+            return "Random Forest"
         else:
             return "Unknown"
 
