@@ -42,7 +42,7 @@ class Data_Petri_Net():
                                                                                           'ccp_alpha': 0.2},
                                                                         ML_Technique.LR: {"C": 0.5},
                                                                         ML_Technique.SVM: {"C": 0.5},
-                                                                        ML_Technique:XGB: {},
+                                                                        ML_Technique.XGB: {},
                                                                         ML_Technique.RF: {'n_estimators': 100,
                                                                                           'min_samples_split': 0.1,
                                                                                           'min_samples_leaf': 0.1,

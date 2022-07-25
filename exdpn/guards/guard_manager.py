@@ -40,8 +40,7 @@ class Guard_Manager():
                                                                         ML_Technique.RF: {'n_estimators': 100,
                                                                                           'min_samples_split': 0.1,
                                                                                           'min_samples_leaf': 0.1,
-                                                                                          'ccp_alpha': 0.2}}) -> None:
-                                                                        ML_Technique.SVM: {"C": 0.5}},
+                                                                                          'ccp_alpha': 0.2}},
                  CV_splits: int = 5,
                  impute: bool = False) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
