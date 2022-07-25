@@ -5,6 +5,7 @@
 
 from pandas import DataFrame, concat, Series
 from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
@@ -12,49 +13,13 @@ from sklearn.preprocessing import OneHotEncoder
 from typing import Tuple, List
 
 
-def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
-    """Preprocessing of datasets before they are used for the machine learning training and testing. This function does some \
-    basic preprocessing, such as droping columns with missing values and defining feature attributes and the target attribute. \
-    Furthermore, the data is split into train and test datasets.
-
-    Args:
-        dataframe (DataFrame): The dataset to be transformed for evaluation of the best model.
-
-    Returns:
-        * X_train (DataFrame): The training data without the target attribute.
-        * X_test (DataFrame): The test data without the target attribute.
-        * y_train (Series): The target attribute values corresponding to the training data.
-        * y_test (Series): The test attribute values corresponding to the training data.
-
-    """
-    # perform basic preprocessing
-    df_X, df_y = basic_data_preprocessing(dataframe)
-
-    # split data
-    # use mapping for stratify (map transition to integers)
-    transition_int_map = {transition: index for index,
-                          transition in enumerate(list(set(df_y)))}
-    df_y_transformed = [transition_int_map[transition] for transition in df_y]
-    try:
-        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(
-            df_X, df_y_transformed, stratify=df_y_transformed)
-    except ValueError:
-        X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(
-            df_X, df_y_transformed)
-
-    # map back to transitions
-    y_train = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped]
-    y_test = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_test_mapped]
-
-    return X_train, X_test, pd.Series(y_train), pd.Series(y_test)
-
-
-def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
+def basic_data_preprocessing(dataframe: DataFrame, impute: bool = False) -> Tuple[DataFrame, Series]:
     """Basic preprocessing before datasets, i.e., dropping of columns \
     with only missing values and rows with any NaN value, defining feature attributes and the target attribute.
 
     Args:
         dataframe (DataFrame): The dataset to be transformed.
+        impute (bool): If `True`, missing attribute values will be imputed using constants and an indicator columns will be added. Default is `False`. 
 
     Returns:
         * df_X (DataFrame): The preprocessed dataset of feature attributes.
@@ -64,7 +29,9 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
     # drop columns with all NaNs
     dataframe.dropna(how='all', axis=1, inplace=True)
     # Drop all rows which contain at least one NaN (after NaN Columns are dropped)
-    dataframe.dropna(how='any', axis=0, inplace=True) 
+    # or impute missing values
+    if not impute:
+        dataframe.dropna(how='any', axis=0, inplace=True) 
 
     # get target and feature names
     target_var = "target"
@@ -72,6 +39,22 @@ def basic_data_preprocessing(dataframe: DataFrame) -> Tuple[DataFrame, Series]:
     df_X = df_X.drop(target_var, axis=1)
     df_y = dataframe.copy()
     df_y = dataframe[target_var]
+
+    # impute missing values
+    if impute:
+        numeric_columns = df_X.select_dtypes(include=['number']).columns 
+        # use SI on left over object columns since it behaves odd on numerical columns
+        si = SimpleImputer(strategy='most_frequent', add_indicator=True)
+        idf_X = pd.DataFrame(si.fit_transform(df_X, df_y), columns=si.get_feature_names_out())
+        idf_X.index = df_X.index
+
+        df_X = idf_X
+        df_X[numeric_columns] = df_X[numeric_columns].replace("missing_value", 0)
+        for c in numeric_columns:
+            df_X[c] = pd.to_numeric(df_X[c], errors='coerce')
+
+        indicator_cols = [col for col in si.get_feature_names_out() if col not in si.feature_names_in_]
+        df_X[indicator_cols] = df_X[indicator_cols].replace({True: 1, False: 0})
 
     return df_X, df_y
 

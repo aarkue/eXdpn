@@ -22,6 +22,7 @@ def get_df():
         event_log, net, im, fm, event_level_attributes=["costs", "resource"], tail_length=2)
 
     df_place = guard_datasets_per_place[place_three]
+    df_place = df_place.append(df_place)
     return df_place
 
 
@@ -29,7 +30,7 @@ class Test_Guard_Manager(unittest.TestCase):
     def test_simple(self):
         df_place = get_df()
 
-        gm = Guard_Manager(df_place, [ML_Technique.DT])
+        gm = Guard_Manager(df_place, [ML_Technique.DT], CV_splits=2)
         _ = gm.train_test()
         technique, guard = gm.get_best()
         _ = guard.get_explainable_representation()
@@ -39,9 +40,8 @@ class Test_Guard_Manager(unittest.TestCase):
     def test_error_on_missing_eval(self):
         df_place = get_df()
 
-        gm = Guard_Manager(df_place, [ML_Technique.DT])
+        gm = Guard_Manager(df_place, [ML_Technique.DT], CV_splits=2)
         self.assertRaises(AssertionError, gm.get_best)
-
 
 if __name__ == "__main__":
     unittest.main()
