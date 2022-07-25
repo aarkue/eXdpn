@@ -27,12 +27,20 @@ class Guard_Manager():
                  ml_list: List[ML_Technique] = [ML_Technique.DT,
                                                 ML_Technique.LR,
                                                 ML_Technique.SVM,
-                                                ML_Technique.NN],
+                                                ML_Technique.NN,
+                                                ML_Technique.XGB,
+                                                ML_Technique.RF],
                  hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1,
                                                                                           'min_samples_leaf': 0.1,
                                                                                           'ccp_alpha': 0.2},
                                                                         ML_Technique.LR: {"C": 0.5},
+                                                                        ML_Technique.SVM: {"C": 0.5},
+                                                                        ML_Technique.XGB: {},
+                                                                        ML_Technique.RF: {'n_estimators': 100,
+                                                                                          'min_samples_split': 0.1,
+                                                                                          'min_samples_leaf': 0.1,
+                                                                                          'ccp_alpha': 0.2}}) -> None:
                                                                         ML_Technique.SVM: {"C": 0.5}},
                  CV_splits: int = 5,
                  impute: bool = False) -> None:
@@ -261,6 +269,7 @@ class Guard_Manager():
             'Logistic Regression': '#e26f8f',
             'Support Vector Machine': '#e1ad01',
             'Neural Network': '#263488',
+            'XGBoost': '#87CEFA',
             'Random Forest': '#A2B5CD'
         }
         keys = list(guard_results.keys())
