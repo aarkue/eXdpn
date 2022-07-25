@@ -14,6 +14,7 @@ from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
 from typing import Dict, List, Any, Optional
 import numpy as np
+import shap
 
 
 class XGBoost_Guard(Guard):
@@ -36,15 +37,6 @@ class XGBoost_Guard(Guard):
         """
 
         super().__init__(hyperparameters)
-
-        # TODO decide on OHE vs (no OHE and approx tree method)
-        # overwrite tree_method and enable_categorical so that
-        # categorical data may be used. Since this is an
-        # experimental feature of xgboost, we need to change
-        # the default tree_method to approx/hist/gpu_hist.
-        # \Note that the `enable_categorical` and `tree_method` will be forcefully set to \`True` and `approx` respectively, so that categorical data may be used for prediction.
-        #hyperparameters['enable_categorical'] = True
-        #hyperparameters['tree_method'] = 'approx'
 
         try:
             self.model = XGBClassifier(**hyperparameters)
@@ -162,7 +154,6 @@ class XGBoost_Guard(Guard):
 
             .. include:: ../../docs/_templates/md/example-end.md
         """
-
         return True
 
     def get_explainable_representation(self, data: Optional[DataFrame] = None) -> Figure:
@@ -177,11 +168,10 @@ class XGBoost_Guard(Guard):
             Exception: If the guard has no explainable representation.
 
         Examples:
-            # TODO
             >>> from exdpn.util import import_log
             >>> from exdpn.petri_net import get_petri_net
             >>> from exdpn.guard_datasets import extract_all_datasets
-            >>> from exdpn.guards import Decision_Tree_Guard
+            >>> from exdpn.guards import XGBoost_Guard
             >>> from exdpn.data_preprocessing import data_preprocessing_evaluation
             >>> event_log = import_log('./datasets/p2p_base.xes')
             >>> pn, im, fm = get_petri_net(event_log)
@@ -192,13 +182,13 @@ class XGBoost_Guard(Guard):
             >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
-            >>> guard = Decision_Tree_Guard()
+            >>> guard = XGBoost_Guard()
             >>> guard.train(X_train, y_train)
             >>> y_prediction = guard.predict(X_test)
             >>> # return figure of explainable representation
-            >>> fig = guard.get_explainable_representation() # results may deviate 
+            >>> fig = guard.get_explainable_representation(X_test) # results may deviate 
 
-            <img src="../../images/dt-example-representation.svg" alt="Example explainable representation of a decision tree guard" style="max-height: 350px;"/>
+            <img src="../../images/svm-example-representation.svg" alt="Example explainable representation of a XGBoost guard" style="max-height: 350px;"/>
 
             .. include:: ../../docs/_templates/md/example-end.md
 
@@ -209,8 +199,76 @@ class XGBoost_Guard(Guard):
         if self.is_explainable() == False:
             raise Exception(
                 "Guard is not explainable and therefore has no explainable representation")
-        # TODO
-        return None
+
+        classes = [t.label if t.label !=
+                   None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+        # one hot encoding for categorical data
+        data = apply_ohe(data, self.ohe)
+
+        explainer = shap.TreeExplainer(self.model)
+        shap_values = explainer.shap_values(data)
+
+        # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
+        fig, ax = plt.subplots()
+        shap.summary_plot(shap_values,
+                          data,
+                          plot_type="bar",
+                          show=False,
+                          class_names=classes,
+                          class_inds=range(len(classes)))
+        plt.title("Feature Impact on Model Prediction", fontsize=14)
+        plt.ylabel("Feature Attributes", fontsize=14)
+
+        return fig
+
+    def get_local_explanations(self, local_data: DataFrame, base_sample: DataFrame) -> Dict[str, Figure]:
+        assert local_data.shape[0] == 1
+        # Pre-process local_data
+        # One-Hot Encoding for categorical data
+        processed_local_data = apply_ohe(local_data, self.ohe)
+
+        # Pre-process base_sample
+        # One-Hot Encoding for categorical data
+        processed_base_sample = apply_ohe(base_sample, self.ohe)
+
+        target_names = [t.label if t.label !=
+                        None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+
+        def shap_predict(data: np.ndarray):
+            data_asframe = DataFrame(data, columns=self.feature_names)
+            ret = self.model.predict_proba(data_asframe)
+            return ret
+
+        predictions = shap_predict(processed_local_data)
+
+        # TreeExplainer throws errors for me
+        explainer = shap.KernelExplainer(
+            shap_predict, processed_base_sample, output_names=target_names)
+        single_shap = explainer.shap_values(
+            processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
+
+        ret = dict()
+        fig = plt.figure()
+        shap.multioutput_decision_plot(list(explainer.expected_value), single_shap,
+                                       features=processed_local_data, row_index=0, feature_names=self.feature_names,
+                                       highlight=[np.argmax(predictions[0])], link='logit', legend_labels=target_names,
+                                       legend_location="lower right", feature_display_range=slice(-1, -11, -1), show=False)
+        ret['Decision plot (Multioutput)'] = fig
+
+        winner_index = np.argmax(predictions[0])
+        for key in range(len(single_shap)):
+            fig = plt.figure()
+            shap.decision_plot(list(explainer.expected_value)[key], single_shap[key], features=processed_local_data, link='logit',
+                               legend_labels=[target_names[key]], feature_display_range=slice(-1, -11, -1), show=False, highlight=0 if (winner_index == key) else None)
+            ret[f"Decision plot for {target_names[key]}"] = fig
+
+            # fig = plt.figure()
+            fig = shap.force_plot(explainer.expected_value[key],
+                                  single_shap[key],
+                                  processed_local_data, out_names=target_names[key], matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
+            fig = plt.gcf()
+            ret[f"Force plot for {target_names[key]}"] = fig
+        return ret
 
 
 # tests implemented examples

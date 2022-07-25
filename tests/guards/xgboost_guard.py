@@ -17,8 +17,8 @@ def get_df():
     net, im, fm = get_petri_net(event_log)
     dp = find_decision_points(net)
 
-    place = [place for place in dp.keys() if place.name ==
-             "({'create purchase order'}, {'request standard approval', 'request manager approval'})"][0]
+    place = [place for place in dp.keys() if place.name.startswith(
+             "({'create purchase order'}")][0]
 
     guard_datasets_per_place = extract_all_datasets(
         event_log, net, im, fm, event_level_attributes=["total_price", "item_id", "item_amount", "supplier", "item_category"], tail_length=2)
