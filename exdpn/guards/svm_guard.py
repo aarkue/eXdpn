@@ -247,7 +247,7 @@ class SVM_Guard(Guard):
         unscaled_base_sample = processed_base_sample.copy()
         for label,row in unscaled_base_sample.iterrows():
             for n in self.scaler.get_feature_names_out():
-                row[n] = unscaled_base_sample.iloc[label][n]
+                row[n] = base_sample.iloc[label][n]
         def shap_predict(data: np.ndarray):
             data_asframe = DataFrame(data, columns=self.feature_names)
             ret = self.model.predict_proba(data_asframe)

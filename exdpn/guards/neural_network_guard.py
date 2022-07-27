@@ -267,7 +267,7 @@ class Neural_Network_Guard(Guard):
         unscaled_base_sample = processed_base_sample.copy()
         for label,row in unscaled_base_sample.iterrows():
             for n in self.scaler.get_feature_names_out():
-                row[n] = unscaled_base_sample.iloc[label][n]
+                row[n] = base_sample.iloc[label][n]
         def shap_predict(data: np.ndarray):
             data_asframe = DataFrame(data, columns=self.feature_names)
             ret = self.model.predict_proba(data_asframe)
@@ -292,7 +292,7 @@ class Neural_Network_Guard(Guard):
                                                     feature_names=self.feature_names), show=False)
             ret[f"Beeswarm plot for {target_names[key]}"] = fig
 
-            force_plot = shap.force_plot(explainer.expected_value[[key]],shap_values[key],features=unscaled_base_sample, out_names=target_names[key], link='logit',show=False)
+            force_plot = shap.force_plot(explainer.expected_value[[key]],shap_values[key],unscaled_base_sample, out_names=target_names[key], link='logit',show=False)
             html_data = io.StringIO()
             shap.save_html(html_data,force_plot,full_html=False)
             html_data.seek(0)  # rewind the data
@@ -333,9 +333,10 @@ class Neural_Network_Guard(Guard):
             return ret
 
         predictions = shap_predict(processed_local_data)
-
+        target_names = [t.label if t.label !=
+                        None else f"None ({t.name})" for t in self.transition_int_map.keys()]
         explainer = shap.KernelExplainer(
-            shap_predict, processed_base_sample, output_names=self.target_names)
+            shap_predict, processed_base_sample, output_names=target_names)
         single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         
         unscaled_local_data = processed_local_data.copy().iloc[0]
@@ -346,7 +347,7 @@ class Neural_Network_Guard(Guard):
         fig = plt.figure()
         shap.multioutput_decision_plot(list(explainer.expected_value),single_shap,
         features=unscaled_local_data, row_index=0, feature_names=self.feature_names,
-        highlight=[np.argmax(predictions[0])], link='logit', legend_labels=[t.label for t in self.target_names],
+        highlight=[np.argmax(predictions[0])], link='logit', legend_labels=[t for t in target_names],
         legend_location="lower right", feature_display_range=slice(-1,-11,-1),show=False)
         ret['Decision plot (Multioutput)'] = fig
         
@@ -355,17 +356,17 @@ class Neural_Network_Guard(Guard):
         for key in range(len(single_shap)):
             fig = plt.figure()
             shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=unscaled_local_data, link='logit',
-            legend_labels=[self.target_names[key].label], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
-            ret[f"Decision plot for {self.target_names[key].label}"] = fig
+            legend_labels=[target_names[key]], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
+            ret[f"Decision plot for {target_names[key]}"] = fig
 
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
                             single_shap[key],
-                            unscaled_local_data, out_names=self.target_names[key].label, matplotlib=True,
+                            unscaled_local_data, out_names=target_names[key], matplotlib=True,
                             # link='logit',
                             contribution_threshold=0.1, show=False)
             fig = plt.gcf()
-            ret[f"Force plot for {self.target_names[key].label}"] = fig
+            ret[f"Force plot for {target_names[key]}"] = fig
         return ret
 
 # tests implemented examples

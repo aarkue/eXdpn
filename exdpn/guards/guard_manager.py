@@ -214,7 +214,7 @@ class Guard_Manager():
                          result in self.guards_results.items()}
         fig = plt.figure(figsize=(6, 3))
         plt.xticks(rotation=45, ha='right')
-        plt.ylim(0, 1)
+        # plt.ylim(0, 1)
         axis = plt.gca()
         axis.spines['top'].set_visible(False)
         axis.spines['right'].set_visible(False)
