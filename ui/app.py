@@ -222,12 +222,12 @@ def mine_decisions(logid: str):
                 'svg_representation': svg_representation,
                 'guard_result_svg': guard_result_svg,
                 'techniques': [str(key) for key in dpn.guard_manager_per_place[p].guards_list.keys()],
-                'warning_text': '' if len(failed_techniques) == 0 else 'Some techniques failed: ' +  ', '.join([str(key) for key in ml_techniques if key not in dpn.guard_manager_per_place[p].guards_list.keys()])
-
+                'warning_text': '' if len(failed_techniques) == 0 else 'Some techniques failed: ' +  ', '.join([str(key) for key in ml_techniques if key not in dpn.guard_manager_per_place[p].guards_list.keys()]),
+                'instances': dpn.guard_manager_per_place[p].dataframe.index.to_list(),
             }
         
         data_petri_nets[logid] = dpn
-        return {
+        return { 
             'mean_guard_conformance': dpn.get_mean_guard_conformance(event_log),
             'place_info': return_info
         }, 200;
@@ -325,9 +325,6 @@ def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: 
         # Find Explainable Representation
         sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
                 n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
-        # local_data_exp = df.loc[['990003']]
-        # local_data_exp.drop(['target'],axis=1, inplace=True)
-        # sample = df.sample(50).drop(['target'],axis=1)
         local_data : DataFrame = dpn.guard_manager_per_place[place].dataframe.loc[[(case_id,decision_repetition)]]
         local_data.drop(['target'],axis=1, inplace=True)
         explainable_representations: Dict[str,plt.Figure] = selected_guard.get_local_explanations(local_data,sampled_test_data)
