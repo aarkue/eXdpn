@@ -284,7 +284,7 @@ class Neural_Network_Guard(Guard):
         fig = plt.figure()
         shap.multioutput_decision_plot(list(explainer.expected_value),single_shap,
         features=unscaled_local_data, row_index=0, feature_names=self.feature_names,
-        highlight=[np.argmax(predictions[0])], link='logit', legend_labels=self.target_names,
+        highlight=[np.argmax(predictions[0])], link='logit', legend_labels=[t.label for t in self.target_names],
         legend_location="lower right", feature_display_range=slice(-1,-11,-1),show=False)
         ret['Decision plot (Multioutput)'] = fig
         
@@ -294,7 +294,7 @@ class Neural_Network_Guard(Guard):
             fig = plt.figure()
             shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=unscaled_local_data, link='logit',
             legend_labels=[self.target_names[key].label], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
-            ret[f"Decision plot for {self.target_names[key]}"] = fig
+            ret[f"Decision plot for {self.target_names[key].label}"] = fig
 
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
@@ -303,7 +303,7 @@ class Neural_Network_Guard(Guard):
                             # link='logit',
                             contribution_threshold=0.1, show=False)
             fig = plt.gcf()
-            ret[f"Force plot for {self.target_names[key]}"] = fig
+            ret[f"Force plot for {self.target_names[key].label}"] = fig
         return ret
 
 # tests implemented examples
