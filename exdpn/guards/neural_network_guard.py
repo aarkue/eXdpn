@@ -252,6 +252,20 @@ class Neural_Network_Guard(Guard):
 
 
     def get_local_explanations(self, local_data:DataFrame, base_sample:DataFrame) -> Dict[str,Figure]:
+        """Get explainable representations for a single decision situation. 
+
+        Args:
+            local_data (DataFrame): A dataframe containing the single decision situation.
+            base_sample (DataFrame): A small (10-30) sample of the population for this decision point; Used for calculation of shap values.
+
+        Returns:
+            Dict[str,Figure]: A dictionary containing the explainable representations for the single decision situation. Containing the following entries:
+            - "Decision plot (Multioutput)"
+            - "Decision plot for `X`" (for all output labels X)
+            - "Force plot for `X`" (for all output labels X)
+                
+        """  
+
         assert local_data.shape[0] == 1
         # Pre-process local_data
         # Scale data

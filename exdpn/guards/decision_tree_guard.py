@@ -219,7 +219,7 @@ class Decision_Tree_Guard(Guard):
         return fig
 
     def get_local_explanations(self, local_data:DataFrame, base_sample: DataFrame) -> Dict[str,Figure]:
-        """Get explainable representations for a single decision situation. 
+        """ Local Representations are not supported for Decision Tree. 
 
         Args:
             local_data (DataFrame): A dataframe containing the single decision situation.
