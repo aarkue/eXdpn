@@ -22,6 +22,10 @@ from exdpn.data_petri_net import Data_Petri_Net
 import matplotlib.pyplot as plt
 from exdpn.petri_net import get_petri_net
 
+
+import matplotlib
+matplotlib.use("agg")
+
 def get_upload_path(name):
     return safe_join("./uploads/", name)
 
