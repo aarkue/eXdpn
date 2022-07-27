@@ -218,6 +218,30 @@ class Decision_Tree_Guard(Guard):
         plt.ylabel("Feature Attributes", fontsize=14)
         return fig
 
+    def get_local_explanations(self, local_data:DataFrame, base_sample: DataFrame) -> Dict[str,Figure]:
+        """ Local Representations are not supported for Decision Tree. 
+
+        Args:
+            local_data (DataFrame): A dataframe containing the single decision situation.
+            base_sample (DataFrame): A small (10-30) sample of the population for this decision point; Used for calculation of shap values.
+
+        Returns:
+            Dict[str,Figure]: A dictionary containing the explainable representations for the single decision situation. Containing the following entries:
+            - "Decision plot (Multioutput)"
+            - "Decision plot for `X`" (for all output labels X)
+            - "Force plot for `X`" (for all output labels X)
+                
+        """
+        fig = plt.figure()
+        fig.text(0.5, 0.5,
+            'Local explanations are not available for the decision tree.',
+            fontsize = 30,
+            color = "darkred",
+            wrap = True,
+            horizontalalignment="center"
+        )
+        return {'Not available': fig}
+
 
 # tests implemented examples
 if __name__ == "__main__":

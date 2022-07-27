@@ -115,7 +115,7 @@
                             document.getElementById('selected_guard_comparison_svg').setAttribute('src',guardDataPerPlace[placeId]['comparison_svg_url'])
                             
                             let element_str = `<select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="expl-repr-selector">`;
-                            for(technique of guardDataPerPlace[placeId]['techniques']){
+                            for(const technique of guardDataPerPlace[placeId]['techniques']){
                               element_str += `<option value="${technique}" ${guardDataPerPlace[placeId]['name'] === technique ? 'selected' : ''}>${technique}</option>`;
                             }
                             element_str += "</select>";
@@ -128,6 +128,38 @@
                             selector.addEventListener("input", (e) => {
                               getExplainableRepresentation(selector.value, placeId)
                             })
+
+
+                            // document.getElementById('local-instance-selector-container')
+                            let local_technique_selector_str = `<select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="local-technique-selector">`;
+                            for(const technique of guardDataPerPlace[placeId]['techniques']){
+                              local_technique_selector_str += `<option value="${technique}" ${guardDataPerPlace[placeId]['name'] === technique ? 'selected' : ''}>${technique}</option>`;
+                            }
+                            local_technique_selector_str += "</select>";
+                            document.getElementById('local-technique-selector-container').innerHTML = local_technique_selector_str;
+                            let localTechniqueSelector = document.getElementById('local-technique-selector')
+                            localTechniqueSelector.removeAttribute('disabled')
+                            localTechniqueSelector.addEventListener("input", (e) => {
+                              getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value);
+                            })
+
+
+                            let local_instance_selector_str = `<select class="form-select mb-1" aria-label="Choose Instance" name="Instance" id="local-instance-selector">`;
+                            for(const instance of guardDataPerPlace[placeId]['instances']){
+                              local_instance_selector_str += `<option value="${instance[0]}/${instance[1]}">${instance[0]} - ${instance[1]}</option>`;
+                            }
+                            local_instance_selector_str += "</select>";
+                            document.getElementById('local-instance-selector-container').innerHTML = local_instance_selector_str;
+                            let localInstanceSelector = document.getElementById('local-instance-selector')
+                            localInstanceSelector.removeAttribute('disabled')
+                            localInstanceSelector.addEventListener("input", (e) => {
+                              getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value);
+                            })
+
+                            document.getElementById('selected_guard_local_svg').removeAttribute('src');
+
+                            const firstInstance = guardDataPerPlace[placeId]['instances'][0];
+                            getLocalExplanation(guardDataPerPlace[placeId]['name'], placeId, firstInstance[0] + "/" + firstInstance[1]);
 
                             const bsel = new bootstrap.Offcanvas('#offcanvasScrolling')
                             bsel.show();
@@ -274,13 +306,82 @@
           showErrorToast(err)
         });
       }
+
+      function getLocalExplanation(technique, placeid, caseAndRepetition){
+        const select = document.getElementById("local-technique-selector");
+        select.setAttribute('disabled',"");
+        const select2 = document.getElementById("local-instance-selector");
+        select2.setAttribute('disabled',"");
+        const select3 = document.getElementById("local-explanation-option-selector");
+        if (select3) {
+          select3.setAttribute('disabled',"");
+        }
+
+        const selectSpinner = document.getElementById("local-selector-container-spinner");
+        selectSpinner.style.display = 'block';
+
+        fetch(`/log/{{log_id}}/place/${placeid}/explainable-representation/${technique}/local/${caseAndRepetition}`, {
+          method: "GET"
+        }).then(async (res) => {
+          if(res.ok){
+
+            const json = await res.json();
+            if(selectedPlace == placeid){
+              
+              let explanation_option_selector_str = `<select class="form-select mb-1" aria-label="Choose Plot" name="Plot" id="local-explanation-option-selector">`;
+              let isFirst = true;
+              let initialRepresentation;
+              for(const representation in json['svg_representations']){
+                explanation_option_selector_str += `<option value="${representation}" ${isFirst ? 'selected' : ''}>${representation}</option>`;
+                if(isFirst){
+                  initialRepresentation = representation;
+                  isFirst = false;
+                }
+              }
+              explanation_option_selector_str += "</select>";
+              document.getElementById('local-explanation-options-container').innerHTML = explanation_option_selector_str;
+              let localExplanationOptionSelector = document.getElementById('local-explanation-option-selector')
+              localExplanationOptionSelector.removeAttribute('disabled')
+              localExplanationOptionSelector.addEventListener("input", (e) => {
+                console.log(localExplanationOptionSelector.value)
+
+                const blob = new Blob([json['svg_representations'][localExplanationOptionSelector.value]],{type: 'image/svg+xml'})
+                const blob_url = URL.createObjectURL(blob);
+                document.getElementById('selected_guard_local_svg').setAttribute('src', blob_url);
+              })
+
+              const blob = new Blob([json['svg_representations'][initialRepresentation]],{type: 'image/svg+xml'})
+              const blob_url = URL.createObjectURL(blob);
+              document.getElementById('selected_guard_local_svg').setAttribute('src', blob_url);
+            }
+          }else{
+            const errorMessage = await getErrorMessageFromRes(res);
+            showErrorToast(errorMessage)
+          }
+        }).catch((err) => {
+          console.log({err});
+          showErrorToast(err)
+        }).finally(() => {
+          select.removeAttribute('disabled');
+          select2.removeAttribute('disabled');
+          if(select3){
+            select3.removeAttribute('disabled');
+          }
+          selectSpinner.style.display = 'none';
+        });
+      }
     </script>
     <style>
-      .explainable_representation {
+      .offcanvasGrid {
+        gap: 5px;
+        display: grid;
+        grid-template-columns: 1fr 2fr 2fr;
+      }
+      #explainable_representation {
         height: 100%;
       }
       .offcanvas {
-        --bs-offcanvas-height: max(40vh,400px) !important;
+        --bs-offcanvas-height: max(50vh,400px) !important;
       }
       #discoveredPetriNet svg {
         border: 2px dashed rgba(49, 47, 47, 0.685);
@@ -299,8 +400,11 @@
         fill: rgba(0, 128, 0, 0.761);
       }
       img {
-        height: 100%;
-        width: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        height: max(33vh ,250px);
+        margin: auto;
+        object-fit: contain;
       }
     </style>
 
@@ -429,6 +533,14 @@
                         <input type="checkbox" data-ml-name="Neural Network"  class="form-check-input me-2" checked>
                         <samp>Neural Network</samp>
                       </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="XGBoost"  class="form-check-input me-2" checked>
+                        <samp>XGBoost</samp>
+                      </label>
+                      <label class="list-group-item">
+                        <input type="checkbox" data-ml-name="Random Forest"  class="form-check-input me-2" checked>
+                        <samp>Random Forest</samp>
+                      </label>
                   </div>
                    </div>
                 </div>
@@ -492,14 +604,35 @@
         </div>
         <div class="offcanvas offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
           <div class="offcanvas-header align-items-start">
-            <div  style="width: 100%;" class="d-flex justify-content-around align-items-center">
+            <div  style="width: 100%;" class="offcanvasGrid">
               <div style="width: 100%;">
                 <h4 class="text-muted">Best Technique: <span id="selected_guard_name" class="text-success">No name</span></h4>
                 <p class="text-muted fs-5">F1 Score: <span id="selected_guard_performance" class="text-success"></span></p>
             <span id="decisionMiningWarningText" style="color: #a84040;"></span>
               </div>
               <div style="width: 100%;">
-              <h4 class="text-center">Explainable Representation</h4>
+                <h4 class="text-center">Local Explanation</h4>
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                  <div id="local-technique-selector-container">
+                    <!-- Content Generated when DPN is mined and returned -->
+                  </div>
+                  <div id="local-instance-selector-container">
+                    <!-- Content Generated when DPN is mined and returned -->
+                  </div>
+                  <div id="local-explanation-options-container">
+                    <!-- Content Generated when DPN is mined and returned -->
+                  </div>
+                  <div id="local-selector-container-spinner"
+                  class="spinner-border spinner-border-sm text-secondary"
+                  role="status"
+                  style="display: none; width: 1.5rem; height: 1.5rem;"
+                  >
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+              </div>
+              <div style="width: 100%;">
+              <h4 class="text-center">Global Explanation</h4>
               <div class="d-flex justify-content-center align-items-center gap-2">
                 <div id="selector-container">
                   <!-- Content Generated when DPN is mined and returned -->
@@ -517,13 +650,16 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
-            <div id="explainable_representation" class="d-flex justify-content-around h-100" >
-              <div class="h-100">
+            <div id="explainable_representation" class="offcanvasGrid" >
+              <!-- <div class="h-100"> -->
                 <img id="selected_guard_comparison_svg"/>
-              </div>
-              <div class="h-100">
-                <img id="selected_guard_svg"/>
-              </div>
+              <!-- </div> -->
+              <!-- <div class="h-100"> -->
+                <img id="selected_guard_local_svg" />
+              <!-- </div> -->
+              <!-- <div class="h-100"> -->
+                <img id="selected_guard_svg" />
+              <!-- </div> -->
             </div>
           </div>
         </div>

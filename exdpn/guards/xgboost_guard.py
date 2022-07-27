@@ -265,7 +265,9 @@ class XGBoost_Guard(Guard):
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
                                   single_shap[key],
-                                  processed_local_data, out_names=target_names[key], matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
+                                  processed_local_data, out_names=target_names[key], matplotlib=True,
+                                  #link='logit',
+                                  contribution_threshold=0.1, show=False)
             fig = plt.gcf()
             ret[f"Force plot for {target_names[key]}"] = fig
         return ret
