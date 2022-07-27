@@ -206,7 +206,7 @@ def mine_decisions(logid: str):
                      n=min(100, len(dpn.guard_manager_per_place[p].X_test)));
                 explainable_representation:plt.Figure = best_guard.get_explainable_representation(sampled_test_data)
 
-                svg_representation = get_svg_from_figure(explainable_representation)
+                svg_representation = get_svg_and_close_figure(explainable_representation)
 
                 # imgdata = io.StringIO()
                 # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
@@ -247,15 +247,8 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
         return {"message": "Place not found."}, 400
 
     # Get the Enum representation of the selected Technique
-    if ml_technique == str(ML_Technique.LR):
-        technique_enum_value =  ML_Technique.LR
-    elif ml_technique == str(ML_Technique.SVM):
-        technique_enum_value =  ML_Technique.SVM
-    elif ml_technique == str(ML_Technique.DT):
-        technique_enum_value =  ML_Technique.DT
-    elif ml_technique == str(ML_Technique.NN):
-        technique_enum_value =  ML_Technique.NN
-    else:
+    technique_enum_value = get_ml_technique_from_str(ml_technique)
+    if technique_enum_value is None:
         return {"message": "Invalid ML technique"}, 400
 
     # See if the representation exists:
@@ -275,7 +268,7 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
                 n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
         explainable_representation:plt.Figure = selected_guard.get_explainable_representation(sampled_test_data)
 
-        svg_representation = get_svg_from_figure(explainable_representation)
+        svg_representation = get_svg_and_close_figure(explainable_representation)
 
         # imgdata = io.StringIO()
         # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
@@ -306,15 +299,8 @@ def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: 
         return {"message": "Place not found."}, 400
 
     # Get the Enum representation of the selected Technique
-    if ml_technique == str(ML_Technique.LR):
-        technique_enum_value =  ML_Technique.LR
-    elif ml_technique == str(ML_Technique.SVM):
-        technique_enum_value =  ML_Technique.SVM
-    elif ml_technique == str(ML_Technique.DT):
-        technique_enum_value =  ML_Technique.DT
-    elif ml_technique == str(ML_Technique.NN):
-        technique_enum_value =  ML_Technique.NN
-    else:
+    technique_enum_value = get_ml_technique_from_str(ml_technique)
+    if technique_enum_value is None:
         return {"message": "Invalid ML technique"}, 400
 
     guards = dpn.guard_manager_per_place[place].guards_list
@@ -332,7 +318,7 @@ def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: 
         svg_representations = {}
 
         svg_representations = {
-            plot_type: get_svg_from_figure(explainable_representation)
+            plot_type: get_svg_and_close_figure(explainable_representation)
             for plot_type, explainable_representation in explainable_representations.items()
         }
         # imgdata = io.StringIO()
@@ -346,12 +332,20 @@ def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: 
         'svg_representations': svg_representations
     }, 200
 
-def get_svg_from_figure(figure: plt.Figure):
+def get_svg_and_close_figure(figure: plt.Figure):
     imgdata = io.StringIO()
     figure.savefig(imgdata, format='svg', bbox_inches="tight")
     imgdata.seek(0)  # rewind the data
+    plt.close(figure)
     return imgdata.getvalue()
 
+def get_ml_technique_from_str(ml_technique:str):
+    matching_techniques = [technique for technique in ML_Technique if str(technique) == ml_technique]
+    if(len(matching_techniques) > 0):
+        return matching_techniques[0]
+    else:
+        return None
+    
 
 def cache_representation(logid:str, placeid:int, technique_enum_value: ML_Technique, svg_representation:str):
     log_representations = explainable_representations.get(logid, dict())
