@@ -299,7 +299,9 @@ class Neural_Network_Guard(Guard):
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
                             single_shap[key],
-                            unscaled_local_data, out_names=self.target_names[key].label, matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
+                            unscaled_local_data, out_names=self.target_names[key].label, matplotlib=True,
+                            # link='logit',
+                            contribution_threshold=0.1, show=False)
             fig = plt.gcf()
             ret[f"Force plot for {self.target_names[key]}"] = fig
         return ret
