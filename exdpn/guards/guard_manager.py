@@ -23,13 +23,19 @@ class Guard_Manager():
                  ml_list: List[ML_Technique] = [ML_Technique.DT,
                                                 ML_Technique.LR,
                                                 ML_Technique.SVM,
-                                                ML_Technique.NN],
+                                                ML_Technique.NN,
+                                                ML_Technique.RF],
                  hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1,
                                                                                           'min_samples_leaf': 0.1,
                                                                                           'ccp_alpha': 0.2},
                                                                         ML_Technique.LR: {"C": 0.5},
-                                                                        ML_Technique.SVM: {"C": 0.5}}) -> None:
+                                                                        ML_Technique.SVM: {"C": 0.5},
+                                                                        ML_Technique.XGB: {},
+                                                                        ML_Technique.RF: {'n_estimators': 100,
+                                                                                          'min_samples_split': 0.1,
+                                                                                          'min_samples_leaf': 0.1,
+                                                                                          'ccp_alpha': 0.2}}) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
 
@@ -218,7 +224,8 @@ class Guard_Manager():
             'Decision Tree': '#478736',
             'Logistic Regression': '#e26f8f',
             'Support Vector Machine': '#e1ad01',
-            'Neural Network': '#263488'
+            'Neural Network': '#263488',
+            'Random Forest': '#87CEFA'
         }
         keys = list(guard_results.keys())
         values = [guard_results[key] for key in keys]
