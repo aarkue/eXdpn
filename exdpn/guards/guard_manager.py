@@ -24,6 +24,7 @@ class Guard_Manager():
                                                 ML_Technique.LR,
                                                 ML_Technique.SVM,
                                                 ML_Technique.NN,
+                                                ML_Technique.XGB,
                                                 ML_Technique.RF],
                  hyperparameters: Dict[ML_Technique, Dict[str, Any]] = {ML_Technique.NN: {'hidden_layer_sizes': (10, 10)},
                                                                         ML_Technique.DT: {'min_samples_split': 0.1,
@@ -221,11 +222,12 @@ class Guard_Manager():
         plt.title('Comparison of Techniques')
 
         colors = {
-            'Decision Tree': '#478736',
+            'Decision Tree': '#31bc64',
             'Logistic Regression': '#e26f8f',
             'Support Vector Machine': '#e1ad01',
             'Neural Network': '#263488',
-            'Random Forest': '#87CEFA'
+            'Random Forest': '#1a6b45',
+            'XGBoost': '#87CEFA'
         }
         keys = list(guard_results.keys())
         values = [guard_results[key] for key in keys]
