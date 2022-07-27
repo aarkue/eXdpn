@@ -12,7 +12,7 @@ from exdpn.data_preprocessing import fit_ohe
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 import numpy as np
 
 class Decision_Tree_Guard(Guard):
@@ -217,6 +217,29 @@ class Decision_Tree_Guard(Guard):
             plt.title("Warning: Only one target class present. Results may be misleading.",{'color':  'darkred'})
         plt.ylabel("Feature Attributes", fontsize=14)
         return fig
+
+    def get_global_explanations(self, base_sample: DataFrame) -> Dict[str,Union[Figure,str]]:
+        """Get a global explainable representation for the concrete machine learning classifier.
+        Args:
+            base_sample (DataFrame): A small (10-30) sample of the population for this decision point; Used for calculation of shap values.
+        Returns:
+            Dict[str,Figure]: A dictionary containing the global explainable representations. Containing the following entries:
+            - "Decision Tree"
+        """
+        fig, ax = plt.subplots()
+        plot_tree(self.model,
+                  ax=ax,
+                  feature_names=self.feature_names,
+                  class_names=[
+                      t.label if t.label != None else f"None ({t.name})" for t in self.transition_int_map.keys()],
+                  impurity=False,
+                  filled=True)
+        plt.suptitle("Decision Tree", fontsize=14)
+        if self.single_class:
+            plt.title("Warning: Only one target class present. Results may be misleading.",{'color':  'darkred'})
+        plt.ylabel("Feature Attributes", fontsize=14)
+        return {'Decision Tree': fig}
+
 
     def get_local_explanations(self, local_data:DataFrame, base_sample: DataFrame) -> Dict[str,Figure]:
         """ Local Representations are not supported for Decision Tree. 

@@ -3,7 +3,8 @@
 
 """
 
-from typing import Dict, List, Any, Optional
+import io
+from typing import Dict, List, Any, Optional, Union
 
 from exdpn.data_preprocessing import fit_ohe
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
@@ -250,6 +251,53 @@ class Neural_Network_Guard(Guard):
         plt.ylabel("Feature Attributes", fontsize=14)
         return fig
 
+    def get_global_explanations(self, base_sample: DataFrame) -> Dict[str,Union[Figure,str]]:
+        """Get a global explainable representation for the concrete machine learning classifier.
+        Args:
+            base_sample (DataFrame): A small (10-30) sample of the population for this decision point; Used for calculation of shap values.
+        Returns:
+            Dict[str,Figure]: A dictionary containing the global explainable representations. Containing the following entries:
+            - "Bar plot (Summary)"
+            - "Beeswarm plot for `X`" (for all output labels X)
+            - "Force plot for `X`" (for all output labels X)
+        """
+        processed_base_sample = apply_scaling(base_sample, self.scaler, self.scaler_columns)
+        # one hot encoding for categorical data
+        processed_base_sample = apply_ohe(processed_base_sample, self.ohe)
+        unscaled_base_sample = processed_base_sample.copy()
+        for label,row in unscaled_base_sample.iterrows():
+            for n in self.scaler.get_feature_names_out():
+                row[n] = base_sample.iloc[label][n]
+        def shap_predict(data: np.ndarray):
+            data_asframe = DataFrame(data, columns=self.feature_names)
+            ret = self.model.predict_proba(data_asframe)
+            return ret
+
+        explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
+        
+        shap_values = explainer.shap_values(processed_base_sample)
+        target_names = [t.label if t.label !=
+                        None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+        ret = dict()
+        fig = plt.figure()
+        print(target_names)
+        shap.summary_plot(shap_values, unscaled_base_sample, plot_type='bar', class_names=target_names, use_log_scale=False,max_display=10, show=False)
+        ret['Bar plot (Summary)'] = fig;
+
+        for key in range(len(target_names)):
+            print(target_names[key])
+            fig = plt.figure()
+            shap.plots.beeswarm(shap.Explanation(values=shap_values[key], 
+                                                            base_values=explainer.expected_value[key], data=unscaled_base_sample,  
+                                                    feature_names=self.feature_names), show=False)
+            ret[f"Beeswarm plot for {target_names[key]}"] = fig
+
+            force_plot = shap.force_plot(explainer.expected_value[[key]],shap_values[key],unscaled_base_sample, out_names=target_names[key], link='logit',show=False)
+            html_data = io.StringIO()
+            shap.save_html(html_data,force_plot,full_html=False)
+            html_data.seek(0)  # rewind the data
+            ret[f"Force plot for {target_names[key]}"] = html_data.getvalue()
+        return ret
 
     def get_local_explanations(self, local_data:DataFrame, base_sample:DataFrame) -> Dict[str,Figure]:
         """Get explainable representations for a single decision situation. 
@@ -285,9 +333,10 @@ class Neural_Network_Guard(Guard):
             return ret
 
         predictions = shap_predict(processed_local_data)
-
+        target_names = [t.label if t.label !=
+                        None else f"None ({t.name})" for t in self.transition_int_map.keys()]
         explainer = shap.KernelExplainer(
-            shap_predict, processed_base_sample, output_names=self.target_names)
+            shap_predict, processed_base_sample, output_names=target_names)
         single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         
         unscaled_local_data = processed_local_data.copy().iloc[0]
@@ -298,7 +347,7 @@ class Neural_Network_Guard(Guard):
         fig = plt.figure()
         shap.multioutput_decision_plot(list(explainer.expected_value),single_shap,
         features=unscaled_local_data, row_index=0, feature_names=self.feature_names,
-        highlight=[np.argmax(predictions[0])], link='logit', legend_labels=[t.label for t in self.target_names],
+        highlight=[np.argmax(predictions[0])], link='logit', legend_labels=[t for t in target_names],
         legend_location="lower right", feature_display_range=slice(-1,-11,-1),show=False)
         ret['Decision plot (Multioutput)'] = fig
         
@@ -307,17 +356,17 @@ class Neural_Network_Guard(Guard):
         for key in range(len(single_shap)):
             fig = plt.figure()
             shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=unscaled_local_data, link='logit',
-            legend_labels=[self.target_names[key].label], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
-            ret[f"Decision plot for {self.target_names[key].label}"] = fig
+            legend_labels=[target_names[key]], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
+            ret[f"Decision plot for {target_names[key]}"] = fig
 
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
                             single_shap[key],
-                            unscaled_local_data, out_names=self.target_names[key].label, matplotlib=True,
+                            unscaled_local_data, out_names=target_names[key], matplotlib=True,
                             # link='logit',
                             contribution_threshold=0.1, show=False)
             fig = plt.gcf()
-            ret[f"Force plot for {self.target_names[key].label}"] = fig
+            ret[f"Force plot for {target_names[key]}"] = fig
         return ret
 
 # tests implemented examples

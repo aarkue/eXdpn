@@ -111,7 +111,8 @@
                             // Show data for selected place & guard
                             document.getElementById('selected_guard_name').textContent = guardDataPerPlace[placeId]['name']
                             document.getElementById('selected_guard_performance').textContent = Math.round(parseFloat(guardDataPerPlace[placeId]['performance'])*100)/100;
-                            document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
+                            // document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
+                            // document.getElementById('selected_guard_global_svg').removeAttribute('src');
                             document.getElementById('selected_guard_comparison_svg').setAttribute('src',guardDataPerPlace[placeId]['comparison_svg_url'])
                             
                             let element_str = `<select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="expl-repr-selector">`;
@@ -250,14 +251,23 @@
           document.getElementById('meanGuardConformance').style.display = 'block';
           guardDataPerPlace = json['place_info'];
           for(const placeId in guardDataPerPlace){
-            const blob = new Blob([guardDataPerPlace[placeId]['svg_representation']],{type: 'image/svg+xml'})
+            let firstSvgKey;
+            for(const plotName in guardDataPerPlace[placeId]['svg_representations']){
+              if(guardDataPerPlace[placeId]['svg_representations'][plotName].type === 'svg' && firstSvgKey == undefined){
+                firstSvgKey = plotName;
+              }
+            }
+
+            handleGlobalExplanation(guardDataPerPlace[placeId]['svg_representations'])
+
+            const blob = new Blob([guardDataPerPlace[placeId]['svg_representations'][firstSvgKey].data],{type: 'image/svg+xml'})
             const url = URL.createObjectURL(blob);
             guardDataPerPlace[placeId]['svg_url'] = url;
 
-            
             const resultsComparisonBlob = new Blob([guardDataPerPlace[placeId]['guard_result_svg']],{type: 'image/svg+xml'})
             const resultsComparisonUrl = URL.createObjectURL(resultsComparisonBlob);
             guardDataPerPlace[placeId]['comparison_svg_url'] = resultsComparisonUrl;
+            console.log({guardDataPerPlace})
           }
         }else{
           loadDecisionButton.removeAttribute('disabled');
@@ -277,8 +287,53 @@
         loadEventLog();
       });
 
+
+
+      function handleGlobalExplanation(svg_representations){
+        let explanation_option_selector_str = `<select class="form-select mb-1" aria-label="Choose Plot" name="Plot" id="global-explanation-option-selector">`;
+        let isFirst = true;
+        let initialRepresentation;
+        for(const representation in svg_representations){
+          explanation_option_selector_str += `<option value="${representation}" ${isFirst ? 'selected' : ''}>${representation}</option>`;
+          if(isFirst){
+            initialRepresentation = representation;
+            isFirst = false;
+          }
+        }
+        explanation_option_selector_str += "</select>";
+        document.getElementById('global-explanation-options-container').innerHTML = explanation_option_selector_str;
+        let globalExplanationOptionSelector = document.getElementById('global-explanation-option-selector')
+        globalExplanationOptionSelector.removeAttribute('disabled')
+
+        const handleChangedPlotName = () => {
+          console.log(globalExplanationOptionSelector.value)
+          if(svg_representations[globalExplanationOptionSelector.value].type === 'svg'){
+
+            const blob = new Blob([svg_representations[globalExplanationOptionSelector.value].data],{type: 'image/svg+xml'})
+            const blob_url = URL.createObjectURL(blob);
+            document.getElementById('selected_guard_global_svg').setAttribute('src', blob_url);
+            document.getElementById('selected_guard_global_html').setAttribute('data', '');
+          }else{
+            const blob = new Blob(["<!DOCTYPE html>\n" + svg_representations[globalExplanationOptionSelector.value].data],{type: 'text/html'})
+            const blob_url = URL.createObjectURL(blob);
+            document.getElementById('selected_guard_global_svg').removeAttribute('src');
+            document.getElementById('selected_guard_global_html').setAttribute('data', blob_url);
+          }
+        };
+        globalExplanationOptionSelector.addEventListener("input", handleChangedPlotName )
+
+        handleChangedPlotName()
+        // const blob = new Blob([svg_representations[initialRepresentation].data],{type: 'image/svg+xml'})
+        // const blob_url = URL.createObjectURL(blob);
+        // document.getElementById('selected_guard_global_svg').setAttribute('src', blob_url);
+      }
+
       function getExplainableRepresentation(technique, placeid){
         const select = document.getElementById("expl-repr-selector");
+        const select2 = document.getElementById("global-explanation-option-selector")
+        if(select2){
+          select2.setAttribute('disabled',"")
+        }
         select.setAttribute('disabled',"");
         const selectSpinner = document.getElementById("selector-container-spinner");
         selectSpinner.style.display = 'block';
@@ -289,9 +344,10 @@
 
             const json = await res.json();
             if(selectedPlace == placeid){
-              const blob = new Blob([json['svg_representation']],{type: 'image/svg+xml'})
-              const blob_url = URL.createObjectURL(blob);
-              document.getElementById('selected_guard_svg').setAttribute('src', blob_url);
+              handleGlobalExplanation(json['svg_representations'])
+              // const blob = new Blob([json['svg_representatiosn']],{type: 'image/svg+xml'})
+              // const blob_url = URL.createObjectURL(blob);
+              // document.getElementById('selected_guard_svg').setAttribute('src', blob_url);
             }
           }else{
             const errorMessage = await getErrorMessageFromRes(res);
@@ -302,6 +358,9 @@
         }).catch((err) => {
           console.log({err});
           select.removeAttribute('disabled');
+          if(select2){
+          select2.removeAttribute('disabled')
+        }
           selectSpinner.style.display = 'none';
           showErrorToast(err)
         });
@@ -405,6 +464,9 @@
         height: max(33vh ,250px);
         margin: auto;
         object-fit: contain;
+      }
+      .explanation_height {
+        height: max(33vh ,250px);
       }
     </style>
 
@@ -637,6 +699,10 @@
                 <div id="selector-container">
                   <!-- Content Generated when DPN is mined and returned -->
                 </div>
+
+                <div id="global-explanation-options-container">
+                  <!-- Content Generated when DPN is mined and returned -->
+                </div>
                 <div id="selector-container-spinner"
                 class="spinner-border spinner-border-sm text-secondary"
                 role="status"
@@ -658,7 +724,12 @@
                 <img id="selected_guard_local_svg" />
               <!-- </div> -->
               <!-- <div class="h-100"> -->
-                <img id="selected_guard_svg" />
+                <div class="explanation_height">
+                  <object type="text/html" class="w-100 h-100" id="selected_guard_global_html"></object>
+                  <!-- <div id="selected_guard_global_html"></div> -->
+                  <img id="selected_guard_global_svg" />
+                </div>
+                <!-- <img id="selected_guard_svg" /> -->
               <!-- </div> -->
             </div>
           </div>
