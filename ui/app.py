@@ -203,15 +203,13 @@ def mine_decisions(logid: str):
         for p, best_guard in dpn.get_best().items():
             guard_result_svg = ""
             fig = dpn.guard_manager_per_place[p].get_comparison_plot()
-            imgdata = io.StringIO()
-            fig.savefig(imgdata, format='svg', bbox_inches="tight")
-            imgdata.seek(0)  # rewind the data
-            guard_result_svg = imgdata.getvalue()
+
+            guard_result_svg = get_svg_and_close_figure(fig)
+            # guard_result_svg = imgdata.getvalue()
             if best_guard.is_explainable():
                 # Find Explainable Representation
                 # sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
                 #         n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
-                print("Best guard is explainable")
                 sampled_data = dpn.guard_manager_per_place[p].dataframe.sample(30)
                 sampled_data.drop(['target'],axis=1,inplace=True)
                 explainable_representation:plt.Figure = best_guard.get_global_explanations(sampled_data)
@@ -221,15 +219,6 @@ def mine_decisions(logid: str):
                 }
                 # sampled_test_data = dpn.guard_manager_per_place[p].X_test.sample(
                 #      n=min(100, len(dpn.guard_manager_per_place[p].X_test)));
-                
-                # explainable_representation:plt.Figure = best_guard.get_explainable_representation(sampled_test_data)
-
-                # svg_representation = get_svg_and_close_figure(explainable_representation)
-
-                # imgdata = io.StringIO()
-                # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
-                # imgdata.seek(0)  # rewind the data
-                # svg_representation = imgdata.getvalue()
             else:
                 svg_representations = {}
             cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representations)
@@ -293,12 +282,6 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
             for plot_type, explainable_representation in explainable_representation.items()
         }
         selected_guard.get_global_explanations(sampled_data)
-        # svg_representation = get_svg_and_close_figure(explainable_representation)
-
-        # imgdata = io.StringIO()
-        # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
-        # imgdata.seek(0)  # rewind the data
-        # svg_representation = imgdata.getvalue()
     else:
         svg_representations = {}
 
@@ -346,10 +329,6 @@ def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: 
             plot_type: get_svg_and_close_figure(explainable_representation)
             for plot_type, explainable_representation in explainable_representations.items()
         }
-        # imgdata = io.StringIO()
-        # explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
-        # imgdata.seek(0)  # rewind the data
-        # svg_representation = imgdata.getvalue()
     else:
         svg_representations = {}
 

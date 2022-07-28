@@ -113,6 +113,7 @@
                             document.getElementById('selected_guard_performance').textContent = Math.round(parseFloat(guardDataPerPlace[placeId]['performance'])*100)/100;
                             // document.getElementById('selected_guard_svg').setAttribute('src', guardDataPerPlace[placeId]['svg_url'])
                             // document.getElementById('selected_guard_global_svg').removeAttribute('src');
+                            
                             document.getElementById('selected_guard_comparison_svg').setAttribute('src',guardDataPerPlace[placeId]['comparison_svg_url'])
                             
                             let element_str = `<select class="form-select mb-1" aria-label="Choose Explainable Representation" name="ML Technique" id="expl-repr-selector">`;
@@ -159,6 +160,8 @@
 
                             document.getElementById('selected_guard_local_svg').removeAttribute('src');
 
+                            
+                            handleGlobalExplanation(guardDataPerPlace[placeId]['svg_representations'])
                             const firstInstance = guardDataPerPlace[placeId]['instances'][0];
                             getLocalExplanation(guardDataPerPlace[placeId]['name'], placeId, firstInstance[0] + "/" + firstInstance[1]);
 
@@ -290,6 +293,7 @@
 
 
       function handleGlobalExplanation(svg_representations){
+        console.log("Handle Global Explanation",{svg_representations})
         let explanation_option_selector_str = `<select class="form-select mb-1" aria-label="Choose Plot" name="Plot" id="global-explanation-option-selector">`;
         let isFirst = true;
         let initialRepresentation;
@@ -312,11 +316,15 @@
             const blob = new Blob([svg_representations[globalExplanationOptionSelector.value].data],{type: 'image/svg+xml'})
             const blob_url = URL.createObjectURL(blob);
             document.getElementById('selected_guard_global_svg').setAttribute('src', blob_url);
+            document.getElementById('selected_guard_global_svg').classList.remove('visually-hidden');
             document.getElementById('selected_guard_global_html').setAttribute('data', '');
+            document.getElementById('selected_guard_global_html').classList.add('visually-hidden');
           }else{
             const blob = new Blob(["<!DOCTYPE html>\n" + svg_representations[globalExplanationOptionSelector.value].data],{type: 'text/html'})
             const blob_url = URL.createObjectURL(blob);
             document.getElementById('selected_guard_global_svg').removeAttribute('src');
+            document.getElementById('selected_guard_global_svg').classList.add('visually-hidden');
+            document.getElementById('selected_guard_global_html').classList.remove('visually-hidden');
             document.getElementById('selected_guard_global_html').setAttribute('data', blob_url);
           }
         };
