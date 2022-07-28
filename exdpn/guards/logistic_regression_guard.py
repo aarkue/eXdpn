@@ -250,8 +250,8 @@ class Logistic_Regression_Guard(Guard):
             return ret
 
         explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
-
-        shap_values = explainer.shap_values(processed_base_sample)
+        shap_values = explainer.shap_values(processed_base_sample, nsamples=300, l1_reg=f"num_features({len(self.feature_names)})")
+        # shap_values = explainer.shap_values(processed_base_sample)
         target_names = [t.label if t.label !=
                         None else f"None ({t.name})" for t in self.transition_int_map.keys()]
         ret = dict()

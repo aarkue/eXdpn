@@ -14,7 +14,7 @@ from exdpn.guards import ML_Technique  # imports all guard classes
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import data_preprocessing_evaluation
 from exdpn.guards.model_builder import model_builder
-from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score, f1_score
 
 
 class Guard_Manager():
@@ -126,9 +126,9 @@ class Guard_Manager():
                     transition_int_map[transition] for transition in y_prediction]
                 y_test_transformed = [transition_int_map[transition]
                                     for transition in self.y_test.tolist()]
-
-                self.guards_results[guard_name] = f1_score(
-                    y_test_transformed, y_prediction_transformed, average="weighted")
+                self.guards_results[guard_name] = accuracy_score(y_test_transformed,y_prediction_transformed)
+                # self.guards_results[guard_name] = f1_score(
+                #     y_test_transformed, y_prediction_transformed, average="weighted")
             except Exception as e:
                 failing_guards.append(guard_name)
                 warnings.warn(f"Warning: Technique {guard_name} failed to train/test on the provided data: {e}. Removing technique from consideration.")
