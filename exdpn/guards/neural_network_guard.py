@@ -113,6 +113,8 @@ class Neural_Network_Guard(Guard):
 
         self.model = self.model.fit(X, y_transformed)
 
+        print(f"Train accuracy for Neural Network: {self.model.score(X,y_transformed)}")
+
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Predicts the next transition based on the input instances.
 

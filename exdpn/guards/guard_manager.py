@@ -126,7 +126,7 @@ class Guard_Manager():
                     transition_int_map[transition] for transition in y_prediction]
                 y_test_transformed = [transition_int_map[transition]
                                     for transition in self.y_test.tolist()]
-                # self.guards_results[guard_name] = accuracy_score(y_test_transformed,y_prediction_transformed)
+                print(f"Test accuracy for {guard_name}: {accuracy_score(y_test_transformed,y_prediction_transformed)}")
                 self.guards_results[guard_name] = f1_score(
                     y_test_transformed, y_prediction_transformed, average="weighted")
             except Exception as e:
