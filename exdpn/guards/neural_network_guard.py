@@ -267,9 +267,10 @@ class Neural_Network_Guard(Guard):
         # one hot encoding for categorical data
         processed_base_sample = apply_ohe(processed_base_sample, self.ohe)
         unscaled_base_sample = processed_base_sample.copy()
-        for label,row in unscaled_base_sample.iterrows():
-            for n in self.scaler.get_feature_names_out():
-                row[n] = base_sample.iloc[label][n]
+        if self.scaler is not None:
+            for label,row in unscaled_base_sample.iterrows():
+                for n in self.scaler.get_feature_names_out():
+                    row[n] = base_sample.iloc[label][n]
         def shap_predict(data: np.ndarray):
             data_asframe = DataFrame(data, columns=self.feature_names)
             ret = self.model.predict_proba(data_asframe)
@@ -342,8 +343,9 @@ class Neural_Network_Guard(Guard):
         single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         
         unscaled_local_data = processed_local_data.copy().iloc[0]
-        for n in self.scaler.get_feature_names_out():
-            unscaled_local_data[n] = local_data.iloc[0][n]
+        if self.scaler is not None:
+            for n in self.scaler.get_feature_names_out():
+                unscaled_local_data[n] = local_data.iloc[0][n]
 
         ret = dict()
         fig = plt.figure()
