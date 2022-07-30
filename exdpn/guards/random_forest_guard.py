@@ -206,6 +206,7 @@ class Random_Forest_Guard(Guard):
 
         classes = [t.label if t.label !=
                    None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+        
         # one hot encoding for categorical data
         data = apply_ohe(data, self.ohe)
         explainer = shap.TreeExplainer(self.model)
@@ -224,7 +225,6 @@ class Random_Forest_Guard(Guard):
         plt.ylabel("Feature Attributes", fontsize=14)
 
         return fig
-
 
     def get_global_explanations(self, base_sample: DataFrame) -> Dict[str,Union[Figure,str]]:
         """Get a global explainable representation for the concrete machine learning classifier.
@@ -280,10 +280,6 @@ class Random_Forest_Guard(Guard):
         # Pre-process local_data
         # One-Hot Encoding for categorical data
         processed_local_data = apply_ohe(local_data, self.ohe)
-        
-        # Pre-process base_sample
-        # One-Hot Encoding for categorical data
-        processed_base_sample = apply_ohe(base_sample, self.ohe)
 
         # transitions_labels =  {i: n for n,i in self.transition_int_map.items()}
         # target_names = [transitions_labels[i] for i in sorted(transitions_labels.keys())]
