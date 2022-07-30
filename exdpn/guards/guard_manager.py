@@ -126,9 +126,14 @@ class Guard_Manager():
                     transition_int_map[transition] for transition in y_prediction]
                 y_test_transformed = [transition_int_map[transition]
                                     for transition in self.y_test.tolist()]
-                # self.guards_results[guard_name] = accuracy_score(y_test_transformed,y_prediction_transformed)
-                self.guards_results[guard_name] = f1_score(
-                    y_test_transformed, y_prediction_transformed, average="weighted")
+                accuracy = accuracy_score(y_test_transformed,y_prediction_transformed)
+                f1 = f1_score(y_test_transformed,y_prediction_transformed, average="weighted")
+                print(f"Test accuracy for {guard_name}: {accuracy}")
+                print(f"Test f1 for {guard_name}: {f1}")
+                # self.guards_results[guard_name] = accuracy
+                self.guards_results[guard_name] = f1
+                # self.guards_results[guard_name] = f1_score(
+                #     y_test_transformed, y_prediction_transformed, average="weighted")
             except Exception as e:
                 failing_guards.append(guard_name)
                 warnings.warn(f"Warning: Technique {guard_name} failed to train/test on the provided data: {e}. Removing technique from consideration.")
@@ -214,7 +219,7 @@ class Guard_Manager():
                          result in self.guards_results.items()}
         fig = plt.figure(figsize=(6, 3))
         plt.xticks(rotation=45, ha='right')
-        # plt.ylim(0, 1)
+        plt.ylim(0, 1.1)
         axis = plt.gca()
         axis.spines['top'].set_visible(False)
         axis.spines['right'].set_visible(False)
@@ -232,8 +237,13 @@ class Guard_Manager():
         keys = list(guard_results.keys())
         values = [guard_results[key] for key in keys]
         colors = [colors[technique] for technique in keys]
-        plt.bar(keys, values, color=colors)
+        bars = plt.bar(keys, values, color=colors)
+        for bar in bars:
+            yval = bar.get_height()
+            plt.text(bar.get_x() + (bar.get_width()/2), yval + 0.01, round(yval,4),
+            horizontalalignment="center")
         return fig
+
 
 
 # tests implemented examples
