@@ -6,6 +6,8 @@
 import io
 from typing import Dict, List, Any, Optional, Union
 
+from sklearn.metrics import f1_score
+
 from exdpn.data_preprocessing import fit_ohe
 from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling, fit_scaling
 from exdpn.guards import Guard
@@ -112,8 +114,6 @@ class Neural_Network_Guard(Guard):
             self.single_class = False
 
         self.model = self.model.fit(X, y_transformed)
-
-        print(f"Train accuracy for Neural Network: {self.model.score(X,y_transformed)}")
 
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Predicts the next transition based on the input instances.
@@ -288,11 +288,13 @@ class Neural_Network_Guard(Guard):
         ret['Bar plot (Summary)'] = fig;
 
         for key in range(len(target_names)):
-            print(target_names[key])
             fig = plt.figure()
             shap.plots.beeswarm(shap.Explanation(values=shap_values[key], 
                                                             base_values=explainer.expected_value[key], data=unscaled_base_sample,  
-                                                    feature_names=self.feature_names), show=False)
+                                                    feature_names=self.feature_names), show=False,
+                                                    order=range(len(self.feature_names)))
+            axis = plt.gca()
+            axis.set_xlim(-1,1)
             ret[f"Beeswarm plot for {target_names[key]}"] = fig
 
             force_plot = shap.force_plot(explainer.expected_value[[key]],shap_values[key],unscaled_base_sample, out_names=target_names[key], link='logit',show=False)
@@ -362,6 +364,14 @@ class Neural_Network_Guard(Guard):
             shap.decision_plot(list(explainer.expected_value)[key],single_shap[key],features=unscaled_local_data, link='logit',
             legend_labels=[target_names[key]], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
             ret[f"Decision plot for {target_names[key]}"] = fig
+            
+            fig = plt.figure()
+            shap.plots.beeswarm(shap.Explanation(values=single_shap[key], 
+                                                            base_values=explainer.expected_value[key], data=processed_local_data), show=False,
+                                                            order=range(len(self.feature_names)))
+            axis = plt.gca()
+            axis.set_xlim(-1,1)
+            ret[f"WIP: Beeswarm plot for {target_names[key]}"] = fig
 
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
