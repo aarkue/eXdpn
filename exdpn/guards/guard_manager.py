@@ -42,6 +42,7 @@ class Guard_Manager():
                                                                                           'min_samples_leaf': 0.1,
                                                                                           'ccp_alpha': 0.2}},
                  CV_splits: int = 5,
+                 CV_shuffle: bool = False,
                  impute: bool = False) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
@@ -52,6 +53,7 @@ class Guard_Manager():
             hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
                 if not specified, standard/generic parameters are used.
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
+            CV_shuffle (bool): Shuffle samples before splitting, defaults to False. 
             impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
 
         Examples:
@@ -84,7 +86,7 @@ class Guard_Manager():
 
         # set up cross validation for model evaluation
         try:
-            self.skf = StratifiedKFold(n_splits = CV_splits, shuffle = True, random_state = 2022)
+            self.skf = StratifiedKFold(n_splits = CV_splits, shuffle = CV_shuffle)
             self.skf.get_n_splits(self.df_X, self.df_y)
         except TypeError:
             raise TypeError(
@@ -130,8 +132,15 @@ class Guard_Manager():
                           transition in enumerate(list(set(self.df_y)))}
         df_y_transformed = [transition_int_map[transition] for transition in self.df_y]
         
-        self.guards_results_mean = {}
-        guards_results = {guard_name: [] for guard_name in self.guards_list.keys()}
+        self.f1_mean_test = {}
+        self.f1_mean_train = {}
+        self.accuracy_mean_test = {}
+        self.accuracy_mean_train = {}
+        f1_mean_test = {guard_name: [] for guard_name in self.guards_list.keys()}
+        f1_mean_train = {guard_name: [] for guard_name in self.guards_list.keys()}
+        accuracy_mean_test = {guard_name: [] for guard_name in self.guards_list.keys()}
+        accuracy_mean_train = {guard_name: [] for guard_name in self.guards_list.keys()}
+
         failing_guards = list()
         # evaluate all selected ml techniques for all guards of the given decision point
         for train_idx, test_idx in self.skf.split(self.df_X, df_y_transformed):
@@ -149,44 +158,56 @@ class Guard_Manager():
                 try:
                     # train model for current cv split 
                     guard_models.train(X_train, y_train)
-                    y_prediction = guard_models.predict(X_test)
+                    y_prediction_test = guard_models.predict(X_test)
+                    y_prediction_train = guard_models.predict(X_train)
 
                     # convert Transition objects to integers so that sklearn's F1 score doesn't freak out
                     # this is ugly, we know
                     transition_int_map = {transition: index for index, transition in enumerate(
-                        list(set(y_prediction + y_test.tolist())))}
-                    y_prediction_transformed = [
-                        transition_int_map[transition] for transition in y_prediction]
+                        list(set(y_prediction_test + y_prediction_train + y_test.tolist() + y_train.tolist())))}
+                    y_prediction_test_transformed = [
+                        transition_int_map[transition] for transition in y_prediction_test]
+                    y_prediction_train_transformed = [
+                        transition_int_map[transition] for transition in y_prediction_train]
                     y_test_transformed = [transition_int_map[transition]
                                         for transition in y_test.tolist()]
+                    y_train_transformed = [transition_int_map[transition]
+                                        for transition in y_train.tolist()]
                     
-                    #accuracy = accuracy_score(y_test_transformed,y_prediction_transformed)
-                    #f1 = f1_score(y_test_transformed,y_prediction_transformed, average="weighted")
-                    #print(f"Test accuracy for {guard_name}: {accuracy}")
-                    #print(f"Test f1 for {guard_name}: {f1}")
-                    ## self.guards_results[guard_name] = accuracy
-                    #self.guards_results[guard_name] = f1
-                    ## self.guards_results[guard_name] = f1_score(
-                    ##     y_test_transformed, y_prediction_transformed, average="weighted")
-                    
-                    
-                    # get f1 score for current cv split
-                    guards_results_temp = f1_score(
-                        y_test_transformed, y_prediction_transformed, average="weighted")
-                    guards_results[guard_name] += [guards_results_temp] 
+                    # get f1 score and accuracy for current cv split
+                    f1_mean_test_temp = f1_score(
+                        y_test_transformed, y_prediction_test_transformed, average="weighted")
+                    f1_mean_test[guard_name] += [f1_mean_test_temp] 
+                    f1_mean_train_temp = f1_score(
+                        y_train_transformed, y_prediction_train_transformed, average="weighted")
+                    f1_mean_train[guard_name] += [f1_mean_train_temp] 
+
+                    accuracy_mean_test_temp = accuracy_score(y_test_transformed, y_prediction_test_transformed)
+                    accuracy_mean_test[guard_name] += [accuracy_mean_test_temp] 
+                    accuracy_mean_train_temp = accuracy_score(y_train_transformed, y_prediction_train_transformed)
+                    accuracy_mean_train[guard_name] += [accuracy_mean_train_temp] 
+
                 except Exception as e:
                     failing_guards.append(guard_name)
                     warnings.warn(f"Warning: Technique {guard_name} failed to train/test on the provided data: {e}. Removing technique from consideration.")
             for failing_guard in failing_guards:
                 self.guards_list.pop(failing_guard)
             
-            # get mean f1 score for each machine learning technique
-            self.guards_results_mean = {technique: np.mean(results) for technique, results in guards_results.items()}
+            # get mean f1 score and accuracy for each machine learning technique
+            self.f1_mean_test = {technique: np.mean(results) for technique, results in f1_mean_test.items()}
+            #print(f"Mean f1 score on test data for {guard_name}: {self.f1_mean_test}")
+            self.f1_mean_train = {technique: np.mean(results) for technique, results in f1_mean_train.items()}
+            #print(f"Mean f1 score on test data for {guard_name}: {self.f1_mean_test}")
+
+            self.accuracy_mean_test = {technique: np.mean(results) for technique, results in accuracy_mean_test.items()}
+            #print(f"Mean accuracy on test data for {guard_name}: {self.accuracy_mean_test}")
+            self.accuracy_mean_train = {technique: np.mean(results) for technique, results in accuracy_mean_train.items()}
+            #print(f"Mean accuracy on test data for {guard_name}: {self.accuracy_mean_train}")
 
             # retrain models on whole data 
             for guard_models in self.guards_list.values():
                 guard_models.train(self.df_X, self.df_y)
-        return self.guards_results_mean
+        return self.f1_mean_test
 
     def get_best(self) -> Tuple[str, Guard]:
         """Returns "best" guard for a decision point (see `train_test`).
@@ -222,8 +243,8 @@ class Guard_Manager():
             
             .. include:: ../../docs/_templates/md/example-end.md
         """
-        assert self.guards_results_mean != None, "Guards must be evaluated first"
-        best_guard_name = max(self.guards_results_mean, key=self.guards_results_mean.get)
+        assert self.f1_mean_test != None, "Guards must be evaluated first"
+        best_guard_name = max(self.f1_mean_test, key=self.f1_mean_test.get)
 
         return best_guard_name, self.guards_list[best_guard_name]
 

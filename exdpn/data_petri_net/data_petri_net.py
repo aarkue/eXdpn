@@ -48,6 +48,7 @@ class Data_Petri_Net():
                                                                                           'min_samples_leaf': 0.1,
                                                                                           'ccp_alpha': 0.2}},
                  CV_splits: int = 5,
+                 CV_shuffle: bool = False, 
                  guard_threshold: float = 0.0,
                  impute: bool = False,
                  verbose: bool = True) -> None:
@@ -69,6 +70,7 @@ class Data_Petri_Net():
             hyperparameters (Dict[ML_Technique, Dict[str, Any]], optional): The hyperparameters that should be used for the machine learning techniques. \
                 If not specified, standard/generic parameters are used.
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
+            CV_shuffle (bool): Shuffle samples before splitting, defaults to False. 
             guard_threshold (float, optional): The performance threshold (between 0 and 1) that determines if a guard is added to the data Petri net or not. If the guard performance \
                 is smaller than the threshold the guard is not added (see `exdpn.guards.guard_manager.Guard_Manager.train_test`). Default is 0. 
             impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
@@ -142,6 +144,7 @@ class Data_Petri_Net():
                                                              ml_list=ml_list,
                                                              hyperparameters=hyperparameters,
                                                              CV_splits=CV_splits,
+                                                             CV_shuffle=CV_shuffle,
                                                              impute=impute)
                                         for place in self.decision_points.keys()}
 
@@ -194,14 +197,14 @@ class Data_Petri_Net():
 
         for place, guard_manager in self.guard_manager_per_place.items():
             ml_technique, guard = guard_manager.get_best()
-            if max(guard_manager.guards_results_mean.values()) < self.guard_threshold:
+            if max(guard_manager.f1_mean_train.values()) < self.guard_threshold:
                 max_performance = max(guard_manager.guards_results.values())
                 self._print_if_verbose(
                     f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
                 continue
             self.guard_per_place[place] = guard
             self.ml_technique_per_place[place] = ml_technique
-            self.performance_per_place[place] = self.guard_manager_per_place[place].guards_results_mean[ml_technique]
+            self.performance_per_place[place] = self.guard_manager_per_place[place].f1_mean_train[ml_technique]
             self._print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
 
