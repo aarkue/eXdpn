@@ -3,6 +3,7 @@
 
 """
 
+import io
 from sklearn.ensemble import RandomForestClassifier
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
@@ -13,7 +14,7 @@ from exdpn.data_preprocessing.data_preprocessing import apply_ohe, apply_scaling
 
 from pandas import DataFrame
 from pm4py.objects.petri_net.obj import PetriNet
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 import numpy as np
 import shap 
 
@@ -225,7 +226,56 @@ class Random_Forest_Guard(Guard):
 
         return fig
 
-    def get_local_explanations(self, local_data:DataFrame) -> Dict[str,Figure]:
+    def get_global_explanations(self, base_sample: DataFrame) -> Dict[str,Union[Figure,str]]:
+        """Get a global explainable representation for the concrete machine learning classifier.
+        Args:
+            base_sample (DataFrame): A small (10-30) sample of the population for this decision point; Used for calculation of shap values.
+        Returns:
+            Dict[str,Figure]: A dictionary containing the global explainable representations. Containing the following entries:
+            - "Bar plot (Summary)"
+            - "Beeswarm plot for `X`" (for all output labels X)
+            - "Force plot for `X`" (for all output labels X)
+        """
+        # one hot encoding for categorical data
+        processed_base_sample = apply_ohe(base_sample, self.ohe)
+        unscaled_base_sample = processed_base_sample
+        def shap_predict(data: np.ndarray):
+            data_asframe = DataFrame(data, columns=self.feature_names)
+            ret = self.model.predict_proba(data_asframe)
+            return ret
+
+        explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
+
+        shap_values = explainer.shap_values(processed_base_sample, nsamples=300, l1_reg=f"num_features({len(self.feature_names)})")
+        # shap_values = explainer.shap_values(processed_base_sample)
+        target_names = [t.label if t.label !=
+                   None else f"None ({t.name})" for t in self.transition_int_map.keys()]
+
+        ret = dict()
+        fig = plt.figure()
+        print(target_names)
+        shap.summary_plot(shap_values, unscaled_base_sample, plot_type='bar', class_names=target_names, use_log_scale=False,max_display=10, show=False)
+        ret['Bar plot (Summary)'] = fig;
+
+        for key in range(len(target_names)):
+            print(target_names[key])
+            fig = plt.figure()
+            shap.plots.beeswarm(shap.Explanation(values=shap_values[key], 
+                                                            base_values=explainer.expected_value[key], data=unscaled_base_sample,  
+                                                    feature_names=self.feature_names), show=False,
+                                                    order=range(len(self.feature_names)))
+            axis = plt.gca()
+            axis.set_xlim(-1,1)
+            ret[f"Beeswarm plot for {target_names[key]}"] = fig
+
+            force_plot = shap.force_plot(explainer.expected_value[[key]],shap_values[key],features=unscaled_base_sample, out_names=target_names[key], link='logit',show=False)
+            html_data = io.StringIO()
+            shap.save_html(html_data,force_plot,full_html=False)
+            html_data.seek(0)  # rewind the data
+            ret[f"Force plot for {target_names[key]}"] = html_data.getvalue()
+        return ret
+    
+    def get_local_explanations(self, local_data:DataFrame, base_sample: DataFrame) -> Dict[str,Figure]:
         assert local_data.shape[0] == 1
         # Pre-process local_data
         # One-Hot Encoding for categorical data
@@ -262,10 +312,20 @@ class Random_Forest_Guard(Guard):
             legend_labels=[target_names[key]], feature_display_range=slice(-1,-11,-1), show=False, highlight= 0 if (winner_index == key) else None )
             ret[f"Decision plot for {target_names[key]}"] = fig
 
+            fig = plt.figure()
+            shap.plots.beeswarm(shap.Explanation(values=single_shap[key], 
+                                                            base_values=explainer.expected_value[key], data=processed_local_data), show=False,
+                                                            order=range(len(self.feature_names)))
+            axis = plt.gca()
+            axis.set_xlim(-1,1)
+            ret[f"WIP: Beeswarm plot for {target_names[key]}"] = fig
+
             # fig = plt.figure()
             fig = shap.force_plot(explainer.expected_value[key],
                             single_shap[key],
-                            processed_local_data, out_names=target_names[key], matplotlib=True, link='logit', contribution_threshold=0.1, show=False)
+                            processed_local_data, out_names=target_names[key], matplotlib=True,
+                            # link='logit',
+                            contribution_threshold=0.1, show=False)
             fig = plt.gcf()
             ret[f"Force plot for {target_names[key]}"] = fig
         return ret

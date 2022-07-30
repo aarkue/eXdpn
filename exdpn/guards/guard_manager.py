@@ -17,7 +17,7 @@ from exdpn.guards import ML_Technique  # imports all guard classes
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import basic_data_preprocessing
 from exdpn.guards.model_builder import model_builder
-from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import StratifiedKFold
 
 
@@ -159,7 +159,17 @@ class Guard_Manager():
                         transition_int_map[transition] for transition in y_prediction]
                     y_test_transformed = [transition_int_map[transition]
                                         for transition in y_test.tolist()]
-
+                    
+                    #accuracy = accuracy_score(y_test_transformed,y_prediction_transformed)
+                    #f1 = f1_score(y_test_transformed,y_prediction_transformed, average="weighted")
+                    #print(f"Test accuracy for {guard_name}: {accuracy}")
+                    #print(f"Test f1 for {guard_name}: {f1}")
+                    ## self.guards_results[guard_name] = accuracy
+                    #self.guards_results[guard_name] = f1
+                    ## self.guards_results[guard_name] = f1_score(
+                    ##     y_test_transformed, y_prediction_transformed, average="weighted")
+                    
+                    
                     # get f1 score for current cv split
                     guards_results_temp = f1_score(
                         y_test_transformed, y_prediction_transformed, average="weighted")
@@ -256,7 +266,7 @@ class Guard_Manager():
                          result in self.guards_results_mean.items()}
         fig = plt.figure(figsize=(6, 3))
         plt.xticks(rotation=45, ha='right')
-        plt.ylim(0, 1)
+        plt.ylim(0, 1.1)
         axis = plt.gca()
         axis.spines['top'].set_visible(False)
         axis.spines['right'].set_visible(False)
@@ -264,18 +274,23 @@ class Guard_Manager():
         plt.title('Comparison of Techniques')
 
         colors = {
-            'Decision Tree': '#478736',
+            'Decision Tree': '#31bc64',
             'Logistic Regression': '#e26f8f',
             'Support Vector Machine': '#e1ad01',
             'Neural Network': '#263488',
-            'XGBoost': '#87CEFA',
-            'Random Forest': '#A2B5CD'
+            'Random Forest': '#1a6b45',
+            'XGBoost': '#87CEFA'
         }
         keys = list(guard_results.keys())
         values = [guard_results[key] for key in keys]
         colors = [colors[technique] for technique in keys]
-        plt.bar(keys, values, color=colors)
+        bars = plt.bar(keys, values, color=colors)
+        for bar in bars:
+            yval = bar.get_height()
+            plt.text(bar.get_x() + (bar.get_width()/2), yval + 0.01, round(yval,4),
+            horizontalalignment="center")
         return fig
+
 
 
 # tests implemented examples
