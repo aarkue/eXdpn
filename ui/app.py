@@ -3,6 +3,7 @@ from typing import Any, Dict, Tuple
 from flask import Flask, render_template, request, redirect
 import os
 from datetime import datetime as dt
+from pandas import DataFrame
 
 app = Flask("eXdpn")
 from werkzeug.utils import secure_filename
@@ -20,6 +21,10 @@ from exdpn.guards import ML_Technique
 from exdpn.data_petri_net import Data_Petri_Net
 import matplotlib.pyplot as plt
 from exdpn.petri_net import get_petri_net
+
+
+import matplotlib
+matplotlib.use("agg")
 
 def get_upload_path(name):
     return safe_join("./uploads/", name)
@@ -185,41 +190,51 @@ def mine_decisions(logid: str):
             case_level_attributes = case_level_attributes,
             event_level_attributes = event_level_attributes,
             guard_threshold = 0,
-            ml_list=ml_techniques
+            ml_list=ml_techniques,
+            hyperparameters = {ML_Technique.NN: {'hidden_layer_sizes': (30, 30)},
+                                                                        ML_Technique.DT: {'min_impurity_decrease': 0.001},
+                                                                        ML_Technique.LR: {"C": 0.5},
+                                                                        ML_Technique.SVM: {"C": 0.5},
+                                                                        ML_Technique.XGB: {},
+                                                                        ML_Technique.RF: {'n_estimators': 100,
+                                                                                          'min_impurity_decrease': 0.001}},
         )
         return_info = dict()
         for p, best_guard in dpn.get_best().items():
             guard_result_svg = ""
             fig = dpn.guard_manager_per_place[p].get_comparison_plot()
-            imgdata = io.StringIO()
-            fig.savefig(imgdata, format='svg', bbox_inches="tight")
-            imgdata.seek(0)  # rewind the data
-            guard_result_svg = imgdata.getvalue()
+
+            guard_result_svg = get_svg_and_close_figure(fig)
+            # guard_result_svg = imgdata.getvalue()
             if best_guard.is_explainable():
                 # Find Explainable Representation
-                sampled_test_data = dpn.guard_manager_per_place[p].X_test.sample(
-                     n=min(100, len(dpn.guard_manager_per_place[p].X_test)));
-                explainable_representation:plt.Figure = best_guard.get_explainable_representation(sampled_test_data)
-                imgdata = io.StringIO()
-                explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
-                imgdata.seek(0)  # rewind the data
-                svg_representation = imgdata.getvalue()
+                # sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
+                #         n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
+                sampled_data = dpn.guard_manager_per_place[p].dataframe.sample(30)
+                sampled_data.drop(['target'],axis=1,inplace=True)
+                explainable_representation:plt.Figure = best_guard.get_global_explanations(sampled_data)
+                svg_representations = {
+                    plot_type: {'data': (get_svg_and_close_figure(explainable_representation) if type(explainable_representation) != str else explainable_representation), 'type': 'svg' if type(explainable_representation) != str else 'html'}
+                    for plot_type, explainable_representation in explainable_representation.items()
+                }
+                # sampled_test_data = dpn.guard_manager_per_place[p].X_test.sample(
+                #      n=min(100, len(dpn.guard_manager_per_place[p].X_test)));
             else:
-                svg_representation = ""
-            cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representation)
+                svg_representations = {}
+            cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representations)
             failed_techniques = [str(key) for key in ml_techniques if key not in dpn.guard_manager_per_place[p].guards_list.keys()]
             return_info[id(p)] = {
                 'performance': dpn.performance_per_place[p],
                 'name': str(dpn.ml_technique_per_place[p]),
-                'svg_representation': svg_representation,
+                'svg_representations': svg_representations,
                 'guard_result_svg': guard_result_svg,
                 'techniques': [str(key) for key in dpn.guard_manager_per_place[p].guards_list.keys()],
-                'warning_text': '' if len(failed_techniques) == 0 else 'Some techniques failed: ' +  ', '.join([str(key) for key in ml_techniques if key not in dpn.guard_manager_per_place[p].guards_list.keys()])
-
+                'warning_text': '' if len(failed_techniques) == 0 else 'Some techniques failed: ' +  ', '.join([str(key) for key in ml_techniques if key not in dpn.guard_manager_per_place[p].guards_list.keys()]),
+                'instances': dpn.guard_manager_per_place[p].dataframe.index.to_list(),
             }
         
         data_petri_nets[logid] = dpn
-        return {
+        return { 
             'mean_guard_conformance': dpn.get_mean_guard_conformance(event_log),
             'place_info': return_info
         }, 200;
@@ -239,21 +254,14 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
         return {"message": "Place not found."}, 400
 
     # Get the Enum representation of the selected Technique
-    if ml_technique == str(ML_Technique.LR):
-        technique_enum_value =  ML_Technique.LR
-    elif ml_technique == str(ML_Technique.SVM):
-        technique_enum_value =  ML_Technique.SVM
-    elif ml_technique == str(ML_Technique.DT):
-        technique_enum_value =  ML_Technique.DT
-    elif ml_technique == str(ML_Technique.NN):
-        technique_enum_value =  ML_Technique.NN
-    else:
+    technique_enum_value = get_ml_technique_from_str(ml_technique)
+    if technique_enum_value is None:
         return {"message": "Invalid ML technique"}, 400
 
     # See if the representation exists:
     if logid in explainable_representations and (placeid,technique_enum_value) in explainable_representations[logid]:
         return {
-            'svg_representation': explainable_representations[logid][(placeid,technique_enum_value)]
+            'svg_representations': explainable_representations[logid][(placeid,technique_enum_value)]
         }, 200
         # return explainable_representations[logid][(placeid,technique_enum_value)], 200	
 
@@ -263,22 +271,85 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
     selected_guard = guards[technique_enum_value]
     if selected_guard.is_explainable():
         # Find Explainable Representation
-        sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
-                n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
-        explainable_representation:plt.Figure = selected_guard.get_explainable_representation(sampled_test_data)
-        imgdata = io.StringIO()
-        explainable_representation.savefig(imgdata, format='svg', bbox_inches="tight")
-        imgdata.seek(0)  # rewind the data
-        svg_representation = imgdata.getvalue()
-    else:
-        svg_representation = ""
+        # sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
+        #         n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
 
-    cache_representation(logid, placeid, technique_enum_value, svg_representation)
+        sampled_data = dpn.guard_manager_per_place[place].dataframe.sample(30)
+        sampled_data.drop(['target'],axis=1,inplace=True)
+        explainable_representation:plt.Figure = selected_guard.get_global_explanations(sampled_data)
+        svg_representations = {
+            plot_type: {'data': (get_svg_and_close_figure(explainable_representation) if type(explainable_representation) != str else explainable_representation), 'type': 'svg' if type(explainable_representation) != str else 'html'}
+            for plot_type, explainable_representation in explainable_representation.items()
+        }
+        selected_guard.get_global_explanations(sampled_data)
+    else:
+        svg_representations = {}
+
+    cache_representation(logid, placeid, technique_enum_value, svg_representations)
 
     return {
-        'svg_representation': svg_representation
+        'svg_representations': svg_representations
     }, 200
     # return svg_representation
+
+@app.route("/log/<logid>/place/<int:placeid>/explainable-representation/<ml_technique>/local/<case_id>/<int:decision_repetition>", methods=["GET"])
+def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: str, decision_repetition: int):
+    dpn = data_petri_nets.get(logid, None)
+    if dpn is None:
+        return {"message": "No models trained yet."}, 400
+    # Find the corresponding place object
+    place = None
+    for p in dpn.petri_net.places:
+        if id(p) == placeid:
+            place = p
+            break
+    if place is None:
+        return {"message": "Place not found."}, 400
+
+    # Get the Enum representation of the selected Technique
+    technique_enum_value = get_ml_technique_from_str(ml_technique)
+    if technique_enum_value is None:
+        return {"message": "Invalid ML technique"}, 400
+
+    guards = dpn.guard_manager_per_place[place].guards_list
+
+
+    selected_guard = guards[technique_enum_value]
+    if selected_guard.is_explainable():
+        # Find Explainable Representation
+        sampled_test_data = dpn.guard_manager_per_place[place].X_test.sample(
+                n=min(100, len(dpn.guard_manager_per_place[place].X_test)));
+        local_data : DataFrame = dpn.guard_manager_per_place[place].dataframe.loc[[(case_id,decision_repetition)]]
+        local_data.drop(['target'],axis=1, inplace=True)
+        explainable_representations: Dict[str,plt.Figure] = selected_guard.get_local_explanations(local_data,sampled_test_data)
+
+        svg_representations = {}
+
+        svg_representations = {
+            plot_type: get_svg_and_close_figure(explainable_representation)
+            for plot_type, explainable_representation in explainable_representations.items()
+        }
+    else:
+        svg_representations = {}
+
+    return {
+        'svg_representations': svg_representations
+    }, 200
+
+def get_svg_and_close_figure(figure: plt.Figure):
+    imgdata = io.StringIO()
+    figure.savefig(imgdata, format='svg', bbox_inches="tight")
+    imgdata.seek(0)  # rewind the data
+    plt.close(figure)
+    return imgdata.getvalue()
+
+def get_ml_technique_from_str(ml_technique:str):
+    matching_techniques = [technique for technique in ML_Technique if str(technique) == ml_technique]
+    if(len(matching_techniques) > 0):
+        return matching_techniques[0]
+    else:
+        return None
+    
 
 def cache_representation(logid:str, placeid:int, technique_enum_value: ML_Technique, svg_representation:str):
     log_representations = explainable_representations.get(logid, dict())

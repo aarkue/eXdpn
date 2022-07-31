@@ -1,6 +1,6 @@
 import abc
 from pandas import DataFrame
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 from matplotlib.figure import Figure
 
 from pm4py.objects.petri_net.obj import PetriNet
@@ -49,7 +49,7 @@ class Guard(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def is_explainable(self) -> bool:
         """Returns whether or not the concrete machine learning classifier is explainable.
-
+ 
         Returns:
             bool: Whether or not the concrete machine learning classifier is explainable.
             
@@ -66,4 +66,35 @@ class Guard(metaclass=abc.ABCMeta):
             Figure: The explainable representation of the concrete machine learning classifier.
 
         """
+        pass
+
+    @abc.abstractclassmethod
+    def get_global_explanations(self, base_sample: DataFrame) -> Dict[str,Union[Figure,str]]:
+        """Get a global explainable representation for the concrete machine learning classifier.
+        Args:
+            base_sample (DataFrame): A small (10-30) sample of the population for this decision point; Used for calculation of shap values.
+        Returns:
+            Dict[str,Figure]: A dictionary containing the global explainable representations. Containing the following entries:
+            - "Bar plot (Summary)"
+            - "Beeswarm plot for `X`" (for all output labels X)
+            - "Force plot for `X`" (for all output labels X)
+        """
+        pass
+
+
+    @abc.abstractclassmethod
+    def get_local_explanations(self, local_data:DataFrame, base_sample: DataFrame) -> Dict[str,Figure]:
+        """Get explainable representations for a single decision situation. 
+
+        Args:
+            local_data (DataFrame): A dataframe containing the single decision situation.
+            base_sample (DataFrame): A small (10-30) sample of the population for this decision point; Used for calculation of shap values.
+
+        Returns:
+            Dict[str,Figure]: A dictionary containing the explainable representations for the single decision situation. Containing the following entries:
+            - "Decision plot (Multioutput)"
+            - "Decision plot for `X`" (for all output labels X)
+            - "Force plot for `X`" (for all output labels X)
+                
+        """        
         pass
