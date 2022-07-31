@@ -113,6 +113,7 @@ class Data_Petri_Net():
 
         """
         self.verbose = verbose
+        self.ml_list = ml_list
         if petri_net is None or initial_marking is None or final_marking is None:
             self.petri_net, self.im, self.fm = get_petri_net(
                 event_log, miner_type)
