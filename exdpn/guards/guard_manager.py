@@ -42,7 +42,8 @@ class Guard_Manager():
                                                                                           'min_samples_leaf': 0.1,
                                                                                           'ccp_alpha': 0.2}},
                  CV_splits: int = 5,
-                 impute: bool = False) -> None:
+                 impute: bool = False,
+                 numeric_attributes: list[str] = []) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
 
@@ -53,6 +54,7 @@ class Guard_Manager():
                 if not specified, standard/generic parameters are used.
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
             impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
+            numeric_attributes (list[str]): Names of attributes to convert to numerical type (i.e. no one hot encoding will be performed on the corresponding columns).
 
         Examples:
             
@@ -74,13 +76,15 @@ class Guard_Manager():
             .. include:: ../../docs/_templates/md/example-end.md
 
         """
-        df_X, df_y = basic_data_preprocessing(dataframe, impute=impute)
+        df_X, df_y = basic_data_preprocessing(dataframe, impute=impute, numeric_attributes=numeric_attributes)
         self.df_X = df_X
         self.df_y = df_y
         self.hyperparameters = hyperparameters
 
         self.CV_splits = CV_splits 
         self.impute = impute
+        self.numeric_attributes = numeric_attributes
+        self.guards_results_mean = None
 
         # set up cross validation for model evaluation
         try:
