@@ -79,7 +79,8 @@ def basic_data_preprocessing(dataframe: DataFrame, impute: bool = False, numeric
         try:
             col_name = f"event::{col}" if f"event::{col}" in df_X.columns else f"case::{col}"
             df_X[col_name] = pd.to_numeric(df_X[col_name])
-
+        except KeyError:
+            print(f"Warning: Key `event::{col}` and `case::{col}` was not present.")
         except ValueError:
             print(f"Warning: Could not convert column {col} to numeric.")
 
