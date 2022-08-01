@@ -147,7 +147,7 @@ class Data_Petri_Net():
                                                              hyperparameters=hyperparameters,
                                                              CV_splits=CV_splits,
                                                              CV_shuffle=CV_shuffle,
-                                                             impute=impute
+                                                             impute=impute,
                                                              numeric_attributes=numeric_attributes)
                                         for place in self.decision_points.keys()}
 
