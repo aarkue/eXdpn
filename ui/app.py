@@ -198,19 +198,14 @@ def mine_decisions(logid: str):
             fig = dpn.guard_manager_per_place[p].get_comparison_plot()
 
             guard_result_svg = get_svg_and_close_figure(fig)
-            # guard_result_svg = imgdata.getvalue()
             if best_guard.is_explainable():
                 # Find Explainable Representation
-                # sampled_test_data = dpn.guard_manager_per_place[place].df_X.sample(
-                #         n=min(100, len(dpn.guard_manager_per_place[place].df_X)));
                 sampled_data = dpn.guard_manager_per_place[p].df_X.sample(30)
                 explainable_representation:plt.Figure = best_guard.get_global_explanations(sampled_data)
                 svg_representations = {
                     plot_type: {'data': (get_svg_and_close_figure(explainable_representation) if type(explainable_representation) != str else explainable_representation), 'type': 'svg' if type(explainable_representation) != str else 'html'}
                     for plot_type, explainable_representation in explainable_representation.items()
                 }
-                # sampled_test_data = dpn.guard_manager_per_place[p].df_X.sample(
-                #      n=min(100, len(dpn.guard_manager_per_place[p].df_X)));
             else:
                 svg_representations = {}
             cache_representation(logid, id(p), dpn.ml_technique_per_place[p], svg_representations)
@@ -255,7 +250,6 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
         return {
             'svg_representations': explainable_representations[logid][(placeid,technique_enum_value)]
         }, 200
-        # return explainable_representations[logid][(placeid,technique_enum_value)], 200	
 
     guards = dpn.guard_manager_per_place[place].guards_list
 
@@ -263,8 +257,6 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
     selected_guard = guards[technique_enum_value]
     if selected_guard.is_explainable():
         # Find Explainable Representation
-        # sampled_test_data = dpn.guard_manager_per_place[place].df_X.sample(
-        #         n=min(100, len(dpn.guard_manager_per_place[place].df_X)));
 
         sampled_data = dpn.guard_manager_per_place[place].df_X.sample(30)
         explainable_representation:plt.Figure = selected_guard.get_global_explanations(sampled_data)
@@ -280,7 +272,6 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
     return {
         'svg_representations': svg_representations
     }, 200
-    # return svg_representation
 
 @app.route("/log/<logid>/place/<int:placeid>/explainable-representation/<ml_technique>/local/<case_id>/<int:decision_repetition>", methods=["GET"])
 def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: str, decision_repetition: int):

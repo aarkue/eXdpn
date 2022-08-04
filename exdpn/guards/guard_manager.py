@@ -10,7 +10,7 @@ from pandas import DataFrame
 import numpy as np 
 import pandas as pd 
 
-from typing import Dict, List, Tuple, Any, final
+from typing import Dict, List, Tuple, Any
 from exdpn import guards
 
 from exdpn.guards import ML_Technique  # imports all guard classes
