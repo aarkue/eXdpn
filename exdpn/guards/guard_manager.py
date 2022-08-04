@@ -79,6 +79,7 @@ class Guard_Manager():
 
         """
         df_X, df_y = basic_data_preprocessing(dataframe, impute=impute, numeric_attributes=numeric_attributes)
+        self.dataframe = dataframe
         self.df_X = df_X
         self.df_y = df_y
         self.hyperparameters = hyperparameters
