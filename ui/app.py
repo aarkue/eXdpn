@@ -191,13 +191,6 @@ def mine_decisions(logid: str):
             event_level_attributes = event_level_attributes,
             guard_threshold = 0,
             ml_list=ml_techniques,
-            hyperparameters = {ML_Technique.NN: {'hidden_layer_sizes': (30, 30)},
-                                                                        ML_Technique.DT: {'min_impurity_decrease': 0.001},
-                                                                        ML_Technique.LR: {"C": 0.5},
-                                                                        ML_Technique.SVM: {"C": 0.5},
-                                                                        ML_Technique.XGB: {},
-                                                                        ML_Technique.RF: {'n_estimators': 100,
-                                                                                          'min_impurity_decrease': 0.001}},
         )
         return_info = dict()
         for p, best_guard in dpn.get_best().items():
