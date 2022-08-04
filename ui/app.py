@@ -281,7 +281,6 @@ def get_explainable_representation(logid: str, placeid:int, ml_technique: str):
             plot_type: {'data': (get_svg_and_close_figure(explainable_representation) if type(explainable_representation) != str else explainable_representation), 'type': 'svg' if type(explainable_representation) != str else 'html'}
             for plot_type, explainable_representation in explainable_representation.items()
         }
-        selected_guard.get_global_explanations(sampled_data)
     else:
         svg_representations = {}
 
