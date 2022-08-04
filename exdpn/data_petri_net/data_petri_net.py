@@ -201,14 +201,14 @@ class Data_Petri_Net():
 
         for place, guard_manager in self.guard_manager_per_place.items():
             ml_technique, guard = guard_manager.get_best()
-            if max(guard_manager.f1_mean_train.values()) < self.guard_threshold:
+            if max(guard_manager.f1_mean_test.values()) < self.guard_threshold:
                 max_performance = max(guard_manager.guards_results.values())
                 self._print_if_verbose(
                     f"-> Guard at decision point '{place.name}': was dropped because performance {max_performance} is below threshold {self.guard_threshold}")
                 continue
             self.guard_per_place[place] = guard
             self.ml_technique_per_place[place] = ml_technique
-            self.performance_per_place[place] = self.guard_manager_per_place[place].f1_mean_train[ml_technique]
+            self.performance_per_place[place] = self.guard_manager_per_place[place].f1_mean_test[ml_technique]
             self._print_if_verbose(
                 f"-> Best machine learning technique at decision point '{place.name}': {ml_technique} w/ performance {self.performance_per_place[place]}")
 
