@@ -86,7 +86,10 @@ class Guard_Manager():
         self.CV_splits = CV_splits 
         self.impute = impute
         self.numeric_attributes = numeric_attributes
-        self.guards_results_mean = None
+        self.f1_mean_test = None
+        self.f1_mean_train = None
+        self.accuracy_mean_test = None
+        self.accuracy_mean_train = None
 
         # set up cross validation for model evaluation
         try:
@@ -288,7 +291,7 @@ class Guard_Manager():
 
         """
         guard_results = {(str(technique)): result for technique,
-                         result in self.guards_results_mean.items()}
+                         result in self.f1_mean_test.items()}
         fig = plt.figure(figsize=(6, 3))
         plt.xticks(rotation=45, ha='right')
         plt.ylim(0, 1.1)
