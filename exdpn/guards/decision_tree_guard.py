@@ -17,9 +17,7 @@ from typing import Dict, List, Any, Optional, Union
 import numpy as np
 
 class Decision_Tree_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'min_samples_split': 0.1,
-                                                          'min_samples_leaf': 0.1,
-                                                          'ccp_alpha': 0.2}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'min_impurity_decrease': 0.0075}) -> None:
         """Initializes a decision tree based guard with the provided hyperparameters.
 
         Args:

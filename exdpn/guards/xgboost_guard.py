@@ -19,7 +19,7 @@ import shap
 
 
 class XGBoost_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'max_depth': 2, 'n_estimators': 50}) -> None:
         """Initializes a XGBoost based guard with the provided hyperparameters.
 
         Args:

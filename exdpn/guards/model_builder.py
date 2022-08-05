@@ -21,10 +21,8 @@ def model_builder(model_type: ML_Technique, hp: Dict[str, Any]) -> Guard:
         
         >>> from exdpn.guards.model_builder import model_builder
         >>> from exdpn.guards import ML_Technique
-        >>> decision_tree_guard = model_builder(ML_Technique.DT, {'min_samples_split': 0.1, 
-        ...                                                       'min_samples_leaf': 0.1, 
-        ...                                                       'ccp_alpha': 0.2})
-        >>> logistic_regression_guard = model_builder(ML_Technique.LR, {"C": 0.5})
+        >>> decision_tree_guard = model_builder(ML_Technique.DT, {'min_impurity_decrease': 0.0075})
+        >>> logistic_regression_guard = model_builder(ML_Technique.LR, {'C': 0.1375, 'tol': 0.001})
 
         .. include:: ../../docs/_templates/md/example-end.md
 

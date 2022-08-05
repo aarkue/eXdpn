@@ -19,7 +19,7 @@ import numpy as np
 
 
 class SVM_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {"C": 0.5}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'C': 0.3, 'tol': 0.001}) -> None:
         """Initializes a support vector machine based guard with the provided hyperparameters.
 
         Args:

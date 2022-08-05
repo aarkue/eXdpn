@@ -24,7 +24,10 @@ from matplotlib.figure import Figure
 
 
 class Neural_Network_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'hidden_layer_sizes': (10, 10)}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'hidden_layer_sizes': (10,5), 
+                                                          'learning_rate_init': 0.0001, 
+                                                          'alpha': 0.0001, 
+                                                          'max_iter': 2000}) -> None:
         """Initializes a neural network based guard with the provided hyperparameters.
 
         Args:

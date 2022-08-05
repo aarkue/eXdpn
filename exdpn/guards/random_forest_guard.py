@@ -19,10 +19,7 @@ import numpy as np
 import shap 
 
 class Random_Forest_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'n_estimators': 100,
-                                                          'min_samples_split': 0.1,
-                                                          'min_samples_leaf': 0.1,
-                                                          'ccp_alpha': 0.2}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'max_depth': 5}) -> None:
         """Initializes a random forest based guard with the provided hyperparameters.
 
         Args:

@@ -19,7 +19,7 @@ import numpy as np
 
 
 class Logistic_Regression_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {"C": 0.5}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'C': 0.1375, 'tol': 0.001}) -> None:
         """Initializes a logistic regression based guard with the provided hyperparameters.
 
         Args:
