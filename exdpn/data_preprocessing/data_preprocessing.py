@@ -47,14 +47,13 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     return X_train, X_test, pd.Series(y_train), pd.Series(y_test)
 
 
-def basic_data_preprocessing(dataframe: DataFrame, impute: bool = False, numeric_attributes: list[str] = []) -> Tuple[DataFrame, Series]:
+def basic_data_preprocessing(dataframe: DataFrame, impute: bool = False) -> Tuple[DataFrame, Series]:
     """Basic preprocessing before datasets, i.e., dropping of columns \
     with only missing values and rows with any NaN value, defining feature attributes and the target attribute.
 
     Args:
         dataframe (DataFrame): The dataset to be transformed.
         impute (bool): If `True`, missing attribute values will be imputed using constants and an indicator columns will be added. Default is `False`.
-        numeric_attributes (list[str]): Names of attributes to convert to numerical type (i.e. no one hot encoding will be performed on the corresponding columns). 
 
     Returns:
         * df_X (DataFrame): The preprocessed dataset of feature attributes.
@@ -74,15 +73,6 @@ def basic_data_preprocessing(dataframe: DataFrame, impute: bool = False, numeric
     df_X = df_X.drop(target_var, axis=1)
     df_y = dataframe.copy()
     df_y = dataframe[target_var]
-
-    for col in numeric_attributes:
-        try:
-            col_name = f"event::{col}" if f"event::{col}" in df_X.columns else f"case::{col}"
-            df_X[col_name] = pd.to_numeric(df_X[col_name])
-        except KeyError:
-            print(f"Warning: Key `event::{col}` and `case::{col}` was not present.")
-        except ValueError:
-            print(f"Warning: Could not convert column {col} to numeric.")
 
     # impute missing values
     if impute:

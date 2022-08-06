@@ -38,8 +38,7 @@ class Guard_Manager():
                                                                         ML_Technique.RF: {'max_depth': 5}},
                  CV_splits: int = 5,
                  CV_shuffle: bool = False,
-                 impute: bool = False,
-                 numeric_attributes: list[str] = []) -> None:
+                 impute: bool = False) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
 
@@ -51,7 +50,6 @@ class Guard_Manager():
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
             CV_shuffle (bool): Shuffle samples before splitting, defaults to False. 
             impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
-            numeric_attributes (list[str]): Names of attributes to convert to numerical type (i.e. no one hot encoding will be performed on the corresponding columns).
 
         Examples:
             
@@ -73,7 +71,7 @@ class Guard_Manager():
             .. include:: ../../docs/_templates/md/example-end.md
 
         """
-        df_X, df_y = basic_data_preprocessing(dataframe, impute=impute, numeric_attributes=numeric_attributes)
+        df_X, df_y = basic_data_preprocessing(dataframe, impute=impute)
         self.dataframe = dataframe
         self.df_X = df_X
         self.df_y = df_y
@@ -81,7 +79,6 @@ class Guard_Manager():
 
         self.CV_splits = CV_splits 
         self.impute = impute
-        self.numeric_attributes = numeric_attributes
         self.f1_mean_test = None
         self.f1_mean_train = None
         self.accuracy_mean_test = None
