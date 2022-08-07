@@ -165,3 +165,4 @@ ui/uploads/
 
 # quantitative analysis
 quantitative_analysis/*.xes
+quantitative_analysis/*.xes.gz
