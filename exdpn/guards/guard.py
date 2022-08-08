@@ -8,11 +8,12 @@ from pm4py.objects.petri_net.obj import PetriNet
 
 class Guard(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def __init__(self, hyperparameters: Dict[str, Any]) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any], random_state:Optional[int]) -> None:
         """Abstract class defining the guard interface.
 
         Args:
             hyperparameters (Dict[str, Any]): The hyperparameters used for the concrete machine learning classifier initialization.
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
 
         """
         pass

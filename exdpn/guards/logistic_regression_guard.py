@@ -19,11 +19,12 @@ import numpy as np
 
 
 class Logistic_Regression_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'C': 0.1375, 'tol': 0.001}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'C': 0.1375, 'tol': 0.001}, random_state:int = None) -> None:
         """Initializes a logistic regression based guard with the provided hyperparameters.
 
         Args:
             hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier.
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
 
         Raises:
             TypeError: If supplied hyperparameters are invalid.
@@ -35,10 +36,10 @@ class Logistic_Regression_Guard(Guard):
 
             .. include:: ../../docs/_templates/md/example-end.md
         """
-        super().__init__(hyperparameters)
+        super().__init__(hyperparameters, random_state)
         # possible hyperparameter: C (regularization parameter)
         try:
-            self.model = LogisticRegression(**hyperparameters)
+            self.model = LogisticRegression(**hyperparameters, random_state=random_state)
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the logistic regression guard")
@@ -48,6 +49,7 @@ class Logistic_Regression_Guard(Guard):
         self.ohe = None
         self.scaler = None
         self.scaler_columns = None
+        self.random_state = random_state
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the logistic regression guard using the dataset and the specified hyperparameters.
@@ -210,7 +212,7 @@ class Logistic_Regression_Guard(Guard):
         # one hot encoding for categorical data
         data = apply_ohe(data, self.ohe)
         
-        explainer = shap.LinearExplainer(self.model, self.X_train)
+        explainer = shap.LinearExplainer(self.model, self.X_train, seed=self.random_state)
 
         shap_values = explainer.shap_values(data)
 
@@ -250,7 +252,7 @@ class Logistic_Regression_Guard(Guard):
             ret = self.model.predict_proba(data_asframe)
             return ret
 
-        explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
+        explainer = shap.KernelExplainer(shap_predict, processed_base_sample, seed=self.random_state)
         shap_values = explainer.shap_values(processed_base_sample, nsamples=300, l1_reg=f"num_features({len(self.feature_names)})")
         # shap_values = explainer.shap_values(processed_base_sample)
         target_names = [t.label if t.label !=
@@ -320,7 +322,7 @@ class Logistic_Regression_Guard(Guard):
         predictions = shap_predict(processed_local_data)
 
         explainer = shap.KernelExplainer(
-            shap_predict, processed_base_sample, output_names=target_names)
+            shap_predict, processed_base_sample, output_names=target_names, seed=self.random_state)
         single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         
         unscaled_local_data = processed_local_data.copy().iloc[0]

@@ -16,7 +16,6 @@ from exdpn import guards
 from exdpn.guards import ML_Technique  # imports all guard classes
 from exdpn.guards import Guard
 from exdpn.data_preprocessing import basic_data_preprocessing
-from exdpn.guards.model_builder import model_builder
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import StratifiedKFold
 
@@ -38,6 +37,7 @@ class Guard_Manager():
                                                                         ML_Technique.RF: {'max_depth': 5}},
                  CV_splits: int = 5,
                  CV_shuffle: bool = False,
+                 random_state: int = None,
                  impute: bool = False) -> None:
         """Initializes all information needed for the calculation of the best guard for each decision point and /
         returns a dictionary with the list of all guards for each machine learning technique.
@@ -48,7 +48,8 @@ class Guard_Manager():
             hyperparameters (Dict[ML_Technique, Dict[str, Any]]): Hyperparameters that should be used for the machine learning techniques, \
                 if not specified, standard/generic parameters are used.
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
-            CV_shuffle (bool): Shuffle samples before splitting, defaults to False. 
+            CV_shuffle (bool): Shuffle samples before splitting, defaults to False.
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
             impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
 
         Examples:
@@ -76,7 +77,7 @@ class Guard_Manager():
         self.df_X = df_X
         self.df_y = df_y
         self.hyperparameters = hyperparameters
-
+        self.random_state=random_state
         self.CV_splits = CV_splits 
         self.impute = impute
         self.f1_mean_test = None
@@ -86,16 +87,19 @@ class Guard_Manager():
 
         # set up cross validation for model evaluation
         try:
-            self.skf = StratifiedKFold(n_splits = CV_splits, shuffle = CV_shuffle)
+            self.skf = StratifiedKFold(
+                n_splits = CV_splits,
+                shuffle = CV_shuffle,
+                random_state = self.random_state if CV_shuffle else None # if CV_shuffle is False, giving a random state will raise a ValueError as the RandomState has no effect
+            )
             self.skf.get_n_splits(self.df_X, self.df_y)
         except TypeError:
             raise TypeError(
                 "Invalid number of splits for cross validation.")
 
         # create list of all needed machine learning techniques to evaluate the guards
-        self.guards_list = {technique: model_builder(
-            technique, hyperparameters[technique]) for technique in ml_list}
-
+        self.guards_list = {technique: technique.value(hyperparameters[technique], random_state=self.random_state) for technique in ml_list}
+        
 
     def train_test(self) -> Dict[str, Any]:
         """Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
@@ -243,7 +247,7 @@ class Guard_Manager():
             
             .. include:: ../../docs/_templates/md/example-end.md
         """
-        assert self.f1_mean_test != None, "Guards must be evaluated first"
+        assert self.f1_mean_test != None, "Guards must be trained first"
         best_guard_name = max(self.f1_mean_test, key=self.f1_mean_test.get)
 
         return best_guard_name, self.guards_list[best_guard_name]

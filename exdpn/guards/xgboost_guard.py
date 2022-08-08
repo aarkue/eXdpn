@@ -19,11 +19,12 @@ import shap
 
 
 class XGBoost_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'max_depth': 2, 'n_estimators': 50}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'max_depth': 2, 'n_estimators': 50}, random_state:int = None) -> None:
         """Initializes a XGBoost based guard with the provided hyperparameters.
 
         Args:
             hyperparameters (Dict[str, Any]): Hyperparameters used for the XGBoost classifier.
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
 
         Raises:
             TypeError: If supplied hyperparameters are invalid.
@@ -37,10 +38,10 @@ class XGBoost_Guard(Guard):
             .. include:: ../../docs/_templates/md/example-end.md
         """
 
-        super().__init__(hyperparameters)
+        super().__init__(hyperparameters, random_state)
 
         try:
-            self.model = XGBClassifier(**hyperparameters)
+            self.model = XGBClassifier(**hyperparameters, random_state=random_state)
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the XGBoost guard")
@@ -48,6 +49,7 @@ class XGBoost_Guard(Guard):
         self.transition_int_map = None
         self.feature_names = None
         self.ohe = None
+        self.random_state = random_state
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the XGBoost guard using the dataset.
@@ -242,7 +244,7 @@ class XGBoost_Guard(Guard):
                     ret = self.model.predict_proba(data_asframe)
                     return ret
 
-        explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
+        explainer = shap.KernelExplainer(shap_predict, processed_base_sample, seed=self.random_state)
 
         # shap_values = explainer.shap_values(processed_base_sample)
         shap_values = explainer.shap_values(processed_base_sample, nsamples=300, l1_reg=f"num_features({len(self.feature_names)})")
@@ -295,7 +297,7 @@ class XGBoost_Guard(Guard):
 
         # TreeExplainer throws errors for me
         explainer = shap.KernelExplainer(
-            shap_predict, processed_base_sample, output_names=target_names)
+            shap_predict, processed_base_sample, output_names=target_names, seed=self.random_state)
         single_shap = explainer.shap_values(
             processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
 

@@ -17,11 +17,12 @@ from typing import Dict, List, Any, Optional, Union
 import numpy as np
 
 class Decision_Tree_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'min_impurity_decrease': 0.0075}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'min_impurity_decrease': 0.0075}, random_state:int = None) -> None:
         """Initializes a decision tree based guard with the provided hyperparameters.
 
         Args:
             hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier.
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
 
         Raises:
             TypeError: If supplied hyperparameters are invalid.
@@ -35,10 +36,10 @@ class Decision_Tree_Guard(Guard):
             .. include:: ../../docs/_templates/md/example-end.md
         """
 
-        super().__init__(hyperparameters)
+        super().__init__(hyperparameters, random_state)
         
         try:
-            self.model = DecisionTreeClassifier(**hyperparameters)
+            self.model = DecisionTreeClassifier(**hyperparameters, random_state=random_state)
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the decision tree guard")
@@ -46,6 +47,7 @@ class Decision_Tree_Guard(Guard):
         self.transition_int_map = None
         self.feature_names = None
         self.ohe = None
+        self.random_state = random_state
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the decision tree guard using the dataset and the specified hyperparameters.
@@ -95,6 +97,7 @@ class Decision_Tree_Guard(Guard):
             self.single_class = False
 
         self.model = self.model.fit(X, y_transformed)
+
     def predict(self, input_instances: DataFrame) -> List[PetriNet.Transition]:
         """Predicts the next transition based on the input instances.
 

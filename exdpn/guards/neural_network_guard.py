@@ -27,11 +27,12 @@ class Neural_Network_Guard(Guard):
     def __init__(self, hyperparameters: Dict[str, Any] = {'hidden_layer_sizes': (10,5), 
                                                           'learning_rate_init': 0.0001, 
                                                           'alpha': 0.0001, 
-                                                          'max_iter': 2000}) -> None:
+                                                          'max_iter': 2000}, random_state:int = None) -> None:
         """Initializes a neural network based guard with the provided hyperparameters.
 
         Args:
             hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier.
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
 
         Raises:
             TypeError: If supplied hyperparameters are invalid
@@ -44,9 +45,9 @@ class Neural_Network_Guard(Guard):
             .. include:: ../../docs/_templates/md/example-end.md  
 
         """
-        super().__init__(hyperparameters)
+        super().__init__(hyperparameters, random_state)
         try:
-            self.model = MLPClassifier(**hyperparameters)
+            self.model = MLPClassifier(**hyperparameters, random_state=random_state)
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the neural network guard"
@@ -58,6 +59,7 @@ class Neural_Network_Guard(Guard):
         self.scaler = None
         self.scaler_columns = None
         self.training_data = None
+        self.random_state = random_state
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the neural network guard using the dataset and the specified hyperparameters.
@@ -237,7 +239,7 @@ class Neural_Network_Guard(Guard):
             return ret
 
         explainer = shap.KernelExplainer(
-            shap_predict, data, output_names=self.target_names)
+            shap_predict, data, output_names=self.target_names, seed=self.random_state)
 
         shap_values = explainer.shap_values(
             data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
@@ -279,7 +281,7 @@ class Neural_Network_Guard(Guard):
             ret = self.model.predict_proba(data_asframe)
             return ret
 
-        explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
+        explainer = shap.KernelExplainer(shap_predict, processed_base_sample, seed=self.random_state)
         shap_values = explainer.shap_values(processed_base_sample, nsamples=300, l1_reg=f"num_features({len(self.feature_names)})")
         # shap_values = explainer.shap_values(processed_base_sample)
         target_names = [t.label if t.label !=
@@ -344,7 +346,7 @@ class Neural_Network_Guard(Guard):
         target_names = [t.label if t.label !=
                         None else f"None ({t.name})" for t in self.transition_int_map.keys()]
         explainer = shap.KernelExplainer(
-            shap_predict, processed_base_sample, output_names=target_names)
+            shap_predict, processed_base_sample, output_names=target_names, seed=self.random_state)
         single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         
         unscaled_local_data = processed_local_data.copy().iloc[0]
