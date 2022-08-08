@@ -93,9 +93,8 @@ class Guard_Manager():
                 "Invalid number of splits for cross validation.")
 
         # create list of all needed machine learning techniques to evaluate the guards
-        self.guards_list = {technique: model_builder(
-            technique, hyperparameters[technique]) for technique in ml_list}
-
+        self.guards_list = {technique: technique.value(hyperparameters[technique]) for technique in ml_list}
+        
 
     def train_test(self) -> Dict[str, Any]:
         """Calculates for a given decision point all selected guards and returns the precision of the machine learning model, \
