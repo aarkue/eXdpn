@@ -186,8 +186,6 @@ class Data_Petri_Net():
             .. include:: ../../docs/_templates/md/example-end.md
 
         """
-        if self.guard_per_place != None:
-            return
 
         self.guard_per_place = {}
 
