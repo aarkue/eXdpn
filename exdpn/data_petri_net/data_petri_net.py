@@ -43,7 +43,8 @@ class Data_Petri_Net():
                                                                         ML_Technique.XGB: {'max_depth': 2, 'n_estimators': 50},
                                                                         ML_Technique.RF: {'max_depth': 5}},
                  CV_splits: int = 5,
-                 CV_shuffle: bool = False, 
+                 CV_shuffle: bool = False,
+                 random_state: int = None, 
                  guard_threshold: float = 0.0,
                  impute: bool = False,
                  verbose: bool = True) -> None:
@@ -66,6 +67,7 @@ class Data_Petri_Net():
                 If not specified, standard/generic parameters are used.
             CV_splits (int): Number of folds to use in stratified corss-validation, defaults to 5.
             CV_shuffle (bool): Shuffle samples before splitting, defaults to False. 
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
             guard_threshold (float, optional): The performance threshold (between 0 and 1) that determines if a guard is added to the data Petri net or not. If the guard performance \
                 is smaller than the threshold the guard is not added (see `exdpn.guards.guard_manager.Guard_Manager.train_test`). Default is 0. 
             impute (bool): If `True`, missing attribute values in the guard datasets will be imputed using constants and an indicator columns will be added. Default is `False`.
@@ -134,6 +136,7 @@ class Data_Petri_Net():
         self.event_level_attributes = event_level_attributes
         self.tail_length = tail_length
         self.activityName_key = activityName_key
+        self.random_state = random_state
 
         # initialize all gms
         self.guard_manager_per_place = {place: Guard_Manager(self.guard_ds_per_place[place],
@@ -141,6 +144,7 @@ class Data_Petri_Net():
                                                              hyperparameters=hyperparameters,
                                                              CV_splits=CV_splits,
                                                              CV_shuffle=CV_shuffle,
+                                                             random_state=self.random_state,
                                                              impute=impute)
                                         for place in self.decision_points.keys()}
 

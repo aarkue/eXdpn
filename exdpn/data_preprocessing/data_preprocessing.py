@@ -13,12 +13,13 @@ from sklearn.preprocessing import OneHotEncoder
 from typing import Tuple, List
 
 # remove data_preprocessing_evaluation before next release, since it is not in use anymore; doc strings examples have to be updated
-def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, DataFrame, Series, Series]:
+def data_preprocessing_evaluation(dataframe: DataFrame, random_state:int = None) -> Tuple[DataFrame, DataFrame, Series, Series]:
     """Preprocessing of datasets before they are used for the machine learning training and testing. This function does some \
     basic preprocessing, such as droping columns with missing values and defining feature attributes and the target attribute. \
     Furthermore, the data is split into train and test datasets.
     Args:
         dataframe (DataFrame): The dataset to be transformed for evaluation of the best model.
+        random_state (int, optional): The random state to be used for the train/test split. Defaults to None.
     Returns:
         * X_train (DataFrame): The training data without the target attribute.
         * X_test (DataFrame): The test data without the target attribute.
@@ -35,10 +36,10 @@ def data_preprocessing_evaluation(dataframe: DataFrame) -> Tuple[DataFrame, Data
     df_y_transformed = [transition_int_map[transition] for transition in df_y]
     try:
         X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(
-            df_X, df_y_transformed, stratify=df_y_transformed)
+            df_X, df_y_transformed, stratify=df_y_transformed, random_state=random_state)
     except ValueError:
         X_train, X_test, y_train_mapped, y_test_mapped = train_test_split(
-            df_X, df_y_transformed)
+            df_X, df_y_transformed, random_state=random_state)
 
     # map back to transitions
     y_train = [next(trans for trans, trans_id in transition_int_map.items() if trans_id == y) for y in y_train_mapped]

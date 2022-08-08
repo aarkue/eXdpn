@@ -19,7 +19,7 @@ import numpy as np
 import shap 
 
 class Random_Forest_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'max_depth': 5}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'max_depth': 5}, random_state:int = None) -> None:
         """Initializes a random forest based guard with the provided hyperparameters.
 
         Args:
@@ -37,10 +37,10 @@ class Random_Forest_Guard(Guard):
             .. include:: ../../docs/_templates/md/example-end.md
         """
 
-        super().__init__(hyperparameters)
+        super().__init__(hyperparameters, random_state)
 
         try:
-            self.model = RandomForestClassifier(**hyperparameters)
+            self.model = RandomForestClassifier(**hyperparameters, random_state = random_state)
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the decision tree guard")
@@ -48,6 +48,7 @@ class Random_Forest_Guard(Guard):
         self.transition_int_map = None
         self.feature_names = None
         self.ohe = None
+        self.random_state = random_state
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the decision tree guard using the dataset and the specified hyperparameters.
@@ -206,8 +207,7 @@ class Random_Forest_Guard(Guard):
         
         # one hot encoding for categorical data
         data = apply_ohe(data, self.ohe)
-        explainer = shap.TreeExplainer(self.model)
-
+        explainer = shap.TreeExplainer(self.model) # seed=self.random_state, but TreeExplainer takes no seed (ironic, right? :P)
         shap_values = explainer.shap_values(data)
 
         # Docs for this summary plot: https://shap-lrjball.readthedocs.io/en/latest/generated/shap.summary_plot.html
@@ -241,7 +241,7 @@ class Random_Forest_Guard(Guard):
             ret = self.model.predict_proba(data_asframe)
             return ret
 
-        explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
+        explainer = shap.KernelExplainer(shap_predict, processed_base_sample, seed=self.random_state)
 
         shap_values = explainer.shap_values(processed_base_sample, nsamples=300, l1_reg=f"num_features({len(self.feature_names)})")
         # shap_values = explainer.shap_values(processed_base_sample)
@@ -290,7 +290,7 @@ class Random_Forest_Guard(Guard):
         predictions = shap_predict(processed_local_data)
 
         explainer = shap.TreeExplainer(
-            self.model, output_names=target_names)
+            self.model, output_names=target_names) # seed=self.random_state, but TreeExplainer takes no seed (ironic, right? :P)
         single_shap = explainer.shap_values(processed_local_data)
 
         ret = dict()

@@ -19,11 +19,12 @@ import numpy as np
 
 
 class SVM_Guard(Guard):
-    def __init__(self, hyperparameters: Dict[str, Any] = {'C': 0.3, 'tol': 0.001}) -> None:
+    def __init__(self, hyperparameters: Dict[str, Any] = {'C': 0.3, 'tol': 0.001}, random_state:int = None) -> None:
         """Initializes a support vector machine based guard with the provided hyperparameters.
 
         Args:
             hyperparameters (Dict[str, Any]): Hyperparameters used for the classifier.
+            random_state (int, optional): The random state to be used for algorithms wherever possible. Defaults to None.
 
         Raises:
             TypeError: If the supplied hyperparameters are invalid.
@@ -36,10 +37,10 @@ class SVM_Guard(Guard):
         .. include:: ../../docs/_templates/md/example-end.md
 
         """
-        super().__init__(hyperparameters)
+        super().__init__(hyperparameters, random_state)
         # possible hyperparameter: C (regularization parameter)
         try:
-            self.model = SVC(**hyperparameters, kernel='linear', probability=True)
+            self.model = SVC(**hyperparameters, kernel='linear', probability=True, random_state=random_state)
         except TypeError:
             raise TypeError(
                 "Wrong hyperparameters were supplied to the support vector machine guard")
@@ -50,6 +51,7 @@ class SVM_Guard(Guard):
         self.ohe = None
         self.scaler = None
         self.scaler_columns = None
+        self.random_state = random_state
 
     def train(self, X: DataFrame, y: DataFrame) -> None:
         """Trains the support vector machine guard using the dataset and the specified hyperparameters.
@@ -213,7 +215,7 @@ class SVM_Guard(Guard):
         data = apply_scaling(data, self.scaler, self.scaler_columns)
         # one hot encoding for categorical data
         data = apply_ohe(data, self.ohe)
-        explainer = shap.LinearExplainer(self.model, self.X_train)
+        explainer = shap.LinearExplainer(self.model, self.X_train, seed=self.random_state)
 
         shap_values = explainer.shap_values(data)
 
@@ -254,7 +256,7 @@ class SVM_Guard(Guard):
             ret = self.model.predict_proba(data_asframe)
             return ret
 
-        explainer = shap.KernelExplainer(shap_predict, processed_base_sample)
+        explainer = shap.KernelExplainer(shap_predict, processed_base_sample, seed=self.random_state)
 
         shap_values = explainer.shap_values(processed_base_sample, nsamples=300, l1_reg=f"num_features({len(self.feature_names)})")
         # shap_values = explainer.shap_values(processed_base_sample)
@@ -325,7 +327,7 @@ class SVM_Guard(Guard):
         predictions = shap_predict(processed_local_data)
 
         explainer = shap.KernelExplainer(
-            shap_predict, processed_base_sample, output_names=target_names)
+            shap_predict, processed_base_sample, output_names=target_names, seed=self.random_state)
         single_shap = explainer.shap_values(processed_local_data, nsamples=200, l1_reg=f"num_features({len(self.feature_names)})")
         
         unscaled_local_data = processed_local_data.copy().iloc[0]
