@@ -12,7 +12,7 @@ from typing import Dict, List, Any
 
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from exdpn.decisionpoints import find_decision_points
-from exdpn.guard_datasets import extract_all_datasets
+from exdpn.guard_datasets import extract_all_datasets, extract_current_decisions
 from exdpn.guards.guard import Guard
 from exdpn.petri_net import get_petri_net
 from exdpn.guards import Guard_Manager
@@ -310,6 +310,29 @@ class Data_Petri_Net():
                     prediction_result[caseid] = 0
 
         return sum([prediction_result[trace_id] for trace_id in seen_trace_ids]) / len(seen_trace_ids)
+
+    def predict_current_decisions(self, log: EventLog) -> Dict[Any, Dict[PetriNet.Place, PetriNet.Transition]]:
+        current_decisions = extract_current_decisions(
+            log, 
+            self.petri_net, self.im, self.fm, 
+            self.case_level_attributes, self.event_level_attributes, 
+            self.tail_length, self.activityName_key)
+
+        for place, decision_dataset in current_decisions.items():
+            if len(decision_dataset) == 0:
+                continue
+            
+            X, _ = basic_data_preprocessing(decision_dataset, impute=self.impute)
+            decision_dataset.drop(['target'], axis=1, inplace=True)
+            guard = self.get_guard_at_place(place)
+            try:
+                predicted_transitions = guard.predict(X)
+            except:
+                self._print_if_verbose(f'Prediction of transitions following place {place} failed')
+            else:
+                decision_dataset["prediction"] = predicted_transitions
+
+        return current_decisions
 
 
 # tests implemented examples
