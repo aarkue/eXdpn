@@ -232,24 +232,37 @@ def extract_current_decisions(
         place: set(arc.target for arc in net.arcs if arc.source == place) for place in places
     }
 
-    datasets = {place: DataFrame(
-        columns=["case::" + attr for attr in case_level_attributes] + 
-                ["event::"+ attr for attr in event_level_attributes] + 
-                [f"tail::prev{i}" for i in range(1, tail_length+1)] + 
-                ["target"]) for place in places}
+    datasets = {}
 
-    for idx, trace in enumerate(log):
-        trace_replay = replay[idx]
-        if trace_replay["trace_is_fit"]:
-            # Skip fitting traces
-            continue
-        index, instance = extract_current_decision_for_trace(
-            trace, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
+    for place in places:
+        instances = []
+        indices = []
 
-        for place in places:
+        for idx, trace in enumerate(log):
+            trace_replay = replay[idx]
+
+            if trace_replay["trace_is_fit"]:
+                # Skip fitting traces
+                continue
+
             if trace_replay["enabled_transitions_in_marking"] & target_transitions[place]:
-                # tests if the intersection of the two lists is non-empty
-                datasets[place].loc[index] = instance
+                    # tests if the intersection of the two lists is non-empty
+                    index, instance = extract_current_decision_for_trace(
+                        trace, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
+                    
+                    instances.append(instance)
+                    indices.append(index)
+        
+        if len(instances) != 0:
+            datasets[place] = DataFrame(
+                instances,
+                columns=["case::" + attr for attr in case_level_attributes] + 
+                        ["event::"+ attr for attr in event_level_attributes] + 
+                        [f"tail::prev{i}" for i in range(1, tail_length+1)] + 
+                        ["target"],
+                index=indices
+            )
+            datasets[place].index.name = xes.DEFAULT_TRACEID_KEY
 
     return datasets
 
