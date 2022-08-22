@@ -11,7 +11,7 @@ from typing import Dict, List, Tuple, Union, Any
 import numpy as np
 
 from pm4py.objects.petri_net.obj import PetriNet, Marking
-from pm4py.objects.log.obj import EventLog
+from pm4py.objects.log.obj import EventLog, Trace
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
 from pm4py.util import xes_constants as xes
 
@@ -211,6 +211,89 @@ def extract_dataset_for_place(
         index=MultiIndex.from_tuples(
             indices, names=[xes.DEFAULT_TRACEID_KEY, "decision_repetiton"])
     )
+
+def extract_current_decisions(
+    log: EventLog,
+    net: PetriNet,
+    initial_marking: Marking,
+    final_marking: Marking,
+    case_level_attributes: List[str] = [],
+    event_level_attributes: List[str] = [],
+    tail_length: int = 3,
+    activityName_key: str = xes.DEFAULT_NAME_KEY,
+    padding: Any = "#"
+):
+    replay = _compute_replay(log, net, initial_marking,
+                             final_marking, activityName_key, False)
+
+    target_transitions = find_decision_points(net)
+    places = list(target_transitions.keys())
+    target_transitions = {
+        place: set(arc.target for arc in net.arcs if arc.source == place) for place in places
+    }
+
+    datasets = {place: DataFrame(
+        columns=["case::" + attr for attr in case_level_attributes] + 
+                ["event::"+ attr for attr in event_level_attributes] + 
+                [f"tail::prev{i}" for i in range(1, tail_length+1)] + 
+                ["target"]) for place in places}
+
+    for idx, trace in enumerate(log):
+        trace_replay = replay[idx]
+        if trace_replay["trace_is_fit"]:
+            # Skip fitting traces
+            continue
+        index, instance = extract_current_decision_for_trace(
+            trace, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
+
+        for place in places:
+            if trace_replay["enabled_transitions_in_marking"] & target_transitions[place]:
+                # tests if the intersection of the two lists is non-empty
+                datasets[place].loc[index] = instance
+
+    return datasets
+
+def extract_current_decision_for_trace(
+    trace: Trace,
+    case_level_attributes: List[str] = [],
+    event_level_attributes: List[str] = [],
+    tail_length: int = 3,
+    activityName_key: str = xes.DEFAULT_NAME_KEY,
+    padding: Any = "#",
+):
+    case_attr_values = [trace.attributes.get(
+        attr, np.NaN) for attr in case_level_attributes]
+
+    if len(trace) == 0:
+        # There is no "previous event", so we cannot collect this info
+        event_attr_values = [np.NaN] * len(event_level_attributes)
+    else:
+        # Get the values of the event level attribute
+        last_event = trace[-1]
+        event_attr_values = [last_event.get(
+            attr, np.NaN) for attr in event_level_attributes]
+
+        # Finally, extract recent activities
+        tail_activities = []
+        for i in range(1, tail_length+1):
+            if len(trace)-i >= 0:
+                tail_activities.append(
+                    trace[-i].get(activityName_key, ""))
+            else:
+                tail_activities.append(padding)
+
+        # This instance record  now descibes the decision situation
+        instance = case_attr_values + event_attr_values + \
+            tail_activities + [padding]
+        # Give this index a unique index
+        if xes.DEFAULT_TRACEID_KEY not in trace.attributes:
+            raise Exception(
+                f"A case in the Event Log Object has no caseid (No case attribute {xes.DEFAULT_TRACEID_KEY})")
+        else:
+            index = trace.attributes[xes.DEFAULT_TRACEID_KEY]
+
+    return index, instance 
+
 
 
 # tests implemented examples
