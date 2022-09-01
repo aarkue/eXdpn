@@ -230,8 +230,8 @@
 
 
       function mineDecisions(){ 
+        guardDataPerPlace = {};
         let selectedAttributes = getSelectedAttributes()
-        
         if (selectedAttributes["ml_techniques"].length === 0) {
           showErrorToast("No ML Techniques Selected")
           return
@@ -316,15 +316,17 @@
             const blob = new Blob([svg_representations[globalExplanationOptionSelector.value].data],{type: 'image/svg+xml'})
             const blob_url = URL.createObjectURL(blob);
             document.getElementById('selected_guard_global_svg').setAttribute('src', blob_url);
-            document.getElementById('selected_guard_global_svg').classList.remove('visually-hidden');
+            // document.getElementById('selected_guard_global_svg').classList.remove('visually-hidden');
+            document.getElementById('selected_guard_global_svg').classList.remove('d-none');
             document.getElementById('selected_guard_global_html').setAttribute('data', '');
-            document.getElementById('selected_guard_global_html').classList.add('visually-hidden');
+            // document.getElementById('selected_guard_global_html').classList.add('visually-hidden');
+            document.getElementById('selected_guard_global_html').classList.add('d-none');
           }else{
             const blob = new Blob(["<!DOCTYPE html>\n" + svg_representations[globalExplanationOptionSelector.value].data],{type: 'text/html'})
             const blob_url = URL.createObjectURL(blob);
             document.getElementById('selected_guard_global_svg').removeAttribute('src');
-            document.getElementById('selected_guard_global_svg').classList.add('visually-hidden');
-            document.getElementById('selected_guard_global_html').classList.remove('visually-hidden');
+            document.getElementById('selected_guard_global_svg').classList.add('d-none');
+            document.getElementById('selected_guard_global_html').classList.remove('d-none');
             document.getElementById('selected_guard_global_html').setAttribute('data', blob_url);
           }
         };
