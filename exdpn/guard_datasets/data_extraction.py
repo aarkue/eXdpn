@@ -223,6 +223,10 @@ def extract_current_decisions(
     activityName_key: str = xes.DEFAULT_NAME_KEY,
     padding: Any = "#"
 ):
+    """Extracts the current decisions of an event log. \
+        These are all current decisons of unfit traces with respect to token based replay. \
+        Current decisions of an unfit trace arise at those places which have enabled transitions in the token based replay-marking \
+        and correspond to the latest instance of such a trace."""
     replay = _compute_replay(log, net, initial_marking,
                              final_marking, activityName_key, False)
 
@@ -274,6 +278,7 @@ def extract_current_decision_for_trace(
     activityName_key: str = xes.DEFAULT_NAME_KEY,
     padding: Any = "#",
 ):
+    """Extracts the latest instance of a trace."""
     case_attr_values = [trace.attributes.get(
         attr, np.NaN) for attr in case_level_attributes]
 
