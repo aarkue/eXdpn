@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<log xes.version="1849-2016" xes.features="nested-attributes" xmlns="http://www.xes-standard.org/">
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext" />
+	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.xesext" />
+	<string key="origin" value="csv" />
+	<trace>
+		<string key="concept:name" value="990000" />
+		<event>
+			<string key="concept:name" value="create purchase order" />
+			<date key="time:timestamp" value="2021-11-10T22:14:20+00:00" />
+			<float key="total_price" value="139.99" />
+			<string key="item_id" value="Apple Pencil 2nd Gen." />
+			<int key="item_amount" value="1" />
+			<string key="item_category" value="Electronics" />
+			<string key="supplier" value="MediaMarkt GmbH" />
+		</event>
+	</trace>
+</log>
