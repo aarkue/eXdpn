@@ -65,12 +65,14 @@ def extract_all_datasets(
     """
 
     # Get list of places and mapping which transitions they correspond to
+    target_transitions = find_decision_points(net)
     if places is None:
-        target_transitions = find_decision_points(net)
+        # Use all decision points as places
         places = list(target_transitions.keys())
     else:
+        # Use only the transitions corresponding to decision points of the list of places
         target_transitions = {
-            place: set(arc.target for arc in net.arcs if arc.source == place) for place in places
+            place: target_transitions[place] for place in places
         }
 
     # Compute Token-Based Replay
