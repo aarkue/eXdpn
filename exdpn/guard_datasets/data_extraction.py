@@ -228,8 +228,25 @@ def extract_current_decisions(
     padding: Any = "#"
 ):
     """Extracts the current decisions of an event log. \
-        These are all current decisons of unfit traces with respect to token based replay. \
+        These are all current decisons of unfinished cases. \
+        These are identified as the unfit traces which can perfectly be replayed on the model, but do not reach a final marking in token-based replay. \
         Current decisions of an unfit trace arise at those places which have enabled transitions in the token based replay-marking \
+        and correspond to the latest instance of such a trace.
+
+    Args:
+        log (EventLog): The event log to extract the data from.
+        net (PetriNet): The Petri net on which the token-based replay will be performed and on which the decision points.
+        initial_marking (Marking): The initial marking of the Petri net.
+        final_marking (Marking): The final marking of the Petri net.
+        case_level_attributes (List[str], optional): The list of attributes to be extracted on a case-level. Defaults to empty list.
+        event_level_attributes (List[str], optional): The list of attributes to be extracted on an event-level. Defaults to empty list.
+        tail_length (int, optional): The number of preceding events to record the activity of. Defaults to 3.
+        activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
+        places (List[Place], optional): The list of places to extract datasets for. If not present, all decision points are regarded.
+        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
+    Returns:
+        Dict[Place, DataFrame]: The dictionary mapping places in the Petri net to their corresponding dataset.
+    """
 
     replay = _compute_replay(log, net, initial_marking, final_marking, stop_immediately_unfit=True, activityName_key=activityName_key, show_progress_bar=False)
 
@@ -292,6 +309,22 @@ def extract_current_decision_for_trace(
     activityName_key: str = xes.DEFAULT_NAME_KEY,
     padding: Any = "#",
 ):
+    """Extract prediction information for a trace.
+
+    Args:
+        trace (Trace): The trace to extract the data from.
+        case_level_attributes (List[str], optional): The case-level attributes to extract from the last event of the case. Defaults to the empty list.
+        event_level_attributes (List[str], optional): The event-level attributes to extract from the last event of the case. Defaults to the empty list.
+        tail_length (int, optional): The number of preceding events to record the activity of. Defaults to 3.
+        activityName_key (str, optional):  The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
+        padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
+
+    Raises:
+        ValueError: If a case in the event log has no case-id, an error is raised.
+
+    Returns:
+        Tuple[Any, List[Any]]: A tuple containing the index for the dataframe (the case-id) and the list of extracted values (The values for the columns of the dataframe).
+    """    
     """Extracts the latest instance of a trace."""
     case_attr_values = [trace.attributes.get(
         attr, np.NaN) for attr in case_level_attributes]
@@ -319,7 +352,7 @@ def extract_current_decision_for_trace(
             tail_activities + [padding]
         # Give this index a unique index
         if xes.DEFAULT_TRACEID_KEY not in trace.attributes:
-            raise Exception(
+            raise ValueError(
                 f"A case in the Event Log Object has no caseid (No case attribute {xes.DEFAULT_TRACEID_KEY})")
         else:
             index = trace.attributes[xes.DEFAULT_TRACEID_KEY]
