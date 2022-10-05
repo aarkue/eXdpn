@@ -1,0 +1,1 @@
+EVENT_LOG_SAMPLE_SIZE = 500 # Use to decrease log size for large event logs, reduces test time substantially

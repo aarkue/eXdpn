@@ -2,8 +2,7 @@ from exdpn.decisionpoints import find_decision_points
 from exdpn.guard_datasets import extract_all_datasets
 from exdpn.util import import_log
 from exdpn.petri_net import get_petri_net
-from exdpn.guards import Guard_Manager
-from exdpn.guards import ML_Technique
+from exdpn.guards import Guard_Manager, ML_Technique
 
 from pm4py.objects.log.obj import EventLog, Trace
 
@@ -13,7 +12,7 @@ import os
 
 def get_df():
     event_log = import_log(os.path.join(
-        os.getcwd(), 'tests', 'guard_datasets', 'example.xes'))
+        os.getcwd(), 'tests', 'guard_datasets', 'example.xes')) # Same as for guard_datasets tests, so small enough for no sampling
 
     net, im, fm = get_petri_net(event_log, "IM")
     dp = find_decision_points(net)

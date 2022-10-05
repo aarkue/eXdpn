@@ -1,16 +1,22 @@
+import unittest
+import os
+
+from pm4py.objects.log.obj import EventLog, Trace
+from pm4py.objects.log.util.sampling import sample_log
+
 from exdpn.data_petri_net import Data_Petri_Net
 from exdpn.util import import_log
 from exdpn.guards import ML_Technique
 
-from pm4py.objects.log.obj import EventLog, Trace
 
-import unittest
-import os
 
+
+from tests import EVENT_LOG_SAMPLE_SIZE
 
 def get_p2p_event_log():
-    return import_log(os.path.join(
+    log = import_log(os.path.join(
         os.getcwd(), 'datasets', 'p2p_base.xes'))
+    return sample_log(log, no_traces=EVENT_LOG_SAMPLE_SIZE)
 
 def get_dummy_log():
     events = [{"case:concept:name": 1337, "concept:name": act,  "time:timestamp": i} for i, act in enumerate("abcd")]

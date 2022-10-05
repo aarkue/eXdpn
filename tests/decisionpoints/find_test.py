@@ -1,10 +1,7 @@
 import unittest
-from pm4py.objects.log.importer.xes import importer as xes_importer
-from pm4py.algo.discovery.alpha import algorithm as alpha_miner
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.objects.petri_net.utils import petri_utils
 from exdpn.decisionpoints import find_decision_points
-from importlib.resources import read_text
 
 class TestFindDecisionPoints(unittest.TestCase):
     def test_simple_net(self):
