@@ -3,7 +3,6 @@
 
 """
 
-from inspect import trace
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.log.obj import EventLog
 import pm4py.util.xes_constants as xes
