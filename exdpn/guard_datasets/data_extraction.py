@@ -74,8 +74,7 @@ def extract_all_datasets(
         }
 
     # Compute Token-Based Replay
-    replay = _compute_replay(log, net, initial_marking,
-                             final_marking, activityName_key, False)
+    replay = _compute_replay(log, net, initial_marking, final_marking, stop_immediately_unfit=False, activityName_key=activityName_key, show_progress_bar=False)
     ## Extract a dataset for each place ##
     datasets = dict()
     for place in places:
@@ -84,7 +83,7 @@ def extract_all_datasets(
     return datasets
 
 
-def _compute_replay(log: EventLog, net: PetriNet, initial_marking: Marking, final_marking: Marking, activityName_key: str = xes.DEFAULT_NAME_KEY, show_progress_bar: bool = False) -> Dict[str, Any]:
+def _compute_replay(log: EventLog, net: PetriNet, initial_marking: Marking, final_marking: Marking, stop_immediately_unfit: bool = False, activityName_key: str = xes.DEFAULT_NAME_KEY, show_progress_bar: bool = False) -> Dict[str, Any]:
     """Wrapper for PM4Py's token-based replay function.
 
     Args:
@@ -92,6 +91,7 @@ def _compute_replay(log: EventLog, net: PetriNet, initial_marking: Marking, fina
         net (PetriNet): The Petri net to replay on.
         initial_marking (Marking): The initial Marking of the Petri net.
         final_marking (Marking): The final Marking of the Petri net.
+        stop_immediately_unfit (bool, optional): Whether to stop the replay as soon as a trace is unfit. Useful for recognizing unfinished cases. Defaults to False.
         activityName_key (str, optional): The key of the activity name in the event log. Defaults to `pm4py.util.xes_constants.DEFAULT_NAME_KEY` ("concept:name").
         show_progress_bar (bool, optional): Whether or not to show a progress bar. Defaults to False.
 
@@ -103,6 +103,7 @@ def _compute_replay(log: EventLog, net: PetriNet, initial_marking: Marking, fina
     replay_params = {
         variant.value.Parameters.SHOW_PROGRESS_BAR: show_progress_bar,
         variant.value.Parameters.ACTIVITY_KEY: activityName_key,
+        variant.value.Parameters.STOP_IMMEDIATELY_UNFIT: stop_immediately_unfit
     }
     return token_replay.apply(log, net, initial_marking, final_marking, variant=variant, parameters=replay_params)
 
@@ -147,7 +148,7 @@ def extract_dataset_for_place(
     # Compute replay if necessary
     if type(replay) is tuple:
         net, im, fm = replay
-        replay = _compute_replay(log, net, im, fm, activityName_key, False)
+        replay = _compute_replay(log, net, im, fm, stop_immediately_unfit=False, activityName_key=activityName_key, show_progress_bar=False)
 
     # Extract the data for the place
     instances = []
@@ -227,9 +228,9 @@ def extract_current_decisions(
     """Extracts the current decisions of an event log. \
         These are all current decisons of unfit traces with respect to token based replay. \
         Current decisions of an unfit trace arise at those places which have enabled transitions in the token based replay-marking \
-        and correspond to the latest instance of such a trace."""
-    replay = _compute_replay(log, net, initial_marking,
-                             final_marking, activityName_key, False)
+
+    replay = _compute_replay(log, net, initial_marking, final_marking, stop_immediately_unfit=True, activityName_key=activityName_key, show_progress_bar=False)
+
 
     target_transitions = find_decision_points(net)
     if places is None:
@@ -250,7 +251,13 @@ def extract_current_decisions(
         for idx, trace in enumerate(log):
             trace_replay = replay[idx]
 
-            if trace_replay["trace_is_fit"]:
+            # A trace is incomplete if it is not fitting on the model, but it is a prefix of the language of the model
+            activated_transitions_non_silent = [transition for transition in trace_replay["activated_transitions"] if transition.label is not None] # Skip silent transitions in the model for this check
+            trace_is_incomplete = (
+                (not trace_replay["trace_is_fit"]) and # The trace is unfit
+                all(event[activityName_key] == transition.label for event, transition in zip(trace, activated_transitions_non_silent)) # But it can be perfectly replayed on the model as a prefix of the language of the model
+            )
+            if not trace_is_incomplete:
                 # Skip fitting traces
                 continue
 
