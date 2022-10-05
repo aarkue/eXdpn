@@ -221,6 +221,7 @@ def extract_current_decisions(
     event_level_attributes: List[str] = [],
     tail_length: int = 3,
     activityName_key: str = xes.DEFAULT_NAME_KEY,
+    places: List[PetriNet.Place] = None,
     padding: Any = "#"
 ):
     """Extracts the current decisions of an event log. \
@@ -231,10 +232,14 @@ def extract_current_decisions(
                              final_marking, activityName_key, False)
 
     target_transitions = find_decision_points(net)
-    places = list(target_transitions.keys())
-    target_transitions = {
-        place: set(arc.target for arc in net.arcs if arc.source == place) for place in places
-    }
+    if places is None:
+        # Use all decision points as places
+        places = list(target_transitions.keys())
+    else:
+        # Use only the transitions corresponding to decision points of the list of places
+        target_transitions = {
+            place: target_transitions[place] for place in places
+        }
 
     datasets = {}
 
