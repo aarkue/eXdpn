@@ -280,13 +280,13 @@ def extract_current_decisions(
                 # Skip fitting traces
                 continue
 
-            if trace_replay["enabled_transitions_in_marking"] & target_transitions[place]:
-                    # tests if the intersection of the two lists is non-empty
-                    index, instance = extract_current_decision_for_trace(
-                        trace, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
-                    
-                    instances.append(instance)
-                    indices.append(index)
+            if trace_replay["enabled_transitions_in_marking"].intersection(target_transitions[place]):
+                # If a transition is enabled that is the "output" of some place (this place)
+                index, instance = extract_current_decision_for_trace(
+                    trace, case_level_attributes, event_level_attributes, tail_length, activityName_key, padding)
+                
+                instances.append(instance)
+                indices.append(index)
         
         if len(instances) != 0:
             datasets[place] = DataFrame(
@@ -335,8 +335,13 @@ def extract_current_decision_for_trace(
     else:
         # Get the values of the event level attribute
         last_event = trace[-1]
-        event_attr_values = [last_event.get(
-            attr, np.NaN) for attr in event_level_attributes]
+        event_attr_values = [
+            last_event.get(
+                attr,
+                np.NaN
+            )
+            for attr in event_level_attributes
+        ]
 
         # Finally, extract recent activities
         tail_activities = []

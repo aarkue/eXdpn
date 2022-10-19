@@ -314,7 +314,7 @@ class Data_Petri_Net():
         return sum([prediction_result[trace_id] for trace_id in seen_trace_ids]) / len(seen_trace_ids)
 
     def predict_current_decisions(self, log: EventLog) -> Dict[PetriNet.Place, DataFrame]:
-        """Returns a dictionary of places to current decision and their next-transition-predictions for the given event log. \
+        """Returns a dictionary mapping places to a current decision and their next-transition-predictions for the given event log. \
             Current decisions of an unfit trace arise at those places which have enabled transitions in the token based replay-marking. \
             The current decisions of an event log are all current decisons of unfit traces with respect to token based replay (see `exdpn.guard_datasets.extract_current_decisions`).
 
@@ -346,7 +346,8 @@ class Data_Petri_Net():
             log,
             self.petri_net, self.im, self.fm,
             self.case_level_attributes, self.event_level_attributes,
-            self.tail_length, self.activityName_key)
+            self.tail_length, self.activityName_key
+        )
 
         for place, decision_dataset in current_decisions.items():
             if len(decision_dataset) == 0:
@@ -367,15 +368,18 @@ class Data_Petri_Net():
         return current_decisions
 
     def explain_current_decision_predictions_for_trace(
-            self,
-            curr_decision_preds: Dict[PetriNet.Place, DataFrame],
-            trace_id: str,
-            base_sample_size: int = 10) -> Iterator[Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]]:
+        self,
+        curr_decision_preds: Dict[PetriNet.Place, DataFrame],
+        trace_id: str,
+        base_sample_size: int = 10
+    ) -> Iterator[Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]]:
         """Yields pairs of the form: (decision point, predicted next transition, local explanation) for the given current decision pedictions.
 
         Args:
             curr_decision_preds (Dict[PetriNet.Place, DataFrame]): A mapping of decision points to current decision instances and their predicted next transition. \
                 (see `exdpn.data_petri_net.Data_Petri_Net.predict_current_decisions`)
+            trace_id (str): The trace id of the trace for which the local explanations are computed.
+            base_sample_size (int, optional): The number of instances used to compute the local explanations. Defaults to 10.
 
         Yields:
             Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.

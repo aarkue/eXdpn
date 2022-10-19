@@ -13,6 +13,7 @@ import pm4py
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.objects.log.obj import EventLog
 from pm4py.objects.petri_net.obj import PetriNet, Marking
+from pm4py.objects.log.importer.xes.variants.iterparse import import_from_string
 
 import uuid
 from exdpn.util import import_log, extend_event_log_with_preceding_event_delay, extend_event_log_with_total_elapsed_time
@@ -53,6 +54,8 @@ loaded_event_logs: Dict[
 
 discovered_models: Dict[str,Tuple[PetriNet, Marking, Marking]] = dict()
 data_petri_nets: Dict[str, Data_Petri_Net] = dict()
+
+live_predictions: Dict[str, Dict[PetriNet.Place, DataFrame]] = dict()
 explainable_representations: Dict[str,Dict[Tuple[int,ML_Technique],str]] = dict() # Logid -> (placeid,ML_Technique) -> explanation
 
 ATTR_IGNORE_LIST = ["concept:name", "time:timestamp"]
@@ -315,6 +318,77 @@ def get_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: 
     return {
         'svg_representations': svg_representations
     }, 200
+
+@app.route("/log/<logid>/place/<int:placeid>/live-local-explanation/<ml_technique>/case/<case_id>", methods=["GET"])
+def get_live_local_explanations(logid: str, placeid:int, ml_technique: str, case_id: str):
+    dpn = data_petri_nets.get(logid, None)
+    if dpn is None:
+        return {"message": "No models trained yet."}, 400
+    # Find the corresponding place object
+    place = None
+    for p in dpn.petri_net.places:
+        if id(p) == placeid:
+            place = p
+            break
+    if place is None:
+        return {"message": "Place not found."}, 400
+
+    # Get the Enum representation of the selected Technique
+    technique_enum_value = get_ml_technique_from_str(ml_technique)
+    if technique_enum_value is None:
+        return {"message": "Invalid ML technique"}, 400
+
+    guards = dpn.guard_manager_per_place[place].guards_list
+
+
+    selected_guard = guards[technique_enum_value]
+    if selected_guard.is_explainable():
+        # Find Explainable Representation
+        sampled_test_data = dpn.guard_manager_per_place[place].df_X.sample(
+                n=min(100, len(dpn.guard_manager_per_place[place].df_X)));
+        case_live_prediction = live_predictions.get(logid).get(place).loc[case_id]
+        case_prediction = case_live_prediction['prediction']
+        case_prediction_instance = DataFrame([case_live_prediction]).drop("prediction", axis=1)
+        print("predicted: " + str(case_prediction))
+        explainable_representations: Dict[str,plt.Figure] = selected_guard.get_local_explanations(case_prediction_instance,sampled_test_data)
+
+        svg_representations = {}
+
+        svg_representations = {
+            plot_type : get_svg_and_close_figure(explainable_representation)
+            for plot_type, explainable_representation in explainable_representations.items()
+        }
+    else:
+        svg_representations = {}
+
+    return {
+        'svg_representations': svg_representations,
+        'prediction': case_prediction.label if case_prediction.label is not None else case_prediction.name
+    }, 200
+
+
+@app.route("/log/<logid>/load-live-log", methods=["POST"])
+def upload_live_log(logid: str):
+        
+        def serialize_df(df):
+            df_copy = df.copy()
+            df_copy['prediction'] = df_copy['prediction'].apply(lambda x: x.label if x.label is not None else x.name)
+            return df_copy.to_dict(orient='index')
+
+        log = request.files["log"]
+        reader = io.BufferedReader(log)
+        text = reader.read().decode()
+        event_log = import_from_string(text)
+
+        dpn = data_petri_nets.get(logid, None)
+        res = dpn.predict_current_decisions(event_log)
+        live_predictions[logid] = res
+
+        return {
+            id(key): serialize_df(df)
+            for key, df in res.items()
+        }, 200
+
 
 def get_svg_and_close_figure(figure: plt.Figure):
     imgdata = io.StringIO()
