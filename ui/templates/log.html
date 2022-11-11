@@ -25,12 +25,16 @@
 
       let selectedPlace = null;
 
+      let livePredictions = null;
+
       let guardDataPerPlace = {};
+
       function loadEventLog() {
         fetch("/log/{{log_id}}/load", {
           method: "GET",
         })
           .then(async (res) => {
+           document.getElementById('load-live-log-button').disabled = true;
             if (res.ok) {
               const logInfo = await res.json();
               for (const key in logInfo["xes_stats"]) {
@@ -87,6 +91,7 @@
           method: "GET",
         })
           .then(async (res) => {
+           document.getElementById('load-live-log-button').disabled = true;
             if (res.ok) {
               const net = await res.json();
               d3.select("#discoveredPetriNet")
@@ -142,8 +147,28 @@
                             let localTechniqueSelector = document.getElementById('local-technique-selector')
                             localTechniqueSelector.removeAttribute('disabled')
                             localTechniqueSelector.addEventListener("input", (e) => {
-                              getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value);
+                              if(document.getElementById('local-explanation-log-type').value === 'live'){
+                                getLocalExplanation(localTechniqueSelector.value, placeId, liveLocalInstanceSelector.value, true);
+                              }else{
+                                getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value, false);
+                              }
                             })
+
+                            document.getElementById('local-explanation-log-type').oninput =  (e) => {
+                                  let toShow;
+                                  let toHide
+                                  if(event.currentTarget.value === 'normal'){
+                                    toHide = document.querySelector("#live-local-instance-selector-container")
+                                    toShow = document.querySelector("#local-instance-selector-container")
+                                    getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value, false);
+                                  }else{
+                                    toShow = document.querySelector("#live-local-instance-selector-container")
+                                    toHide = document.querySelector("#local-instance-selector-container")
+                                    getLocalExplanation(localTechniqueSelector.value, placeId, liveLocalInstanceSelector.value, true);
+                                  }
+                                  toShow.style = 'display: block';
+                                  toHide.style = 'display: none';
+                            }
 
 
                             let local_instance_selector_str = `<select class="form-select mb-1" aria-label="Choose Instance" name="Instance" id="local-instance-selector">`;
@@ -155,8 +180,28 @@
                             let localInstanceSelector = document.getElementById('local-instance-selector')
                             localInstanceSelector.removeAttribute('disabled')
                             localInstanceSelector.addEventListener("input", (e) => {
-                              getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value);
+                              if(document.getElementById('local-explanation-log-type').value === 'live'){
+                                getLocalExplanation(localTechniqueSelector.value, placeId, liveLocalInstanceSelector.value, true);
+                              }else{
+                                getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value, false);
+                              }
                             })
+
+                            let live_local_instance_selector_str = `<select class="form-select mb-1" aria-label="Choose Instance" name="Instance" id="live-local-instance-selector">`;
+                              for(const instance in (livePredictions ? livePredictions[placeId] : {})){
+                                live_local_instance_selector_str += `<option value="${instance}">${instance}</option>`;
+                              }
+                              live_local_instance_selector_str += "</select>";
+                              document.getElementById('live-local-instance-selector-container').innerHTML = live_local_instance_selector_str;
+                              let liveLocalInstanceSelector = document.getElementById('live-local-instance-selector')
+                              liveLocalInstanceSelector.removeAttribute('disabled')
+                              liveLocalInstanceSelector.addEventListener("input", (e) => {
+                                if(document.getElementById('local-explanation-log-type').value === 'live'){
+                                  getLocalExplanation(localTechniqueSelector.value, placeId, liveLocalInstanceSelector.value, true);
+                                }else{
+                                  getLocalExplanation(localTechniqueSelector.value, placeId, localInstanceSelector.value, false);
+                                }
+                              })
 
                             document.getElementById('selected_guard_local_svg').removeAttribute('src');
 
@@ -202,6 +247,16 @@
 
       function showErrorToast(message){
             const toast_elem = document.getElementById("errorToast")
+            const toast = new bootstrap.Toast(toast_elem)
+
+            toast_elem.querySelector(".toast-body").innerText = message
+
+            toast.show()
+      }
+
+
+      function showSuccessToast(message){
+            const toast_elem = document.getElementById("successToast")
             const toast = new bootstrap.Toast(toast_elem)
 
             toast_elem.querySelector(".toast-body").innerText = message
@@ -272,6 +327,9 @@
             guardDataPerPlace[placeId]['comparison_svg_url'] = resultsComparisonUrl;
             console.log({guardDataPerPlace})
           }
+          document.getElementById('load-live-log-button').disabled = false
+
+          showSuccessToast("Decision Mining completed!")
         }else{
           loadDecisionButton.removeAttribute('disabled');
           loadDecisionButtonLoadingSpan.style.display = 'none';
@@ -376,11 +434,15 @@
         });
       }
 
-      function getLocalExplanation(technique, placeid, caseAndRepetition){
+      function getLocalExplanation(technique, placeid, caseAndRepetition, isLive = false){
         const select = document.getElementById("local-technique-selector");
         select.setAttribute('disabled',"");
         const select2 = document.getElementById("local-instance-selector");
         select2.setAttribute('disabled',"");
+        const select4 = document.getElementById("live-local-instance-selector");
+        select4.setAttribute('disabled',"");
+        const select5 = document.getElementById("local-explanation-log-type");
+        select5.setAttribute('disabled',"");
         const select3 = document.getElementById("local-explanation-option-selector");
         if (select3) {
           select3.setAttribute('disabled',"");
@@ -389,17 +451,23 @@
         const selectSpinner = document.getElementById("local-selector-container-spinner");
         selectSpinner.style.display = 'block';
 
-        fetch(`/log/{{log_id}}/place/${placeid}/explainable-representation/${technique}/local/${caseAndRepetition}`, {
+        const url = isLive ? `/log/{{log_id}}/place/${placeid}/live-local-explanation/${technique}/case/${caseAndRepetition}` : `/log/{{log_id}}/place/${placeid}/explainable-representation/${technique}/local/${caseAndRepetition}`
+
+        fetch(url, {
           method: "GET"
         }).then(async (res) => {
           if(res.ok){
-
             const json = await res.json();
             if(selectedPlace == placeid){
               
               let explanation_option_selector_str = `<select class="form-select mb-1" aria-label="Choose Plot" name="Plot" id="local-explanation-option-selector">`;
               let isFirst = true;
               let initialRepresentation;
+              if(isLive && 'prediction' in json){
+                document.getElementById('live-local-prediction').innerText = 'Predicted: ' + json['prediction']
+              }else{
+                document.getElementById('live-local-prediction').innerText = ''
+              }
               for(const representation in json['svg_representations']){
                 explanation_option_selector_str += `<option value="${representation}" ${isFirst ? 'selected' : ''}>${representation}</option>`;
                 if(isFirst){
@@ -433,11 +501,43 @@
         }).finally(() => {
           select.removeAttribute('disabled');
           select2.removeAttribute('disabled');
+          select4.removeAttribute('disabled');
+          select5.removeAttribute('disabled');
           if(select3){
             select3.removeAttribute('disabled');
           }
           selectSpinner.style.display = 'none';
         });
+      }
+
+      function onSubmitLiveEventLogForm(e){
+        e.preventDefault();
+        const fileInput = document.querySelector('#live-event-log-form input');
+        const formData = new FormData()
+        formData.append('log',fileInput.files[0])
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('uploadLiveLogModal'))
+        if(modal){
+          modal.hide();
+        }
+
+        
+        fetch('/log/{{log_id}}/load-live-log',{body: formData, method: 'POST', }).then(async (res) => {
+          const bsel = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasScrolling'))
+          if(bsel){
+            bsel.hide();
+          }
+          const json = await res.json()
+          livePredictions = json;
+          console.log('live event log loaded',res);
+          showSuccessToast("Live event log loaded!")
+          const logtype_selector = document.querySelectorAll('#local-explanation-log-type > option')
+          for(const select of logtype_selector){
+            select.removeAttribute('disabled')
+          }
+        }).catch((e) => {
+          showErrorToast("Loading live event log failed!")
+          console.log('live event log failed',e);
+        })
       }
     </script>
     <style>
@@ -481,10 +581,14 @@
     </style>
 
     <div class="container mt-2">
-      <div class="d-flex justify-content-center">
+      <div class="d-flex w-100 justify-content-around align-items-center gap-2">
         <a href=".." class="link-primary">Back</a>
+        <a href="https://aarkue.github.io/eXdpn/exdpn.html#user-guide" style="float: right;">User Guide</a>
+        <button
+        class="btn btn-outline-success" data-bs-toggle="modal" disabled id="load-live-log-button"
+        data-bs-target="#uploadLiveLogModal">Load a Live Event Log</button>
       </div>
-      <h1 class="text-center mb-5">eXdpn: {{log.name}}</h1>
+      <h1 class="text-center mb-5">{{log.name}}</h1>
       <div class="text-center">
         <div id="logInfo">
           <table class="table mt-3">
@@ -683,13 +787,23 @@
             <span id="decisionMiningWarningText" style="color: #a84040;"></span>
               </div>
               <div style="width: 100%;">
-                <h4 class="text-center">Local Explanation</h4>
+                <div style="display: grid; grid-template-columns: 10rem auto 10rem; justify-items: center; align-items: center;">
+                  <div></div>
+                  <h4 class="text-center">Local Explanation</h4>
+                  <select class="form-select mb-1" aria-label="Choose Instance" name="Instance" id="local-explanation-log-type" value="normal">
+                    <option value="normal">Normal Log</option>
+                    <option disabled value="live">Live Log</option>
+                  </select>
+                </div>
                 <div class="d-flex justify-content-center align-items-center gap-2">
                   <div id="local-technique-selector-container">
                     <!-- Content Generated when DPN is mined and returned -->
                   </div>
                   <div id="local-instance-selector-container">
                     <!-- Content Generated when DPN is mined and returned -->
+                  </div>
+                  <div id="live-local-instance-selector-container" style="display: none">
+                    <!-- Content Generated when Live Log is uploaded and results returned -->
                   </div>
                   <div id="local-explanation-options-container">
                     <!-- Content Generated when DPN is mined and returned -->
@@ -730,9 +844,10 @@
               <!-- <div class="h-100"> -->
                 <img id="selected_guard_comparison_svg"/>
               <!-- </div> -->
-              <!-- <div class="h-100"> -->
+              <div class="">
+                <h5 class="text-center" id="live-local-prediction"></h5>
                 <img id="selected_guard_local_svg" />
-              <!-- </div> -->
+              </div>
               <!-- <div class="h-100"> -->
                 <div class="explanation_height">
                   <object type="text/html" class="w-100 h-100" id="selected_guard_global_html"></object>
@@ -755,16 +870,41 @@
     <div class="toast-container position-fixed bottom-0 end-0 p-3 text-body">
       <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header bg-danger bg-opacity-50 text-body">
-          <!-- <img src="..." class="rounded me-2" alt="..."> -->
           <strong class="me-auto">Error</strong>
-          <!-- <small>11 mins ago</small> -->
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body bg-danger bg-opacity-10 text-body">
           An error occured. Please try again.
         </div>
       </div>
+      <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success bg-opacity-50 text-body">
+          <strong class="me-auto">Success</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body bg-success bg-opacity-10 text-body">
+          An error occured. Please try again.
+        </div>
+      </div>
     </div>
-
+    <div class="modal fade" id="uploadLiveLogModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Load a Live Event Log</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form id="live-event-log-form" method="post" action="/log/{{log_id}}/load-live-log" onsubmit="onSubmitLiveEventLogForm(event)"  enctype="multipart/form-data">
+                  <div class="modal-body fs-5">
+                      <label for="log" class="form-label">Select an event log (.xes)</label>
+                      <input class="form-control form-control-lg" id="log" type="file" name="log" accept=".xes" required>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-success" type="submit" diabled>Submit</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
   </body>
 </html>

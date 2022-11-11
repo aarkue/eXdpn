@@ -16,7 +16,7 @@ def get_net_and_log() -> Tuple[PetriNet, Marking, Marking, EventLog, PetriNet.Pl
     # TODO: decide on structure with regards to sample event logs
     # load test eventlog
     event_log = import_log(os.path.join(
-        os.getcwd(), 'tests', 'guard_datasets', 'example.xes'))
+        os.getcwd(), 'tests', 'guard_datasets', 'example.xes')) # Small enough to not need sampling
 
     # get petri net and find decision points 
     net, im, fm = get_petri_net(event_log, "IM")

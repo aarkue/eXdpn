@@ -8,11 +8,13 @@ from pm4py.objects.log.obj import EventLog
 import pm4py.util.xes_constants as xes
 from pm4py.statistics.attributes.log.get import get_trace_attribute_values
 
-from typing import Dict, List, Any
+from typing import Dict, Iterator, List, Any, Tuple
+from pandas import DataFrame
+from matplotlib.figure import Figure
 
 from exdpn.data_preprocessing.data_preprocessing import basic_data_preprocessing
 from exdpn.decisionpoints import find_decision_points
-from exdpn.guard_datasets import extract_all_datasets
+from exdpn.guard_datasets import extract_all_datasets, extract_current_decisions
 from exdpn.guards.guard import Guard
 from exdpn.petri_net import get_petri_net
 from exdpn.guards import Guard_Manager
@@ -44,7 +46,7 @@ class Data_Petri_Net():
                                                                         ML_Technique.RF: {'max_depth': 5}},
                  CV_splits: int = 5,
                  CV_shuffle: bool = False,
-                 random_state: int = None, 
+                 random_state: int = None,
                  guard_threshold: float = 0.0,
                  impute: bool = False,
                  verbose: bool = True) -> None:
@@ -173,9 +175,9 @@ class Data_Petri_Net():
         Returns:
             Dict[PetriNet.Place, Guard]: The best performing guard for each decision point with respect to the F1-score.
 
-      
+
         Examples:
-            
+
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
@@ -186,7 +188,7 @@ class Data_Petri_Net():
             ...                      verbose = False)
             >>> best_guards = dpn.get_best()
 
-             
+
             .. include:: ../../docs/_templates/md/example-end.md
 
         """
@@ -218,7 +220,7 @@ class Data_Petri_Net():
             Guard: The best guard at `place`.
 
         Examples:
-            
+
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
@@ -251,7 +253,7 @@ class Data_Petri_Net():
             float: Fraction of traces that respected all decision point guards passed during token based replay.
 
         Examples:
-            
+
             >>> from exdpn.util import import_log
             >>> from exdpn.data_petri_net import Data_Petri_Net
             >>> from exdpn.guards import ML_Technique
@@ -262,7 +264,7 @@ class Data_Petri_Net():
             ...                      verbose = False)
             >>> dpn.get_mean_guard_conformance(event_log) # value may deviate
             0.949
-            
+
             .. include:: ../../docs/_templates/md/example-end.md
 
         """
@@ -310,6 +312,95 @@ class Data_Petri_Net():
                     prediction_result[caseid] = 0
 
         return sum([prediction_result[trace_id] for trace_id in seen_trace_ids]) / len(seen_trace_ids)
+
+    def predict_current_decisions(self, log: EventLog) -> Dict[PetriNet.Place, DataFrame]:
+        """Returns a dictionary mapping places to a current decision and their next-transition-predictions for the given event log. \
+            Current decisions of an unfit trace arise at those places which have enabled transitions in the token based replay-marking. \
+            The current decisions of an event log are all current decisons of unfit traces with respect to token based replay (see `exdpn.guard_datasets.extract_current_decisions`).
+
+        Args:
+            log (EventLog): The event log used to compute current decisions.
+
+        Returns:
+            Dict[PetriNet.Place, DataFrame]: A mapping of decision points to current decision instances and their predicted next transition.
+
+        Examples:
+
+            >>> from exdpn.util import import_log
+            >>> from exdpn.data_petri_net import Data_Petri_Net
+            >>> from exdpn.guards import ML_Technique
+            >>> event_log = import_log('./datasets/p2p_base.xes')
+            >>> event_log_unfit = import_log('./datasets/p2p_base_unfit.xes')        
+            >>> dpn = Data_Petri_Net(event_log = event_log,
+            ...                      event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'],
+            ...                      ml_list = [ML_Technique.SVM],
+            ...                      verbose = False)
+            >>> preds = dpn.predict_current_decisions(event_log_unfit)
+            >>> list(preds.values())[0]["prediction"][0]
+            (request standard approval, 'request standard approval')
+
+            .. include:: ../../docs/_templates/md/example-end.md
+
+        """
+        current_decisions = extract_current_decisions(
+            log,
+            self.petri_net, self.im, self.fm,
+            self.case_level_attributes, self.event_level_attributes,
+            self.tail_length, self.activityName_key
+        )
+
+        for place, decision_dataset in current_decisions.items():
+            if len(decision_dataset) == 0:
+                continue
+
+            X, _ = basic_data_preprocessing(
+                decision_dataset, impute=self.impute)
+            decision_dataset.drop(['target'], axis=1, inplace=True)
+            guard = self.get_guard_at_place(place)
+            try:
+                predicted_transitions = guard.predict(X)
+            except:
+                self._print_if_verbose(
+                    f'Prediction of transitions following place {place} failed')
+            else:
+                decision_dataset["prediction"] = predicted_transitions
+
+        return current_decisions
+
+    def explain_current_decision_predictions_for_trace(
+        self,
+        curr_decision_preds: Dict[PetriNet.Place, DataFrame],
+        trace_id: str,
+        base_sample_size: int = 10
+    ) -> Iterator[Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]]:
+        """Yields pairs of the form: (decision point, predicted next transition, local explanation) for the given current decision pedictions.
+
+        Args:
+            curr_decision_preds (Dict[PetriNet.Place, DataFrame]): A mapping of decision points to current decision instances and their predicted next transition. \
+                (see `exdpn.data_petri_net.Data_Petri_Net.predict_current_decisions`)
+            trace_id (str): The trace id of the trace for which the local explanations are computed.
+            base_sample_size (int, optional): The number of instances used to compute the local explanations. Defaults to 10.
+
+        Yields:
+            Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.
+
+        """
+        explanations_todo = []
+
+        for place, predictions in curr_decision_preds.items():
+            for prediction_instance in predictions.loc[[trace_id]].iterrows():
+                explanations_todo.append((
+                    place,
+                    prediction_instance[1]["prediction"],
+                    DataFrame([prediction_instance[1]]).drop("prediction", axis=1)))
+
+        for (place, pred, prediction_instance) in explanations_todo:
+            guard = self.get_guard_at_place(place)
+            gm = self.guard_manager_per_place[place]
+            yield (
+                place,
+                pred,
+                guard.get_local_explanations(prediction_instance, gm.df_X.sample(base_sample_size, replace=True)))
 
 
 # tests implemented examples
