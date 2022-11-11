@@ -28,11 +28,13 @@
       let livePredictions = null;
 
       let guardDataPerPlace = {};
+
       function loadEventLog() {
         fetch("/log/{{log_id}}/load", {
           method: "GET",
         })
           .then(async (res) => {
+           document.getElementById('load-live-log-button').disabled = true;
             if (res.ok) {
               const logInfo = await res.json();
               for (const key in logInfo["xes_stats"]) {
@@ -89,6 +91,7 @@
           method: "GET",
         })
           .then(async (res) => {
+           document.getElementById('load-live-log-button').disabled = true;
             if (res.ok) {
               const net = await res.json();
               d3.select("#discoveredPetriNet")
@@ -251,6 +254,16 @@
             toast.show()
       }
 
+
+      function showSuccessToast(message){
+            const toast_elem = document.getElementById("successToast")
+            const toast = new bootstrap.Toast(toast_elem)
+
+            toast_elem.querySelector(".toast-body").innerText = message
+
+            toast.show()
+      }
+
       function getSelectedAttributes(){
         let selectedAttributes = {};
         for(const attributeType in logAttributes){
@@ -314,6 +327,9 @@
             guardDataPerPlace[placeId]['comparison_svg_url'] = resultsComparisonUrl;
             console.log({guardDataPerPlace})
           }
+          document.getElementById('load-live-log-button').disabled = false
+
+          showSuccessToast("Decision Mining completed!")
         }else{
           loadDecisionButton.removeAttribute('disabled');
           loadDecisionButtonLoadingSpan.style.display = 'none';
@@ -513,6 +529,7 @@
           const json = await res.json()
           livePredictions = json;
           console.log('live event log loaded',res);
+          showSuccessToast("Live event log loaded!")
           const logtype_selector = document.querySelectorAll('#local-explanation-log-type > option')
           for(const select of logtype_selector){
             select.removeAttribute('disabled')
@@ -568,10 +585,10 @@
         <a href=".." class="link-primary">Back</a>
         <a href="https://aarkue.github.io/eXdpn/exdpn.html#user-guide" style="float: right;">User Guide</a>
         <button
-        class="btn btn-secondary" data-bs-toggle="modal"
+        class="btn btn-outline-success" data-bs-toggle="modal" disabled id="load-live-log-button"
         data-bs-target="#uploadLiveLogModal">Load a Live Event Log</button>
       </div>
-      <h1 class="text-center mb-5">eXdpn: {{log.name}}</h1>
+      <h1 class="text-center mb-5">{{log.name}}</h1>
       <div class="text-center">
         <div id="logInfo">
           <table class="table mt-3">
@@ -770,14 +787,15 @@
             <span id="decisionMiningWarningText" style="color: #a84040;"></span>
               </div>
               <div style="width: 100%;">
-                <h4 class="text-center">Local Explanation</h4>
+                <div style="display: grid; grid-template-columns: 10rem auto 10rem; justify-items: center; align-items: center;">
+                  <div></div>
+                  <h4 class="text-center">Local Explanation</h4>
+                  <select class="form-select mb-1" aria-label="Choose Instance" name="Instance" id="local-explanation-log-type" value="normal">
+                    <option value="normal">Normal Log</option>
+                    <option disabled value="live">Live Log</option>
+                  </select>
+                </div>
                 <div class="d-flex justify-content-center align-items-center gap-2">
-                  <div>
-                    <select class="form-select mb-1" aria-label="Choose Instance" name="Instance" id="local-explanation-log-type">
-                      <option value="normal">Normal Log</option>
-                      <option disabled value="live">Live Log</option>
-                    </select>
-                  </div>
                   <div id="local-technique-selector-container">
                     <!-- Content Generated when DPN is mined and returned -->
                   </div>
@@ -852,12 +870,19 @@
     <div class="toast-container position-fixed bottom-0 end-0 p-3 text-body">
       <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header bg-danger bg-opacity-50 text-body">
-          <!-- <img src="..." class="rounded me-2" alt="..."> -->
           <strong class="me-auto">Error</strong>
-          <!-- <small>11 mins ago</small> -->
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body bg-danger bg-opacity-10 text-body">
+          An error occured. Please try again.
+        </div>
+      </div>
+      <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success bg-opacity-50 text-body">
+          <strong class="me-auto">Success</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body bg-success bg-opacity-10 text-body">
           An error occured. Please try again.
         </div>
       </div>

@@ -381,6 +381,12 @@ def upload_live_log(logid: str):
         event_log = import_from_string(text)
 
         dpn = data_petri_nets.get(logid, None)
+        
+        if "eXdpn::time_since_last_event" in dpn.event_level_attributes:
+            extend_event_log_with_preceding_event_delay(event_log,"eXdpn::time_since_last_event")
+        if "eXdpn::elapsed_case_time" in dpn.event_level_attributes:
+            extend_event_log_with_total_elapsed_time(event_log, "eXdpn::elapsed_case_time")
+
         res = dpn.predict_current_decisions(event_log)
         live_predictions[logid] = res
 
