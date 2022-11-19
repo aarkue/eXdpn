@@ -68,7 +68,7 @@ class Random_Forest_Guard(Guard):
             >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
-            >>> # select a c decision point and the corresponding data set 
+            >>> # select a certain decision point and the corresponding data set 
             >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)
@@ -192,7 +192,7 @@ class Random_Forest_Guard(Guard):
             >>> # return figure of explainable representation
             >>> fig = guard.get_explainable_representation(X_test)
             
-            <img src="../../images/svm-example-representation.svg" alt="Example explainable representation of a support vector machine guard" style="max-height: 350px;"/>
+            <img src="../../images/rf-example-representation.svg" alt="Example explainable representation of a support vector machine guard" style="max-height: 350px;"/>
             .. include:: ../../docs/_templates/md/example-end.md
             
         Note: 

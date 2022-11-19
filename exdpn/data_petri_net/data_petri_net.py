@@ -381,7 +381,7 @@ class Data_Petri_Net():
             trace_id (str): The ID of the trace for which the local explanations are computed.
             base_sample_size (int, optional): The number of instances used to compute the local explanations. Defaults to 10.
 
-        Yields:
+        Returns:
             Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.
 
         """

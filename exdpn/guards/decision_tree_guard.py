@@ -67,7 +67,7 @@ class Decision_Tree_Guard(Guard):
             >>> dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, 
             ...                                       event_level_attributes = ['item_category','item_id','item_amount','supplier','total_price'], 
             ...                                       activityName_key = "concept:name")
-            >>> # select a c decision point and the corresponding data set 
+            >>> # select a certain decision point and the corresponding data set 
             >>> dp = list(dp_dataset_map.keys())[0]
             >>> dp_dataset = dp_dataset_map[dp]
             >>> X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)

@@ -165,7 +165,7 @@
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">            &gt;&gt;&gt; dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, </span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">            ...                                       event_level_attributes = [&#39;item_category&#39;,&#39;item_id&#39;,&#39;item_amount&#39;,&#39;supplier&#39;,&#39;total_price&#39;], </span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">            ...                                       activityName_key = &quot;concept:name&quot;)</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">            &gt;&gt;&gt; # select a c decision point and the corresponding data set </span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">            &gt;&gt;&gt; # select a certain decision point and the corresponding data set </span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">            &gt;&gt;&gt; dp = list(dp_dataset_map.keys())[0]</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">            &gt;&gt;&gt; dp_dataset = dp_dataset_map[dp]</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">            &gt;&gt;&gt; X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)</span>
@@ -289,7 +289,7 @@
 </span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">            &gt;&gt;&gt; # return figure of explainable representation</span>
 </span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">            &gt;&gt;&gt; fig = guard.get_explainable_representation(X_test)</span>
 </span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="sd">            </span>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">            &lt;img src=&quot;../../images/svm-example-representation.svg&quot; alt=&quot;Example explainable representation of a support vector machine guard&quot; style=&quot;max-height: 350px;&quot;/&gt;</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">            &lt;img src=&quot;../../images/rf-example-representation.svg&quot; alt=&quot;Example explainable representation of a support vector machine guard&quot; style=&quot;max-height: 350px;&quot;/&gt;</span>
 </span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">            .. include:: ../../docs/_templates/md/example-end.md</span>
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a><span class="sd">            </span>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">        Note: </span>
@@ -495,7 +495,7 @@
 </span><span id="Random_Forest_Guard-69"><a href="#Random_Forest_Guard-69"><span class="linenos"> 69</span></a><span class="sd">            &gt;&gt;&gt; dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, </span>
 </span><span id="Random_Forest_Guard-70"><a href="#Random_Forest_Guard-70"><span class="linenos"> 70</span></a><span class="sd">            ...                                       event_level_attributes = [&#39;item_category&#39;,&#39;item_id&#39;,&#39;item_amount&#39;,&#39;supplier&#39;,&#39;total_price&#39;], </span>
 </span><span id="Random_Forest_Guard-71"><a href="#Random_Forest_Guard-71"><span class="linenos"> 71</span></a><span class="sd">            ...                                       activityName_key = &quot;concept:name&quot;)</span>
-</span><span id="Random_Forest_Guard-72"><a href="#Random_Forest_Guard-72"><span class="linenos"> 72</span></a><span class="sd">            &gt;&gt;&gt; # select a c decision point and the corresponding data set </span>
+</span><span id="Random_Forest_Guard-72"><a href="#Random_Forest_Guard-72"><span class="linenos"> 72</span></a><span class="sd">            &gt;&gt;&gt; # select a certain decision point and the corresponding data set </span>
 </span><span id="Random_Forest_Guard-73"><a href="#Random_Forest_Guard-73"><span class="linenos"> 73</span></a><span class="sd">            &gt;&gt;&gt; dp = list(dp_dataset_map.keys())[0]</span>
 </span><span id="Random_Forest_Guard-74"><a href="#Random_Forest_Guard-74"><span class="linenos"> 74</span></a><span class="sd">            &gt;&gt;&gt; dp_dataset = dp_dataset_map[dp]</span>
 </span><span id="Random_Forest_Guard-75"><a href="#Random_Forest_Guard-75"><span class="linenos"> 75</span></a><span class="sd">            &gt;&gt;&gt; X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)</span>
@@ -619,7 +619,7 @@
 </span><span id="Random_Forest_Guard-193"><a href="#Random_Forest_Guard-193"><span class="linenos">193</span></a><span class="sd">            &gt;&gt;&gt; # return figure of explainable representation</span>
 </span><span id="Random_Forest_Guard-194"><a href="#Random_Forest_Guard-194"><span class="linenos">194</span></a><span class="sd">            &gt;&gt;&gt; fig = guard.get_explainable_representation(X_test)</span>
 </span><span id="Random_Forest_Guard-195"><a href="#Random_Forest_Guard-195"><span class="linenos">195</span></a><span class="sd">            </span>
-</span><span id="Random_Forest_Guard-196"><a href="#Random_Forest_Guard-196"><span class="linenos">196</span></a><span class="sd">            &lt;img src=&quot;../../images/svm-example-representation.svg&quot; alt=&quot;Example explainable representation of a support vector machine guard&quot; style=&quot;max-height: 350px;&quot;/&gt;</span>
+</span><span id="Random_Forest_Guard-196"><a href="#Random_Forest_Guard-196"><span class="linenos">196</span></a><span class="sd">            &lt;img src=&quot;../../images/rf-example-representation.svg&quot; alt=&quot;Example explainable representation of a support vector machine guard&quot; style=&quot;max-height: 350px;&quot;/&gt;</span>
 </span><span id="Random_Forest_Guard-197"><a href="#Random_Forest_Guard-197"><span class="linenos">197</span></a><span class="sd">            .. include:: ../../docs/_templates/md/example-end.md</span>
 </span><span id="Random_Forest_Guard-198"><a href="#Random_Forest_Guard-198"><span class="linenos">198</span></a><span class="sd">            </span>
 </span><span id="Random_Forest_Guard-199"><a href="#Random_Forest_Guard-199"><span class="linenos">199</span></a><span class="sd">        Note: </span>
@@ -857,7 +857,7 @@
 </span><span id="Random_Forest_Guard.train-69"><a href="#Random_Forest_Guard.train-69"><span class="linenos"> 69</span></a><span class="sd">            &gt;&gt;&gt; dp_dataset_map = extract_all_datasets(event_log, pn, im, fm, </span>
 </span><span id="Random_Forest_Guard.train-70"><a href="#Random_Forest_Guard.train-70"><span class="linenos"> 70</span></a><span class="sd">            ...                                       event_level_attributes = [&#39;item_category&#39;,&#39;item_id&#39;,&#39;item_amount&#39;,&#39;supplier&#39;,&#39;total_price&#39;], </span>
 </span><span id="Random_Forest_Guard.train-71"><a href="#Random_Forest_Guard.train-71"><span class="linenos"> 71</span></a><span class="sd">            ...                                       activityName_key = &quot;concept:name&quot;)</span>
-</span><span id="Random_Forest_Guard.train-72"><a href="#Random_Forest_Guard.train-72"><span class="linenos"> 72</span></a><span class="sd">            &gt;&gt;&gt; # select a c decision point and the corresponding data set </span>
+</span><span id="Random_Forest_Guard.train-72"><a href="#Random_Forest_Guard.train-72"><span class="linenos"> 72</span></a><span class="sd">            &gt;&gt;&gt; # select a certain decision point and the corresponding data set </span>
 </span><span id="Random_Forest_Guard.train-73"><a href="#Random_Forest_Guard.train-73"><span class="linenos"> 73</span></a><span class="sd">            &gt;&gt;&gt; dp = list(dp_dataset_map.keys())[0]</span>
 </span><span id="Random_Forest_Guard.train-74"><a href="#Random_Forest_Guard.train-74"><span class="linenos"> 74</span></a><span class="sd">            &gt;&gt;&gt; dp_dataset = dp_dataset_map[dp]</span>
 </span><span id="Random_Forest_Guard.train-75"><a href="#Random_Forest_Guard.train-75"><span class="linenos"> 75</span></a><span class="sd">            &gt;&gt;&gt; X_train, X_test, y_train, y_test = data_preprocessing_evaluation(dp_dataset)</span>
@@ -914,7 +914,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dp_dataset_map</span> <span class="o">=</span> <span class="n">extract_all_datasets</span><span class="p">(</span><span class="n">event_log</span><span class="p">,</span> <span class="n">pn</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span> 
 <span class="gp">... </span>                                      <span class="n">event_level_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;item_category&#39;</span><span class="p">,</span><span class="s1">&#39;item_id&#39;</span><span class="p">,</span><span class="s1">&#39;item_amount&#39;</span><span class="p">,</span><span class="s1">&#39;supplier&#39;</span><span class="p">,</span><span class="s1">&#39;total_price&#39;</span><span class="p">],</span> 
 <span class="gp">... </span>                                      <span class="n">activityName_key</span> <span class="o">=</span> <span class="s2">&quot;concept:name&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># select a c decision point and the corresponding data set </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># select a certain decision point and the corresponding data set </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dp_dataset_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dp_dataset</span> <span class="o">=</span> <span class="n">dp_dataset_map</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">data_preprocessing_evaluation</span><span class="p">(</span><span class="n">dp_dataset</span><span class="p">)</span>
@@ -1121,7 +1121,7 @@
 </span><span id="Random_Forest_Guard.get_explainable_representation-193"><a href="#Random_Forest_Guard.get_explainable_representation-193"><span class="linenos">193</span></a><span class="sd">            &gt;&gt;&gt; # return figure of explainable representation</span>
 </span><span id="Random_Forest_Guard.get_explainable_representation-194"><a href="#Random_Forest_Guard.get_explainable_representation-194"><span class="linenos">194</span></a><span class="sd">            &gt;&gt;&gt; fig = guard.get_explainable_representation(X_test)</span>
 </span><span id="Random_Forest_Guard.get_explainable_representation-195"><a href="#Random_Forest_Guard.get_explainable_representation-195"><span class="linenos">195</span></a><span class="sd">            </span>
-</span><span id="Random_Forest_Guard.get_explainable_representation-196"><a href="#Random_Forest_Guard.get_explainable_representation-196"><span class="linenos">196</span></a><span class="sd">            &lt;img src=&quot;../../images/svm-example-representation.svg&quot; alt=&quot;Example explainable representation of a support vector machine guard&quot; style=&quot;max-height: 350px;&quot;/&gt;</span>
+</span><span id="Random_Forest_Guard.get_explainable_representation-196"><a href="#Random_Forest_Guard.get_explainable_representation-196"><span class="linenos">196</span></a><span class="sd">            &lt;img src=&quot;../../images/rf-example-representation.svg&quot; alt=&quot;Example explainable representation of a support vector machine guard&quot; style=&quot;max-height: 350px;&quot;/&gt;</span>
 </span><span id="Random_Forest_Guard.get_explainable_representation-197"><a href="#Random_Forest_Guard.get_explainable_representation-197"><span class="linenos">197</span></a><span class="sd">            .. include:: ../../docs/_templates/md/example-end.md</span>
 </span><span id="Random_Forest_Guard.get_explainable_representation-198"><a href="#Random_Forest_Guard.get_explainable_representation-198"><span class="linenos">198</span></a><span class="sd">            </span>
 </span><span id="Random_Forest_Guard.get_explainable_representation-199"><a href="#Random_Forest_Guard.get_explainable_representation-199"><span class="linenos">199</span></a><span class="sd">        Note: </span>
@@ -1198,7 +1198,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">guard</span><span class="o">.</span><span class="n">get_explainable_representation</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 </code></pre></div>
   
-  <p><img src="../../images/svm-example-representation.svg" alt="Example explainable representation of a support vector machine guard" style="max-height: 350px;"/>
+  <p><img src="../../images/rf-example-representation.svg" alt="Example explainable representation of a support vector machine guard" style="max-height: 350px;"/>
   For more examples refer to the <a href="https://aarkue.github.io/eXdpn">User Guide</a>.</p>
 </blockquote>
 

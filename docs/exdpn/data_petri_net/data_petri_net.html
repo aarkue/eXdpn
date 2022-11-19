@@ -475,7 +475,7 @@
 </span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a><span class="sd">            trace_id (str): The ID of the trace for which the local explanations are computed.</span>
 </span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a><span class="sd">            base_sample_size (int, optional): The number of instances used to compute the local explanations. Defaults to 10.</span>
 </span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>
-</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a><span class="sd">        Yields:</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a><span class="sd">        Returns:</span>
 </span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a><span class="sd">            Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.</span>
 </span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>
 </span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -877,7 +877,7 @@
 </span><span id="Data_Petri_Net-382"><a href="#Data_Petri_Net-382"><span class="linenos">382</span></a><span class="sd">            trace_id (str): The ID of the trace for which the local explanations are computed.</span>
 </span><span id="Data_Petri_Net-383"><a href="#Data_Petri_Net-383"><span class="linenos">383</span></a><span class="sd">            base_sample_size (int, optional): The number of instances used to compute the local explanations. Defaults to 10.</span>
 </span><span id="Data_Petri_Net-384"><a href="#Data_Petri_Net-384"><span class="linenos">384</span></a>
-</span><span id="Data_Petri_Net-385"><a href="#Data_Petri_Net-385"><span class="linenos">385</span></a><span class="sd">        Yields:</span>
+</span><span id="Data_Petri_Net-385"><a href="#Data_Petri_Net-385"><span class="linenos">385</span></a><span class="sd">        Returns:</span>
 </span><span id="Data_Petri_Net-386"><a href="#Data_Petri_Net-386"><span class="linenos">386</span></a><span class="sd">            Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.</span>
 </span><span id="Data_Petri_Net-387"><a href="#Data_Petri_Net-387"><span class="linenos">387</span></a>
 </span><span id="Data_Petri_Net-388"><a href="#Data_Petri_Net-388"><span class="linenos">388</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -1545,7 +1545,7 @@
 </span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-382"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-382"><span class="linenos">382</span></a><span class="sd">            trace_id (str): The ID of the trace for which the local explanations are computed.</span>
 </span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-383"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-383"><span class="linenos">383</span></a><span class="sd">            base_sample_size (int, optional): The number of instances used to compute the local explanations. Defaults to 10.</span>
 </span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-384"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-384"><span class="linenos">384</span></a>
-</span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-385"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-385"><span class="linenos">385</span></a><span class="sd">        Yields:</span>
+</span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-385"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-385"><span class="linenos">385</span></a><span class="sd">        Returns:</span>
 </span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-386"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-386"><span class="linenos">386</span></a><span class="sd">            Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.</span>
 </span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-387"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-387"><span class="linenos">387</span></a>
 </span><span id="Data_Petri_Net.explain_current_decision_predictions_for_trace-388"><a href="#Data_Petri_Net.explain_current_decision_predictions_for_trace-388"><span class="linenos">388</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -1578,7 +1578,7 @@
 <li><strong>base_sample_size (int, optional):</strong>  The number of instances used to compute the local explanations. Defaults to 10.</li>
 </ul>
 
-<h6 id="yields">Yields</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.</p>
