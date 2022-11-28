@@ -226,10 +226,10 @@ def extract_current_decisions(
     activityName_key: str = xes.DEFAULT_NAME_KEY,
     places: List[PetriNet.Place] = None,
     padding: Any = "#"
-):
+) -> Dict[PetriNet.Place, DataFrame]:
     """Extracts the current decisions of an event log. \
         These are all current decisons of unfinished cases. \
-        These are identified as the unfit traces which can perfectly be replayed on the model, but do not reach a final marking in token-based replay. \
+        Unfinished cases are identified as the unfit traces which can perfectly be replayed on the model, but do not reach a final marking in token-based replay. \
         Current decisions of an unfit trace arise at those places which have enabled transitions in the token based replay-marking \
         and correspond to the latest instance of such a trace.
 
@@ -245,7 +245,7 @@ def extract_current_decisions(
         places (List[Place], optional): The list of places to extract datasets for. If not present, all decision points are regarded.
         padding (Any, optional): The padding to be used when the tail goes over beginning of the case. Defaults to "#".
     Returns:
-        Dict[Place, DataFrame]: The dictionary mapping places in the Petri net to their corresponding dataset.
+        Dict[Place, DataFrame]: The dictionary mapping places from `places` to their corresponding dataset of current decisions.
     """
 
     replay = _compute_replay(log, net, initial_marking, final_marking, stop_immediately_unfit=True, activityName_key=activityName_key, show_progress_bar=False)
@@ -308,7 +308,7 @@ def extract_current_decision_for_trace(
     tail_length: int = 3,
     activityName_key: str = xes.DEFAULT_NAME_KEY,
     padding: Any = "#",
-):
+) -> Tuple[Any, List[Any]]:
     """Extract prediction information for a trace.
 
     Args:
@@ -323,9 +323,8 @@ def extract_current_decision_for_trace(
         ValueError: If a case in the event log has no case-id, an error is raised.
 
     Returns:
-        Tuple[Any, List[Any]]: A tuple containing the index for the dataframe (the case-id) and the list of extracted values (The values for the columns of the dataframe).
-    """    
-    """Extracts the latest instance of a trace."""
+        Tuple[Any, List[Any]]: A tuple containing the index for the dataframe (the case-ID) and the list of extracted values.
+    """
     case_attr_values = [trace.attributes.get(
         attr, np.NaN) for attr in case_level_attributes]
 

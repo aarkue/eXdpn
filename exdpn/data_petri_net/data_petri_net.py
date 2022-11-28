@@ -316,7 +316,7 @@ class Data_Petri_Net():
     def predict_current_decisions(self, log: EventLog) -> Dict[PetriNet.Place, DataFrame]:
         """Returns a dictionary mapping places to a current decision and their next-transition-predictions for the given event log. \
             Current decisions of an unfit trace arise at those places which have enabled transitions in the token based replay-marking. \
-            The current decisions of an event log are all current decisons of unfit traces with respect to token based replay (see `exdpn.guard_datasets.extract_current_decisions`).
+            The current decisions of an event log are all current decisons of unfit traces with respect to token based replay (see `exdpn.guard_datasets.data_extraction.extract_current_decisions`).
 
         Args:
             log (EventLog): The event log used to compute current decisions.
@@ -373,15 +373,15 @@ class Data_Petri_Net():
         trace_id: str,
         base_sample_size: int = 10
     ) -> Iterator[Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]]:
-        """Yields pairs of the form: (decision point, predicted next transition, local explanation) for the given current decision pedictions.
+        """Yields pairs of the form: (decision point, predicted next transition, local explanation) for the given current decision pedictions of the specified trace.
 
         Args:
             curr_decision_preds (Dict[PetriNet.Place, DataFrame]): A mapping of decision points to current decision instances and their predicted next transition. \
-                (see `exdpn.data_petri_net.Data_Petri_Net.predict_current_decisions`)
-            trace_id (str): The trace id of the trace for which the local explanations are computed.
+                (see `exdpn.data_petri_net.data_petri_net.Data_Petri_Net.predict_current_decisions`)
+            trace_id (str): The ID of the trace for which the local explanations are computed.
             base_sample_size (int, optional): The number of instances used to compute the local explanations. Defaults to 10.
 
-        Yields:
+        Returns:
             Tuple[PetriNet.Place, PetriNet.Transition, Dict[str, Figure]]: A decision point, predicted next transition, local explanation pair.
 
         """

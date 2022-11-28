@@ -191,7 +191,7 @@ class XGBoost_Guard(Guard):
             >>> # return figure of explainable representation
             >>> fig = guard.get_explainable_representation(X_test) # results may deviate 
 
-            <img src="../../images/svm-example-representation.svg" alt="Example explainable representation of a XGBoost guard" style="max-height: 350px;"/>
+            <img src="../../images/xgb-example-representation.svg" alt="Example explainable representation of a XGBoost guard" style="max-height: 350px;"/>
 
             .. include:: ../../docs/_templates/md/example-end.md
 

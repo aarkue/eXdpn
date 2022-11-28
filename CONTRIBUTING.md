@@ -34,4 +34,4 @@
 2. Navigate into the `ui/` directory and run `flask run`
 
 ## Generating Documentation ##
-- Run `pdoc ./exdpn -o ./docs -d google -t ./docs/_templates --favicon https://aarkue.github.io/eXdpn/favicon.ico --footer-text "exdpn - version 1.0.0"` from the root directory.
+- Run `pdoc ./exdpn -o ./docs -d google -t ./docs/_templates --favicon https://aarkue.github.io/eXdpn/favicon.ico --footer-text "exdpn - version <current version number>"` from the root directory.
